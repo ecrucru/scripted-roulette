@@ -1,0 +1,71 @@
+"====="
+" This scripted roulette will try to determine what is the probability"
+" to win if you play X random straight numbers per round."
+"====="
+" The result is around 80% of losses."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+    "=== Parameters of the simulation"
+    SET user.loop.games = 100 "rounds globally"
+    SET user.loop.rounds = 20 "rounds per round"
+    SET user.loop.numbers = 5 "random numbers per round"
+
+    "=== Statistics"
+    PLOT OFF
+    SET user.cash.initial = game.cash
+    SET user.stat.win = 0
+    SET user.stat.loss = 0
+
+.SEQUENCE
+    "=== Resets the cash and the credit"
+    SET game.cash = user.cash.initial
+    SET game.credit = 0
+
+    "=== Initializes the loop"
+    SET user.loop.round = user.loop.rounds
+    LABEL play_again
+
+    "=== Plays X random numbers"
+    SET user.loop.number = user.loop.numbers
+    LABEL bet
+    RANDOM
+    CBET sys.random "It is a conditional bet because we don't bet with a negative value"
+    DEC user.loop.number
+    IF user.loop.number > 0
+        GOTO bet
+    ENDIF
+
+    "=== Spins the ball"
+    SPIN
+
+    "=== Next round"
+    DEC user.loop.round
+    IF user.loop.round > 0 AND game.credit = 0 AND game.cash > game.bet
+        GOTO play_again
+    ENDIF
+
+.SEQUENCE
+    "=== Stores the result of the current round"
+    IF game.cash > user.cash.initial
+        INC user.stat.win
+    ELSE
+        INC user.stat.loss
+    ENDIF
+
+    "=== Next game"
+    DEC user.loop.games
+    IF user.loop.games > 0
+        IF NOT sys.console
+            STATUS user.loop.games 'remaining loops...'
+        ENDIF
+        RESTART
+    ENDIF
+
+    "=== Displays the final results"
+    IF user.stat.win + user.stat.loss > 0
+        WRITE 'Wins =' user.stat.win '(' 100*user.stat.win/(user.stat.win+user.stat.loss) '%)'
+        WRITE 'Losses =' user.stat.loss '(' 100*user.stat.loss/(user.stat.win+user.stat.loss) '%)'
+    ENDIF

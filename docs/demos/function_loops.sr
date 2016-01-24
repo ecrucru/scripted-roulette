@@ -1,0 +1,21 @@
+"====="
+" This scripted roulette explains how you can create simple loops."
+" To have multiple loops, just use a new label name and a new variable."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+.SEQUENCE
+    SET user.loop 5
+    LABEL loop
+    WRITE user.loop '...'
+
+    DEC user.loop
+    IF user.loop > 0
+        @GOTO loop
+    ENDIF
+
+    WRITE '... Ignition !! ...'
+
+    INCLUDE include_final

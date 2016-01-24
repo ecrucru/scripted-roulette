@@ -1,0 +1,24 @@
+"====="
+" This scripted roulette displays the statistics of the roulette."
+"====="
+
+.INIT
+    INCLUDE include_init
+    SET user.loop 5000
+
+.SEQUENCE
+    "=== Spins the ball several times"
+    LABEL loop
+    SPIN
+
+    DEC user.loop
+    IF user.loop > 0
+        GOTO loop
+    ENDIF
+
+    "=== Makes some final stats"
+    STAT
+    SAVE HISTORY
+    SHOW MEMORY
+
+    INCLUDE include_final

@@ -1,0 +1,27 @@
+/* XPM */
+static const char *icon_save_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+". c Black",
+"o c #FFFFFF",
+"O c #ED1C24",
+"X c #22B14C",
+"  c None",
+/* pixels */
+"                ",
+" .............. ",
+" .X.oooooooo.O. ",
+" .X.oooooooo... ",
+" .X.oooooooo.X. ",
+" .X.oooooooo.X. ",
+" .X.oooooooo.X. ",
+" .X.oooooooo.X. ",
+" .XX........XX. ",
+" .XXXXXXXXXXXX. ",
+" .XX.........X. ",
+" .XX......oo.X. ",
+" .XX......oo.X. ",
+" .XX......oo.X. ",
+"  ............. ",
+"                "
+};

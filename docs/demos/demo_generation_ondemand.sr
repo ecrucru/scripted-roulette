@@ -1,0 +1,26 @@
+"====="
+" This scripted roulette generates random numbers until you ask to stop."
+" It can be used if you want to play a real game and have no wheel for it."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+.SEQUENCE
+    "-- Gets a number"
+    LABEL new_spin
+    SPIN
+    WRITE game.landed.number
+
+    "-- Asks to continue"
+    IF game.landed.black
+        CONFIRM 'Landed number =' game.landed.number '(black). Continue ?'
+    ELSE
+        CONFIRM 'Landed number =' game.landed.number '(red). Continue ?'
+    ENDIF
+    IF sys.popup = sys.popup.yes
+        GOTO new_spin
+    ENDIF
+
+    "-- Final tasks"
+    INCLUDE include_final

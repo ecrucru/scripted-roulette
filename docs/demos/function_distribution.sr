@@ -1,0 +1,18 @@
+"====="
+" This scripted roulette illustrates the behaviour of each random number generator."
+" The system variables are not changeable in a sequence. So you need to edit the script"
+" at each new test. All the results are available in the help file."
+"====="
+
+.INIT
+    SET sys.type french
+    SET sys.algorithm mt
+
+.SEQUENCE
+    SHOW ALGORITHM
+    SHOW SEED
+    SHOW DISTRIBUTION
+    SAVE DISTRIBUTION
+    SAVE HOTMAP
+
+    INCLUDE include_final

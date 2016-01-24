@@ -1,0 +1,36 @@
+"====="
+" This scripted roulette illustrates how you can request a value from the user."
+" With the value, you can for example bet on a particular number."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+.SEQUENCE
+    "=== Asks for a number"
+    LABEL retry
+    INPUT 'Please give a number to play ODD or EVEN :'
+    EXIST sys.input
+    IF sys.popup = sys.popup.yes AND sys.result
+        WRITE 'You have picked :' f:sys.input '(or' sys.input 'as integer)'
+    ELSE
+        WRITE 'Please don''t cancel the popup or type a correct value/formula.'
+        GOTO retry
+    ENDIF
+
+    "=== Play EVEN/ODD"
+    IF even(sys.input)
+        CBET even
+    ELSE
+        CBET odd
+    ENDIF
+
+    "=== Did we win ?"
+    SPIN
+    IF game.landed.win
+        WRITE 'You won ! (' game.landed.number ')'
+    ELSE
+        WRITE 'You lost... (' game.landed.number ')'
+    ENDIF
+
+    INCLUDE include_final

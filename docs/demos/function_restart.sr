@@ -1,0 +1,25 @@
+"====="
+" This scripted roulette illustrates how you can reprocess the"
+" sequences several times. You can condition the execution of"
+" the individual sequences by testing the value of 'user.loop'."
+"====="
+
+.INIT
+    SET user.loop = 3
+
+.SEQUENCE
+    WRITE 'Hello !'
+
+.SEQUENCE
+    IF odd(user.loop)
+        WRITE 'How are you ?'
+    ENDIF
+
+.SEQUENCE
+    DEC user.loop
+    IF user.loop > 0
+        RESTART
+    ENDIF
+    WRITE 'You asked me too many times.'
+
+    INCLUDE include_final

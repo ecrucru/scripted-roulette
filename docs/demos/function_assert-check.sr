@@ -1,0 +1,19 @@
+"====="
+" This scripted roulette explains how ASSERT and CHECK work."
+"====="
+
+.SEQUENCE
+    WRITE 'Let''s show the difference between ASSERT and CHECK'
+
+.SEQUENCE
+    WRITE 'First CHECK...'
+    CHECK sys.true
+    WRITE 'SYS.TRUE is true, so you will get this message and jump to the next sequence'
+
+.SEQUENCE
+    WRITE 'Second ASSERT'
+    ASSERT sys.false
+    WRITE 'The condition for ASSERT is not fulfilled, so you won''t see this message'
+
+.SEQUENCE
+    WRITE 'You will also not read this message because the execution of the script has been suspended'

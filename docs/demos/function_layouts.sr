@@ -1,0 +1,30 @@
+"====="
+" This scripted roulette shows which roulettes are available."
+"====="
+
+.INIT
+    WRITE 'French :'
+    SET sys.type french
+    SHOW LAYOUT
+
+    WRITE 'American :'
+    SET sys.type american
+    SHOW LAYOUT
+
+    WRITE 'Mexican :'
+    SET sys.type mexican
+    SHOW LAYOUT
+
+    WRITE 'Balanced & French :'
+    SET sys.type balanced french
+    SHOW LAYOUT
+
+    WRITE 'Balanced & American :'
+    SET sys.type balanced american
+    SHOW LAYOUT
+
+    WRITE 'Balanced & Mexican :'
+    SET sys.type balanced mexican
+    SHOW LAYOUT
+
+    INCLUDE include_final

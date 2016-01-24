@@ -1,0 +1,81 @@
+"====="
+" This scripted roulette executes the script from the version 1"
+" and tells at the end the global chance to win."
+"====="
+" The result is that you win around 33% of the time."
+"====="
+
+.INIT
+    INCLUDE include_init
+    SET user.loop.games = 500
+    SET user.maxwin = 15
+
+    "-- Initialization"
+    PLOT OFF
+    SET user.flag.reset_cash = sys.true
+    SET user.stat.wins = 0
+    SET user.stat.losses = 0
+
+    "-- Determines the required initial amount of cash"
+    SET game.cash.init = 2 * sys.game.numbers * game.bet
+    WRITE 'You need to enter the casino with' game.cash.init 'units of money.'
+
+.SEQUENCE
+    "-- Sets the initial cash"
+    IF user.flag.reset_cash
+        @RANDOMIZE
+        SET game.cash = game.cash.init
+        SET game.credit = 0
+        SET user.count = 0
+    ENDIF
+    SET user.flag.reset_cash = sys.false
+
+    "-- Picks a new number"
+    RANDOM
+    SET user.pick = sys.random
+
+.SEQUENCE
+    "-- Bets on the number"
+    IF sys.game.can_bet
+        BET user.pick
+        SPIN
+    ELSE
+        BREAK "We have no more cash"
+    ENDIF
+
+    "=== Verifies if it was a successful result or not"
+    IF game.landed.win
+        INC user.count
+        IF user.count < user.maxwin
+            RESTART "A new number will be picked"
+        ENDIF
+    ELSE
+        RESTART SEQUENCE "Spin again in the hope the chosen number will land"
+    ENDIF
+
+.SEQUENCE
+    "-- Counts the wins and losses"
+    IF game.cash > game.cash.init
+        INC user.stat.wins
+    ELSE
+        INC user.stat.losses
+    ENDIF
+
+    "-- Restarts the script if there are still things to do"
+    DEC user.loop.games
+    IF user.loop.games > 0
+        SET user.flag.reset_cash = sys.true
+        IF NOT sys.console
+            STATUS user.loop.games 'remaining games...'
+        ENDIF
+        RESTART
+    ENDIF
+
+.SEQUENCE
+    "-- Displays the final results"
+    CHECK user.stat.wins + user.stat.losses > 0
+    WRITE 'Results:'
+    WRITE '- Wins:' user.stat.wins '(' f:100*user.stat.wins/(user.stat.wins+user.stat.losses) '%)'
+    WRITE '- Losses:' user.stat.losses '(' f:100*user.stat.losses/(user.stat.wins+user.stat.losses) '%)'
+
+    INCLUDE include_final

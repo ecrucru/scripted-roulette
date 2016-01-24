@@ -1,0 +1,12 @@
+"====="
+" This is an include file common to most of the sample files."
+"====="
+
+.SEQUENCE
+    STAT
+    @BEEP
+    IF sys.console
+        PAUSE
+    ELSE
+        PROGRESS 0
+    ENDIF

@@ -1,0 +1,26 @@
+"====="
+" This scripted roulette tells how to manage floating point numbers."
+"====="
+
+.INIT
+    SET user.var = 1592 % (18-9) + 1 / 5 * 2 "= 8,4"
+
+.SEQUENCE
+    "=== CASE 1 ==="
+    " You want to display the value."
+
+    WRITE user.var
+    WRITE f:user.var
+
+.SEQUENCE
+    "=== CASE 2 ==="
+    " You want to test the value."
+
+    IF user.var = 8
+        WRITE 'You will not see this value despite you probably saw it with the instruction WRITE.'
+    ENDIF
+    IF user.var = 8.4
+        WRITE 'This is true.'
+    ENDIF
+
+    INCLUDE include_final

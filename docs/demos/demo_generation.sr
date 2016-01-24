@@ -1,0 +1,29 @@
+"====="
+" This scripted roulette generates random numbers."
+"====="
+
+.INIT
+    "=== Options"
+    SET sys.type french
+    SET sys.algorithm tt800
+    SET user.count 1000 "Number of spins"
+
+.SEQUENCE
+    "=== Checks"
+    ASSERT user.count > 0
+
+    "=== Gets a random number"
+    LABEL spin
+    SPIN
+    WRITE game.landed.number
+
+    "=== Loop"
+    DEC user.count
+    IF user.count > 0
+        GOTO spin
+    ENDIF
+
+    "=== Saves the output"
+    SAVE LOG
+
+    INCLUDE include_final

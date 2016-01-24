@@ -1,0 +1,27 @@
+/* XPM */
+static const char *icon_reset_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+". c Black",
+"O c #FFFFFF",
+"  c None",
+"o c #ED1C24",
+"X c #FFF200",
+/* pixels */
+"                ",
+"    ........    ",
+"   .X......X.   ",
+"  .X.oooooo.X.  ",
+" .X.oooooooo.X. ",
+" ..oooooooooo.. ",
+" ..oooooooooo.. ",
+" ..oOOOOOOOOo.. ",
+" ..oOOOOOOOOo.. ",
+" ..oooooooooo.. ",
+" ..oooooooooo.. ",
+" .X.oooooooo.X. ",
+"  .X.oooooo.X.  ",
+"   .X......X.   ",
+"    ........    ",
+"                "
+};

@@ -1,0 +1,106 @@
+"====="
+" With this scripted roulette, the objective is to play the hottest numbers"
+" all the time. But on contrary to another demo, we will play many times"
+" to determine if the method has a positive, negative or neutral trend in"
+" the long term."
+"====="
+" The result is that you have between 1/5 and 1/3 chance to win."
+"====="
+" In any case, don't forget that the software is a mathematical tool with"
+" a statistical background. It doesn't predict the future!"
+"====="
+
+.INIT
+    "=== Settings for the roulette"
+    INCLUDE include_init
+    SET user.initial_cash = game.cash
+
+    "=== Settings for launching games"
+    SET user.games 100 "Let's play so much games"
+    SET user.rounds 50 "For each game, we will spin this number of times"
+
+    "=== Settings to collect the target results"
+    PLOT OFF
+    SET user.stat.negative = 0
+    SET user.stat.positive = 0
+    SET user.stat.neutral = 0
+
+.SEQUENCE
+    "=== Gets sufficient historical data"
+    "In real life, you should just read the information shown on screen"
+    SET user.loop 360
+    LABEL init_hot
+    SPIN
+    DEC user.loop
+    IF user.loop > 0
+        GOTO init_hot
+    ENDIF
+
+    "=== Calculates the hot numbers"
+    STAT
+    EXIST stat.hot1 stat.hot2 stat.hot3 stat.hot4 stat.hot5
+    IF NOT sys.result
+        WRITE error 'The quality of the randomization is not enough. Please restart the script or change the PRNG.'
+        STOP
+    ENDIF
+
+.SEQUENCE
+    ASSERT user.games > 0 AND user.rounds > 0
+
+    "=== Start a new game"
+    SET user.g = user.games
+    LABEL new_game
+    SET game.cash = user.initial_cash
+    SET game.credit = 0
+
+    "=== Next round"
+    SET user.r = user.rounds
+    LABEL new_round
+
+    BET stat.hot1 stat.hot2 stat.hot3 stat.hot4 stat.hot5
+    SPIN
+    STAT
+
+    DEC user.r
+    IF user.r > 0
+        GOTO new_round
+    ENDIF
+
+    "=== Saves the trace of the game (debug)"
+    " SAVE HISTORY"
+    " PAUSE"
+
+    "=== Analysis"
+    IF game.net < user.initial_cash
+        INC user.stat.negative
+    ELSE
+        IF game.net > user.initial_cash
+            INC user.stat.positive
+        ELSE
+            INC user.stat.neutral
+        ENDIF
+    ENDIF
+
+    "=== Next game"
+    DEC user.g
+    PROGRESS 100*(user.games-user.g)/user.games
+    IF user.g > 0
+        GOTO new_game
+    ENDIF
+
+.SEQUENCE
+    CLEAR HISTORY
+    CLEAR LANDED NUMBER
+
+    "=== Intermediary results"
+    SET user.stat.positive_pc = 100 * user.stat.positive / user.games
+    SET user.stat.negative_pc = 100 * user.stat.negative / user.games
+    SET user.stat.neutral_pc  = 100 * user.stat.neutral  / user.games
+
+    "=== Output"
+    WRITE 'Results:'
+    WRITE '- Wins:' user.stat.positive '(' f:user.stat.positive_pc '%)'
+    WRITE '- Losses:' user.stat.negative '(' f:user.stat.negative_pc '%)'
+    WRITE '- Draws:' user.stat.neutral '(' f:user.stat.neutral_pc '%)'
+
+    INCLUDE include_final

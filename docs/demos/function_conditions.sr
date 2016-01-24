@@ -1,0 +1,35 @@
+"====="
+" This scripted roulette illustrates how you can use the conditions."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+.SEQUENCE
+    "=== Let's get a number in advance"
+    SPIN
+
+    "=== Simple condition testing if we got a zero"
+    IF game.landed.zero > 0
+        WRITE 'Zero (#' game.landed.zero ') has no option.'
+        BREAK
+    ENDIF
+    WRITE 'You picked a non-null number.'
+
+    "=== When you can't use ELSE, you can use a system variable to recall the result of the last executed IF"
+    IF NOT sys.last_if
+        IF game.landed.even = 1 OR even(game.landed.number) "Same way of writing"
+            WRITE game.landed.number 'is even.'
+
+            "This IF is imbricated"
+            IF game.landed.number < 19 OR game.landed.half = 1 "Same way of writing"
+                WRITE 'It is in the first half.'
+            ELSE
+                WRITE 'It is in the second half.'
+            ENDIF
+        ELSE "It applies by depth level"
+            WRITE game.landed.number 'is odd.'
+        ENDIF
+    ENDIF
+
+    INCLUDE include_final

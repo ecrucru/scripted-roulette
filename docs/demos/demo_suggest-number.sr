@@ -1,0 +1,82 @@
+"====="
+" This scripted roulette will suggest a number to play based on the last 3 landed numbers."
+" The idea is that a real roulette may follow the same logical sequence than the algorithms"
+" implemented in the application."
+
+" In reality, this assumption is not valid. Each spin is independent from the previous ones."
+" Also, by changing the internal status of the PRNG, you can generate any number of the table."
+" What is then the interest ? To be proposed a number 'randomly' as implemented by the PRNG."
+
+" You can use more than 3 numbers, but you will have to wait for around 37^N combinations."
+" This takes some time. Press the button STOP to terminate the script if needed."
+"====="
+
+.INIT
+    INCLUDE include_init
+    SET sys.algorithm mt "Mersenne-Twister is the most diversified algorithm. Don't use an HTTP generator"
+    PLOT OFF
+    SET user.tries = 0
+
+.SEQUENCE
+    "=== Asks for the 3 last numbers"
+    INPUT 'First number:'
+    EXIST sys.input
+    IF sys.popup = sys.popup.yes AND sys.result
+        SET user.n1 = sys.input
+    ELSE
+        STOP
+    ENDIF
+
+    INPUT 'Second number:'
+    EXIST sys.input
+    IF sys.popup = sys.popup.yes AND sys.result
+        SET user.n2 = sys.input
+    ELSE
+        STOP
+    ENDIF
+
+    INPUT 'Third number:'
+    EXIST sys.input
+    IF sys.popup = sys.popup.yes AND sys.result
+        SET user.n3 = sys.input
+    ELSE
+        STOP
+    ENDIF
+    "Remark: if you type something false, the script will be infinite"
+
+    "=== Initializes the buffered sequence"
+    RANDOM
+    SET user.b1 = sys.random
+    RANDOM
+    SET user.b2 = sys.random
+    RANDOM
+    SET user.b3 = sys.random
+    RANDOM
+    SET user.b4 = sys.random
+
+.SEQUENCE
+    "=== Statistics"
+    INC user.tries
+
+    "=== Are there matching values ?"
+    IF user.b1 == user.n1 AND user.b2 == user.n2 AND user.b3 == user.n3
+        SPIN user.b4 "To get some information about this number"
+        WRITE 'After' user.n1 ',' user.n2 'and' user.n3 ', please bet on' user.b4 '.'
+        IF game.landed.black
+            WRITE 'Its color is BLACK.'
+        ELSE
+            WRITE 'Its color is RED.'
+        ENDIF
+        WRITE 'Found after' user.tries 'tries.'
+
+    ELSE "Shifts the buffer and gets a new number"
+        SET user.b1 = user.b2
+        SET user.b2 = user.b3
+        SET user.b3 = user.b4
+        RANDOM
+        SET user.b4 = sys.random
+
+        RESTART SEQUENCE "It can be an infinite loop"
+    ENDIF
+
+    INCLUDE include_final

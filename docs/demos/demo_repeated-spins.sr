@@ -1,0 +1,48 @@
+"====="
+" When you want to study several scenarios by using the same series of numbers,"
+" you need to reset the PRNG. This scripted roulette explains how to do it."
+"====="
+
+.INIT
+    "=== Technical settings"
+    INCLUDE include_init
+    SET user.loop.initial 10
+
+    "=== Remark"
+    "Because the PRNG may have run for other scripts before, we have to randomize it to"
+    "establish a new initial situation. The call to this function must be done once."
+    RANDOMIZE
+
+.SEQUENCE
+    "=== Gets the first series of numbers"
+    WRITE 'Let''s get some spins :'
+    SET user.loop = user.loop.initial
+    LABEL loop
+
+    SPIN
+    WRITE game.landed.number
+
+    DEC user.loop
+    IF user.loop > 0
+        GOTO loop
+    ENDIF
+
+.SEQUENCE
+    "=== Resets the initial status of the pseudo-random number generators"
+    WRITE 'The random numbers are now reset'
+    CLEAR RANDOM
+
+    "=== Gets the second series of numbers"
+    WRITE 'Let''s see if the new numbers are the same :'
+    SET user.loop = user.loop.initial
+    LABEL loop
+
+    SPIN
+    WRITE game.landed.number
+
+    DEC user.loop
+    IF user.loop > 0
+        GOTO loop
+    ENDIF
+
+    INCLUDE include_final

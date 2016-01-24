@@ -1,0 +1,13 @@
+"====="
+     " Click on button 'Pretty script' to format that
+  "    scripted roulette and make it easier to read.
+	"====="
+.init
+if sys.console
+write 'This program has no interest in CONSOLE mode.'
+ endIF
+	write 'However in GUI mode !!!!'
+set uSer.nuMBER RAnd()+1    *12/2
+                 .sequence
+RANDOM			"Pick a number
+write'Am I a LEGEND ? -->'                 even(SYs.RANDom)

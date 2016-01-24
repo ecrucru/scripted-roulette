@@ -1,0 +1,27 @@
+/* XPM */
+static const char *icon_export_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"o c Black",
+". c #FFFFFF",
+"O c #FFFF00",
+"  c None",
+"X c #FF0000",
+/* pixels */
+"           .    ",
+"          .X.   ",
+" ooooooo..XXX.  ",
+" o.......XXXXX. ",
+" o.oooo.XXXXXXX.",
+" o........XXX...",
+" o.oooooo.XXX.o ",
+" o........XXX.o ",
+" o.oooooo.XXX.o ",
+" o........X.X.o ",
+" o............o ",
+" oooooooooooooo ",
+" oOOOOOOOOOOOOo ",
+" oOOOOOOOOoooOo ",
+" oooooooooooooo ",
+"                "
+};

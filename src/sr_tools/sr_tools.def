@@ -1,0 +1,3 @@
+LIBRARY sr_tools
+EXPORTS bcc_randomize
+EXPORTS bcc_getcomputerclock

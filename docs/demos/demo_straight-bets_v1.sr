@@ -1,0 +1,51 @@
+"====="
+" In this scripted roulette, let's check the technique to bet always on the same number"
+" (with a certain limit) until you win. Then you can change the number. In other words,"
+" the gains of the straight number must cover the previous losses."
+"====="
+" The general comment is that when it works, the gains are exploding. However, when it"
+" fails, the game can be short in time and your credit will increase also quickly."
+"====="
+" In one example, a number has never been spun for 193 rounds ! Such an effect will"
+" ruin you if you play with automated applications."
+"====="
+
+.INIT
+    INCLUDE include_init
+    SET user.limit.rounds = 185 "numbers"
+    SET user.limit.games = 15 "wins"
+
+    "=== Determines the initial cash to have on hand"
+    SET game.cash = 2 * sys.game.numbers * game.bet
+    WRITE 'You need to enter the casino with' game.cash 'units of money.'
+
+.SEQUENCE
+    RANDOM
+    SET user.pick = sys.random
+    SET user.count = 0
+
+.SEQUENCE
+    "-- Bets on the number"
+    IF sys.game.can_bet
+        BET user.pick
+        SPIN
+    ELSE
+        BREAK "We have no more cash"
+    ENDIF
+
+    "=== Verifies if it was successful"
+    IF game.landed.win
+        DEC user.limit.games
+        IF user.limit.games > 0
+            RESTART "A new number will be picked"
+        ENDIF
+    ELSE
+        INC user.count
+        IF user.count > user.limit.rounds
+            RESTART "Our number has never been reached"
+        ELSE
+            RESTART SEQUENCE "Spin again in the hope the chosen number will land"
+        ENDIF
+    ENDIF
+
+    INCLUDE include_final

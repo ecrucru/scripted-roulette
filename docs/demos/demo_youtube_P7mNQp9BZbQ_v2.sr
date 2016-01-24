@@ -1,0 +1,119 @@
+"====="
+" This scripted roulette is a variant of the first version. The objective is to repeat"
+" the script several times to estimate how often you can win. The technique to repeat a"
+" script here is based on RESTART, on contrary to the demo related to the hot numbers."
+"====="
+" The technique works at 80%. But if you use an American roulette, this rate will decrease."
+" https://en.wikipedia.org/wiki/Roulette#Specific_betting_systems"
+"====="
+
+.INIT
+    "=== Technical options of the roulette"
+    SET sys.type french
+    SET sys.algorithm mt
+
+    "=== Initializes the final results"
+    PLOT OFF
+    SET user.stat.wins = 0
+    SET user.stat.losses = 0
+    SET user.games.initial = 100 "games"
+    SET user.games = user.games.initial
+    SET user.rounds.initial = 20 "rounds per game"
+
+    "=== Constants of the game"
+    SET game.bet.max 50
+    SET user.bet.default 1
+    SET user.cash.initial 200
+
+.SEQUENCE
+    "=== Settings of the new game"
+    SET game.cash = user.cash.initial
+    SET game.credit = 0
+    SET game.bet = user.bet.default
+    SET user.rounds = user.rounds.initial
+    @RANDOMIZE
+
+    "=== Discovers the first color"
+    LABEL first_spin
+    SPIN
+    IF game.landed.zero > 0
+        GOTO first_spin
+    ENDIF
+
+    "=== Plays the first round based on the known color"
+    IF game.landed.red
+        BET black
+        SET user.black = sys.true
+    ELSE
+        BET red
+        SET user.black = sys.false
+    ENDIF
+    SPIN
+
+    "=== Plays many times to see the effect of the technique in the long term"
+    LABEL play_again
+    DEC user.rounds
+
+    "=== Bets"
+    IF game.landed.win
+        SET game.bet = user.bet.default
+        IF game.landed.red
+            BET black
+            SET user.black = sys.true
+        ELSE
+            BET red
+            SET user.black = sys.false
+        ENDIF
+    ELSE
+        SET game.bet = 2 * game.bet
+
+        "Manages a casino attack"
+        IF game.bet.max != 0 AND game.bet > game.bet.max
+            SET game.bet = game.bet.max
+        ENDIF
+
+        IF user.black
+            BET black
+        ELSE
+            BET red
+        ENDIF
+    ENDIF
+
+    "=== Spins"
+    SPIN
+
+    "=== Bankruptcy"
+    IF game.credit > 0
+        SET user.rounds = 0 "End of the game"
+    ENDIF
+
+    "=== Play again ?"
+    IF user.rounds > 0
+        GOTO play_again
+    ENDIF
+
+    "=== Won or lost ?"
+    IF game.cash >= user.cash.initial
+        INC user.stat.wins
+    ELSE
+        INC user.stat.losses
+    ENDIF
+
+.SEQUENCE
+    "=== Launches a new game if not finished"
+    DEC user.games
+    SET user.progress 100*(user.games.initial-user.games)/user.games.initial
+    IF NOT sys.console
+        STATUS 'Progression :' user.progress '%'
+    ENDIF
+    PROGRESS user.progress
+    IF user.games > 0
+        RESTART ".INIT is not repeated"
+    ENDIF
+
+    "=== Final report"
+    WRITE 'Results:'
+    WRITE '- Wins:' user.stat.wins '(' f:100*user.stat.wins/(user.stat.wins+user.stat.losses) '%)'
+    WRITE '- Losses:' user.stat.losses '(' f:100*user.stat.losses/(user.stat.wins+user.stat.losses) '%)'
+
+    INCLUDE include_final

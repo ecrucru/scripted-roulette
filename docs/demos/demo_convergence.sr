@@ -1,0 +1,30 @@
+"====="
+" With an American roulette, a 'good' algorithm has a certain probability"
+" for a zero to land. You can check that with that scripted roulette."
+"====="
+
+.INIT
+    "=== Default settings"
+    SET sys.type american
+    SET sys.algorithm lngen
+    PLOT OFF
+
+    "=== Options for the simulation"
+    SET user.spins 10000 "Number of spins"
+
+.SEQUENCE
+    "=== Spins the ball a lot"
+    SPIN
+    DEC user.spins
+    IF user.spins > 0
+        RESTART SEQUENCE
+    ENDIF
+
+.SEQUENCE
+    STAT "Defines how often the green color has landed"
+    EXIST stat.green
+    IF sys.result
+        WRITE 'The occurrence of the green color must tend to 5.26% -->' f:100*stat.green '%.'
+    ELSE
+        WRITE 'Not enough spins to show a reliable result.'
+    ENDIF

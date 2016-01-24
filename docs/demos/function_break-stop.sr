@@ -1,0 +1,17 @@
+"====="
+" This scripted roulette shows the difference between BREAK and STOP."
+"====="
+
+.SEQUENCE
+    WRITE 'Let''s use a BREAK'
+    BREAK
+    WRITE 'You will not see that text'
+
+.SEQUENCE
+    WRITE 'BREAK only stops the current sequence and jumps to the next one'
+    WRITE 'Let''s use a STOP to see the effect'
+    STOP
+    WRITE 'You will not see this message'
+
+.SEQUENCE
+    WRITE 'This text will never be processed'

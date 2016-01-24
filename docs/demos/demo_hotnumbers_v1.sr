@@ -1,0 +1,45 @@
+"====="
+" With this scripted roulette, you will see the evolution of your money"
+" if you always play the 5 hottest numbers."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+.SEQUENCE
+    "=== Waits for sufficient historical data"
+    SET user.loop 25 "In real life, it is not possible to wait too much"
+    LABEL init_hot
+
+    SPIN
+
+    DEC user.loop
+    IF user.loop > 0
+        GOTO init_hot
+    ENDIF
+
+    "=== Calculates the hot numbers"
+    STAT
+    EXIST stat.hot1 stat.hot2 stat.hot3 stat.hot4 stat.hot5
+    IF NOT sys.result
+        WRITE error 'The quality of the randomization is not enough. Please restart the script or change the PRNG.'
+        STOP
+    ENDIF
+
+.SEQUENCE
+    "=== Loop"
+    SET user.loop 100
+    LABEL replay
+
+    "=== Plays only the hot numbers"
+    BET stat.hot1 stat.hot2 stat.hot3 stat.hot4 stat.hot5
+    SPIN
+    STAT "To refresh the hot numbers"
+
+    "=== Plays again"
+    DEC user.loop
+    IF user.loop > 0
+        GOTO replay
+    ENDIF
+
+    INCLUDE include_final

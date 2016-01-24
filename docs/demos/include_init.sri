@@ -1,0 +1,18 @@
+"====="
+" This is an include file common to most of the sample files."
+"====="
+
+    "=== Information to players"
+    WRITE 'This application is a statistical tool to study the Roulette, a casino game.'
+    WRITE 'Take some time to read this interesting article:'
+    WRITE 'https://en.wikipedia.org/wiki/Roulette'
+
+    "=== Technical settings for the roulette"
+    SET sys.type      french
+    SET sys.algorithm mt    "Don't use here an HTTP generator unless you know exactly what you are doing. Some samples are too intensive"
+    SET game.cash     100   "What you have first to pay to enter the Casino"
+    SET game.bet.max  50    "The betting limit set by the Casino to prevent the attacks"
+    SET game.bet      5     "The default amount to bet"
+
+    "=== Randomization of the PRNG at each new execution"
+    @RANDOMIZE

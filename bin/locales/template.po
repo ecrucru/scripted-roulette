@@ -1,0 +1,977 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Scripted Roulette\n"
+"POT-Creation-Date: 2016-01-22 22:29+0100\n"
+"PO-Revision-Date: 2016-01-22 22:29+0100\n"
+"Last-Translator: \n"
+"Language-Team: http://scripted-roulette.sourceforge.net\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-Basepath: ../../src\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: iso-8859-15\n"
+"X-Poedit-KeywordsList: _;wxT28_\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: frame.cpp:143
+msgid "Script"
+msgstr ""
+
+#: frame.cpp:153
+msgid "Memory"
+msgstr ""
+
+#: frame.cpp:170
+msgid "Type"
+msgstr ""
+
+#: frame.cpp:171
+msgid "Message"
+msgstr ""
+
+#: frame.cpp:185
+msgid "All"
+msgstr ""
+
+#: frame.cpp:188 frame.cpp:456
+msgid "Information"
+msgstr ""
+
+#: frame.cpp:191 frame.cpp:434
+msgid "Warning"
+msgstr ""
+
+#: frame.cpp:194 frame.cpp:439
+msgid "Error"
+msgstr ""
+
+#: frame.cpp:197 frame.cpp:444
+msgid "Debug"
+msgstr ""
+
+#: frame.cpp:200 frame.cpp:449
+msgid "System"
+msgstr ""
+
+#: frame.cpp:208
+msgid "Console"
+msgstr ""
+
+#: frame.cpp:217
+msgid "Money"
+msgstr ""
+
+#: frame.cpp:228
+msgid "New"
+msgstr ""
+
+#: frame.cpp:229
+msgid "Open"
+msgstr ""
+
+#: frame.cpp:230
+msgid "Save"
+msgstr ""
+
+#: frame.cpp:231
+msgid "Export the log"
+msgstr ""
+
+#: frame.cpp:233
+msgid "Pretty script"
+msgstr ""
+
+#: frame.cpp:234
+msgid "Reset"
+msgstr ""
+
+#: frame.cpp:236
+msgid "Execute"
+msgstr ""
+
+#: frame.cpp:237
+msgid "Stop"
+msgstr ""
+
+#: frame.cpp:243
+msgid "&New\tCtrl+N"
+msgstr ""
+
+#: frame.cpp:244
+msgid "&Open\tCtrl+O"
+msgstr ""
+
+#: frame.cpp:245
+msgid "&Save\tCtrl+S"
+msgstr ""
+
+#: frame.cpp:246
+msgid "S&ave as..."
+msgstr ""
+
+#: frame.cpp:247
+msgid "E&xport the log"
+msgstr ""
+
+#: frame.cpp:249
+msgid "&Pretty script"
+msgstr ""
+
+#: frame.cpp:250
+msgid "&Reset"
+msgstr ""
+
+#: frame.cpp:251
+msgid "&Execute\tF5"
+msgstr ""
+
+#: frame.cpp:252
+msgid "S&top\tF6"
+msgstr ""
+
+#: frame.cpp:254
+msgid "&Quit"
+msgstr ""
+
+#: frame.cpp:255
+msgid "&File"
+msgstr ""
+
+#: frame.cpp:258
+msgid "&Help\tF1"
+msgstr ""
+
+#: frame.cpp:260
+msgid "&About"
+msgstr ""
+
+#: frame.cpp:261
+msgid "&?"
+msgstr ""
+
+#: frame.cpp:266
+msgid "&Copy the selected lines"
+msgstr ""
+
+#: frame.cpp:335
+msgid " (Running)"
+msgstr ""
+
+#: frame.cpp:525
+#, c-format
+msgid "%d infos."
+msgstr ""
+
+#: frame.cpp:527
+#, c-format
+msgid "%d info."
+msgstr ""
+
+#: frame.cpp:534
+#, c-format
+msgid "%d warnings."
+msgstr ""
+
+#: frame.cpp:536
+#, c-format
+msgid "%d warning."
+msgstr ""
+
+#: frame.cpp:543
+#, c-format
+msgid "%d errors."
+msgstr ""
+
+#: frame.cpp:545
+#, c-format
+msgid "%d error."
+msgstr ""
+
+#: frame.cpp:552
+#, c-format
+msgid "%d other messages."
+msgstr ""
+
+#: frame.cpp:554
+#, c-format
+msgid "%d other message."
+msgstr ""
+
+#: frame.cpp:624 frame.cpp:1066
+msgid "The current document has been modified. Do you want to save it first ?"
+msgstr ""
+
+#: frame.cpp:624 frame.cpp:695 frame.cpp:958 frame.cpp:992 frame.cpp:1066
+#: roulette_write.cpp:194
+msgid "Confirmation"
+msgstr ""
+
+#: frame.cpp:648
+msgid "Open a scripted roulette"
+msgstr ""
+
+#: frame.cpp:682
+msgid ""
+"The include files cannot be processed directly.\n"
+"\n"
+"Please execute a script having the right file extension."
+msgstr ""
+
+#: frame.cpp:687
+msgid "You can't execute a script not related to Scripted Roulette."
+msgstr ""
+
+#: frame.cpp:695
+msgid ""
+"Your scripted roulette uses loops.\n"
+"\n"
+"In order to not lose your script, do you want to save it before it is "
+"executed ?"
+msgstr ""
+
+#: frame.cpp:805
+#, c-format
+msgid "Compiled with %s"
+msgstr ""
+
+#: frame.cpp:837 frame.cpp:984
+msgid "The script is still being executed. Please wait until it ends."
+msgstr ""
+
+#: frame.cpp:837 frame.cpp:984
+msgid "Command not available"
+msgstr ""
+
+#: frame.cpp:889
+msgid ""
+"Nothing has been copied. Please select the lines with the numbered column."
+msgstr ""
+
+#: frame.cpp:952
+msgid ""
+"The script has been modified externally. Do you want to reload the script ?"
+msgstr ""
+
+#: frame.cpp:956
+msgid ""
+"Please note that your current script is not saved yet. Any reload will "
+"discard your recent changes."
+msgstr ""
+
+#: frame.cpp:961
+msgid "The current file cannot be reloaded."
+msgstr ""
+
+#: frame.cpp:992
+msgid ""
+"The current document has been modified. Do you want to save it before to "
+"leave ?"
+msgstr ""
+
+#: frame.cpp:1052
+#, c-format
+msgid "Round %.0f for %.1f units of money"
+msgstr ""
+
+#: frame.cpp:1093
+msgid "Save a scripted roulette"
+msgstr ""
+
+#: frame.cpp:1141
+msgid "There is nothing to export."
+msgstr ""
+
+#: frame.cpp:1146
+msgid "Save the log"
+msgstr ""
+
+#: frame.cpp:1146
+msgid "CSV file (*.csv)|*.csv"
+msgstr ""
+
+#: frame.cpp:1155
+msgid "The log has not been saved."
+msgstr ""
+
+#: main.cpp:41
+msgid "Display the help"
+msgstr ""
+
+#: main.cpp:44
+msgid "Force the language (cf. norm ISO 3166-1)"
+msgstr ""
+
+#: main.cpp:48
+msgid "Execute the script after it is loaded"
+msgstr ""
+
+#: main.cpp:51
+msgid "Show the version"
+msgstr ""
+
+#: main.cpp:54 main.cpp:57
+msgid "Script(s) to execute"
+msgstr ""
+
+#: main_console.cpp:43
+msgid "Unable to interpret the command line. Use the option -h for help."
+msgstr ""
+
+#: main_console.cpp:58
+#, c-format
+msgid "Compiled with : %s"
+msgstr ""
+
+#: main_console.cpp:60
+msgid "Compilation : debug"
+msgstr ""
+
+#: main_console.cpp:62
+msgid "Compilation : release"
+msgstr ""
+
+#: main_console.cpp:65
+msgid "Unicode : yes"
+msgstr ""
+
+#: main_console.cpp:67
+msgid "Unicode : no"
+msgstr ""
+
+#: main_console.cpp:70
+msgid "Extended features : yes"
+msgstr ""
+
+#: main_console.cpp:72
+msgid "Extended features : no"
+msgstr ""
+
+#: main_console.cpp:75
+msgid "Translations : yes"
+msgstr ""
+
+#: main_console.cpp:77
+msgid "Translations : no"
+msgstr ""
+
+#: main_console.cpp:95
+#, c-format
+msgid ">> Start of processing for '%s'..."
+msgstr ""
+
+#: main_console.cpp:97
+#, c-format
+msgid "<< End of processing for '%s'"
+msgstr ""
+
+#: roulette.cpp:97
+#, c-format
+msgid "Having more than %d includes is not accepted."
+msgstr ""
+
+#: roulette.cpp:111
+#, c-format
+msgid "Unable to include '%s'."
+msgstr ""
+
+#: roulette.cpp:143 roulette.cpp:158 roulette_save.cpp:27 roulette_show.cpp:27
+#, c-format
+msgid "Only 1 argument is expected for the instruction '%s'."
+msgstr ""
+
+#: roulette.cpp:200
+msgid "No script is loaded."
+msgstr ""
+
+#: roulette.cpp:208
+msgid "The script contains the following content :"
+msgstr ""
+
+#: roulette.cpp:238
+#, c-format
+msgid "Unable to parse the instruction '%s'."
+msgstr ""
+
+#: roulette.cpp:247
+msgid "Multiple sections .INIT are not allowed."
+msgstr ""
+
+#: roulette.cpp:253 roulette.cpp:266
+#, c-format
+msgid "No argument is expected after the section '%s'."
+msgstr ""
+
+#: roulette.cpp:277
+#, c-format
+msgid "Ignored instruction : '%s'"
+msgstr ""
+
+#: roulette.cpp:337
+#, c-format
+msgid "There are %d sequences."
+msgstr ""
+
+#: roulette.cpp:339
+#, c-format
+msgid "There is %d sequence."
+msgstr ""
+
+#: roulette.cpp:412
+#, c-format
+msgid "Duplicate 'LABEL' are not authorized (%s)."
+msgstr ""
+
+#: roulette.cpp:426
+msgid "The execution of the script has been requested to stop."
+msgstr ""
+
+#: roulette.cpp:446
+#, c-format
+msgid "The instruction '%s' is not authorized in the section .INIT."
+msgstr ""
+
+#: roulette.cpp:452
+msgid ""
+"The use of the instruction 'RANDOMIZE' in a sequence is not recommended."
+msgstr ""
+
+#: roulette.cpp:492
+#, c-format
+msgid "Unknown instruction '%s'."
+msgstr ""
+
+#: roulette.cpp:508
+msgid "There is no defined variable."
+msgstr ""
+
+#: roulette.cpp:514
+msgid "The available variables are :"
+msgstr ""
+
+#: roulette.cpp:628
+msgid "You can't bet with null or negative amounts."
+msgstr ""
+
+#: roulette.cpp:799
+msgid "Statistics :"
+msgstr ""
+
+#: roulette.cpp:800
+#, c-format
+msgid "   - Cash : %.2f"
+msgstr ""
+
+#: roulette.cpp:801
+#, c-format
+msgid "   - Credit : %.2f"
+msgstr ""
+
+#: roulette.cpp:802
+#, c-format
+msgid "   - Net result : %.2f"
+msgstr ""
+
+#: roulette.cpp:803
+#, c-format
+msgid "   - Stake : %.2f"
+msgstr ""
+
+#: roulette.cpp:804
+#, c-format
+msgid "   - Current bet : %.2f"
+msgstr ""
+
+#: roulette.cpp:863
+msgid "Warning : "
+msgstr ""
+
+#: roulette.cpp:864
+msgid "Error : "
+msgstr ""
+
+#: roulette.cpp:865
+msgid "Debug : "
+msgstr ""
+
+#: roulette.cpp:866
+msgid "System : "
+msgstr ""
+
+#: roulette.cpp:936
+#, c-format
+msgid "The input file '%s' is not loaded."
+msgstr ""
+
+#: roulette.cpp:1019
+#, c-format
+msgid "Starting sequence %d"
+msgstr ""
+
+#: roulette.cpp:1022
+#, c-format
+msgid "Sequence %d"
+msgstr ""
+
+#: roulette.cpp:1038
+msgid ""
+"You ran out of quota. Please change your pseudo-random number generator, or "
+"retry later."
+msgstr ""
+
+#: roulette.cpp:1041
+#, c-format
+msgid "Online PRNG : your remaining quota is %d."
+msgstr ""
+
+#: roulette_beep.cpp:27 roulette_break.cpp:27 roulette_debug.cpp:27
+#: roulette_else.cpp:27 roulette_endif.cpp:27 roulette_leave.cpp:27
+#: roulette_pause.cpp:27 roulette_randomize.cpp:27 roulette_refresh.cpp:27
+#: roulette_stat.cpp:27 roulette_stop.cpp:27
+#, c-format
+msgid "No argument is expected for the instruction '%s'."
+msgstr ""
+
+#: roulette_beep.cpp:32
+#, c-format
+msgid "The instruction '%s' is not enabled."
+msgstr ""
+
+#: roulette_bet.cpp:83 roulette_clear.cpp:27 roulette_exist.cpp:27
+#: roulette_goto.cpp:27 roulette_label.cpp:27 roulette_plot.cpp:27
+#: roulette_progress.cpp:27 roulette_set.cpp:28 roulette_slap.cpp:27
+#: roulette_unset.cpp:27 roulette_write.cpp:56
+#, c-format
+msgid "At least 1 argument is expected for the instruction '%s'."
+msgstr ""
+
+#: roulette_buy.cpp:40
+msgid "You can't buy with a negative or null value."
+msgstr ""
+
+#: roulette_buy.cpp:46
+#, c-format
+msgid "Your amount of %.2f has been rejected."
+msgstr ""
+
+#: roulette_buy.cpp:49
+#, c-format
+msgid "You have bought new stakes for %.2f units of money."
+msgstr ""
+
+#: roulette_clear.cpp:84
+msgid ""
+"The algorithm doesn't allow to restore the initial status of the "
+"randomization."
+msgstr ""
+
+#: roulette_clear.cpp:89 roulette_save.cpp:85 roulette_show.cpp:81
+#, c-format
+msgid "Unsupported command '%s' for the instruction '%s'."
+msgstr ""
+
+#: roulette_debug.cpp:33
+msgid ""
+"The software is not compiled correctly to support the instruction 'DEBUG'."
+msgstr ""
+
+#: roulette_else.cpp:32 roulette_else.cpp:64 roulette_endif.cpp:32
+#: roulette_if.cpp:290
+#, c-format
+msgid "No opened instruction 'IF' for the instruction '%s'."
+msgstr ""
+
+#: roulette_else.cpp:76 roulette_if.cpp:304
+msgid "Missing instruction 'ENDIF' at the end of the sequence."
+msgstr ""
+
+#: roulette_goto.cpp:51
+msgid "Jumping to a deeper instruction may be unsafe."
+msgstr ""
+
+#: roulette_goto.cpp:60
+msgid "Target label not found for the instruction 'GOTO'."
+msgstr ""
+
+#: roulette_if.cpp:31
+msgid ""
+"The priorities in conditional statements are not supported. Refer to the "
+"documentation."
+msgstr ""
+
+#: roulette_if.cpp:38
+msgid "Incorrect number of parentheses in a statement 'IF'."
+msgstr ""
+
+#: roulette_if.cpp:47
+msgid "Empty statements in an instruction 'IF' are not expected."
+msgstr ""
+
+#: roulette_if.cpp:80
+msgid ""
+"The logical operator NOT is expected to be at the beginning of a statement."
+msgstr ""
+
+#: roulette_if.cpp:127 roulette_if.cpp:159
+#, c-format
+msgid "Attempt to access an undefined variable ('%s') in a statement 'IF'."
+msgstr ""
+
+#: roulette_if.cpp:133 roulette_if.cpp:165
+#, c-format
+msgid "Error in the logical expression (%s)."
+msgstr ""
+
+#: roulette_pause.cpp:34
+msgid "Press Return to continue..."
+msgstr ""
+
+#: roulette_pause.cpp:38
+msgid "Press OK to continue..."
+msgstr ""
+
+#: roulette_pause.cpp:38
+msgid "Pause"
+msgstr ""
+
+#: roulette_random.cpp:43
+msgid ""
+"The online services won't generate free numbers. Switching to the normal "
+"mode."
+msgstr ""
+
+#: roulette_randomize.cpp:32
+msgid ""
+"The current pseudo-random number generator cannot be randomized on demand."
+msgstr ""
+
+#: roulette_restart.cpp:38
+#, c-format
+msgid "Incorrect parameters for the instruction '%s'."
+msgstr ""
+
+#: roulette_save.cpp:39 roulette_save.cpp:48
+#, c-format
+msgid "The distribution has not been saved into file '%s'."
+msgstr ""
+
+#: roulette_save.cpp:58 roulette_save.cpp:74
+#, c-format
+msgid "The history of the spins has not been saved into the file '%s'."
+msgstr ""
+
+#: roulette_save.cpp:63 roulette_save.cpp:79
+#, c-format
+msgid "The history of the spins is saved as '%s'."
+msgstr ""
+
+#: roulette_set.cpp:38
+msgid "Unsupported domain for the variable."
+msgstr ""
+
+#: roulette_set.cpp:44
+msgid "No name given to the variable."
+msgstr ""
+
+#: roulette_set.cpp:50
+msgid "You cannot change a system variable in a sequence."
+msgstr ""
+
+#: roulette_set.cpp:65 roulette_set.cpp:111
+#, c-format
+msgid "Incorrect number of parameters to define '%s'."
+msgstr ""
+
+#: roulette_set.cpp:90
+msgid "A balanced mexican roulette will adopt the balanced american layout."
+msgstr ""
+
+#: roulette_set.cpp:95
+#, c-format
+msgid "Unrecognized roulette type ('%s')."
+msgstr ""
+
+#: roulette_set.cpp:122
+#, c-format
+msgid "'%s' is a not a supported random number generator."
+msgstr ""
+
+#: roulette_set.cpp:130
+#, c-format
+msgid "'%s.%s' is not a system variable that you can change or create."
+msgstr ""
+
+#: roulette_set.cpp:142
+#, c-format
+msgid "Wrong syntax encountered when processing the definition of '%s'."
+msgstr ""
+
+#: roulette_set.cpp:149
+#, c-format
+msgid "Error when processing '%s' (%s) at '%s'."
+msgstr ""
+
+#: roulette_slap.cpp:33
+#, c-format
+msgid "Scripted Roulette slaps %s around a bit with a large trout."
+msgstr ""
+
+#: roulette_spin.cpp:46
+msgid "No valid argument has been found for the instruction 'SPIN'."
+msgstr ""
+
+#: roulette_spin.cpp:62
+#, c-format
+msgid ""
+"The instruction 'SPIN' is cancelled because the bets have exceeded the limit "
+"(%d > %d)."
+msgstr ""
+
+#: roulette_spin.cpp:80
+#, c-format
+msgid ""
+"No valid random number was generated. Please fix your access to the network "
+"and wait %d minutes."
+msgstr ""
+
+#: roulette_unset.cpp:76
+msgid "No variable has been deleted."
+msgstr ""
+
+#: roulette_write.cpp:152
+msgid "Popup message"
+msgstr ""
+
+#: roulette_write.cpp:156 roulette_write.cpp:168 roulette_write.cpp:241
+#, c-format
+msgid "No text has been generated for the instruction '%s'."
+msgstr ""
+
+#: roulette_write.cpp:176
+msgid "> Possible answers : (Y)es, (N)o, (C)ancel"
+msgstr ""
+
+#: roulette_write.cpp:251
+msgid "> An input is required :"
+msgstr ""
+
+#: roulette_write.cpp:258
+msgid "Input"
+msgstr ""
+
+#: roulette_write.cpp:288
+#, c-format
+msgid "'%s' cannot be interpreted as a value."
+msgstr ""
+
+#: sequence.cpp:56
+msgid "No script is loaded for the sequence."
+msgstr ""
+
+#: sequence.cpp:61
+msgid "The sequence contains the following instructions :"
+msgstr ""
+
+#: table.cpp:278
+msgid ""
+"To use Random.org, your script needs to be in accordance with the terms of "
+"service available at https://www.random.org/terms/"
+msgstr ""
+
+#: table.cpp:301
+msgid "C++ Rand()"
+msgstr ""
+
+#: table.cpp:305
+msgid "Mersenne-Twister"
+msgstr ""
+
+#: table.cpp:309
+msgid "TT800"
+msgstr ""
+
+#: table.cpp:313
+msgid "Computer clock"
+msgstr ""
+
+#: table.cpp:317
+msgid "Standard Minimal (linear congruential generator)"
+msgstr ""
+
+#: table.cpp:321
+msgid "Robert Sedgewick's linear congruential generator"
+msgstr ""
+
+#: table.cpp:325
+msgid "RANDU (linear congruential generator)"
+msgstr ""
+
+#: table.cpp:329
+msgid "Bit generator"
+msgstr ""
+
+#: table.cpp:333
+msgid "XorShift"
+msgstr ""
+
+#: table.cpp:337
+msgid "Algorithm with deviation, based on a modified version of XorShift128+"
+msgstr ""
+
+#: table.cpp:341
+msgid "Natural logarithm"
+msgstr ""
+
+#: table.cpp:345
+msgid "Home-made equi-distribution (French roulette only)"
+msgstr ""
+
+#: table.cpp:350
+msgid "Local web-service emulating www.random.org (for debugging)"
+msgstr ""
+
+#: table.cpp:355
+msgid "www.random.org"
+msgstr ""
+
+#: table.cpp:359
+msgid "Custom algorithm"
+msgstr ""
+
+#: table.cpp:369
+#, c-format
+msgid "The random number generator is '%s'."
+msgstr ""
+
+#: table.cpp:383 table.cpp:472
+msgid ""
+"You can't create statistics about the online services. There is a risk for "
+"an overload and an exhaustion of your quota."
+msgstr ""
+
+#: table.cpp:415
+msgid "Unable to show the distribution for the current algorithm."
+msgstr ""
+
+#: table.cpp:439
+msgid "Distribution of the current algorithm :"
+msgstr ""
+
+#: table.cpp:447
+#, c-format
+msgid "  Deviation = %f"
+msgstr ""
+
+#: table.cpp:455
+#, c-format
+msgid "The method '%s' is not enabled."
+msgstr ""
+
+#: table.cpp:560
+#, c-format
+msgid "The seeds are %d and %d."
+msgstr ""
+
+#: table.cpp:755
+msgid "Some bets were not processed."
+msgstr ""
+
+#: table.cpp:806
+msgid "There is no stake on the table."
+msgstr ""
+
+#: table.cpp:812
+msgid "The table contains the following stakes :"
+msgstr ""
+
+#: table.cpp:823 table.cpp:974 table.cpp:988
+#, c-format
+msgid "%.2f on %s"
+msgstr ""
+
+#: table.cpp:827
+#, c-format
+msgid "   - Straight : %s"
+msgstr ""
+
+#: table.cpp:838 table.cpp:847 table.cpp:861 table.cpp:876 table.cpp:890
+#: table.cpp:904 table.cpp:918 table.cpp:932 table.cpp:946 table.cpp:960
+#, c-format
+msgid "%.2f on %d-%d"
+msgstr ""
+
+#: table.cpp:851
+#, c-format
+msgid "   - Split : %s"
+msgstr ""
+
+#: table.cpp:865
+#, c-format
+msgid "   - Street : %s"
+msgstr ""
+
+#: table.cpp:880
+#, c-format
+msgid "   - Corner : %s"
+msgstr ""
+
+#: table.cpp:894
+#, c-format
+msgid "   - Line : %s"
+msgstr ""
+
+#: table.cpp:908
+#, c-format
+msgid "   - Dozen : %s"
+msgstr ""
+
+#: table.cpp:922
+#, c-format
+msgid "   - Dozens : %s"
+msgstr ""
+
+#: table.cpp:936
+#, c-format
+msgid "   - Column : %s"
+msgstr ""
+
+#: table.cpp:950
+#, c-format
+msgid "   - Columns : %s"
+msgstr ""
+
+#: table.cpp:964
+#, c-format
+msgid "   - Half : %s"
+msgstr ""
+
+#: table.cpp:974
+msgid "Black"
+msgstr ""
+
+#: table.cpp:974
+msgid "Red"
+msgstr ""
+
+#: table.cpp:978
+#, c-format
+msgid "   - Color : %s"
+msgstr ""
+
+#: table.cpp:988
+msgid "Even"
+msgstr ""
+
+#: table.cpp:988
+msgid "Odd"
+msgstr ""
+
+#: table.cpp:992
+#, c-format
+msgid "   - Parity : %s"
+msgstr ""
+
+#: defs.h:71
+msgid "Scripted Roulette files (*.sr;*.sri)|*.sr;*.sri"
+msgstr ""

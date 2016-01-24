@@ -1,0 +1,11 @@
+"====="
+" This scripted roulette generates the different types of messages."
+" You can then filter them in the console log by clicking on the"
+" toggle buttons."
+"====="
+
+.SEQUENCE
+    WRITE         'This is a normal message.'
+    WRITE warning 'This is a warning message.'
+    WRITE error   'This is an error message.'
+    WRITE debug   'This is a debug message.'

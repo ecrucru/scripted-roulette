@@ -1,0 +1,48 @@
+"====="
+" This scripted roulette illustrates how you can handle random numbers."
+"====="
+
+.INIT
+    INCLUDE include_init
+
+.SEQUENCE
+    "=== CASE 1 ==="
+    " You can call a random number directly in a formula."
+    " In that case, it only uses the algorithm RAND."
+    " The parameter is a modulo."
+
+    WRITE 'Raw number up to RAND_MAX (around 32767) :' rand()
+    WRITE 'Number between 1 and 50 :' rand(50)+1
+
+    SET user.my_random = rand(100)+1
+    WRITE 'Number between 1 and 100 :' user.my_random
+
+.SEQUENCE
+    "=== CASE 2 ==="
+    " You want to bet on a random straight number."
+    " The algorithm that will be used is the one you already defined."
+    " You cannot get a number that you can't play."
+    " 37 is generally '00' and 38 is '000'."
+
+    RANDOM
+    WRITE 'You will bet on :' sys.random
+    BET straight sys.random
+
+.SEQUENCE
+    "=== CASE 3 ==="
+    " You want to bet red or black."
+    " You have to use conditions."
+    " Remark: 0 = 0 = Even"
+    "         00 = 37 = Odd"
+    "         000 = 38 = Even"
+
+    RANDOM
+    IF even(sys.random)
+        WRITE 'Let''s play RED.'
+        BET red
+    ELSE
+        WRITE 'Let''s play BLACK.'
+        BET black
+    ENDIF
+
+    INCLUDE include_final
