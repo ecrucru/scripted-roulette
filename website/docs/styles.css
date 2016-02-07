@@ -1,0 +1,140 @@
+
+/*===== Types =====*/
+
+	.Center {
+		text-align:center;
+	}
+
+	.Code {
+		display:block;
+		padding:5px;
+		margin-left:50px;
+		white-space:pre-wrap;
+		border:1px solid black;
+		background-color:rgb(240,240,240);
+		font-family:"Courier New";
+	}
+
+	.NoBorder {
+		border:none;
+	}
+
+	.Important {
+		border:1px solid black;
+		background-color:#FFF2CC;
+		padding:5px;
+	}
+
+
+/*===== Elements =====*/
+
+	#page_menu {
+		position:fixed;
+		left:0px;
+		top:0px;
+		width:30%;
+		height:100%;
+		overflow-y:auto;
+
+		border-right:1px solid black;
+		background-color:rgb(240, 240, 240);
+		font-size:11pt;
+		font-family:"Arial";
+	}
+
+	#page_menu A {
+		color:rgb(65, 98, 141);
+		text-decoration:none;
+	}
+
+	#page_menu A:hover {
+		color:blue;
+		font-weight:bold;
+		text-decoration:underline;
+	}
+
+	#page_content {
+		display:block;
+		margin-left:30%;
+		padding:10px;
+	}
+
+	#page_software {
+		text-align:center;
+		font-size:20pt;
+		font-weight:bold;
+	}
+
+
+/*===== Default names =====*/
+
+	ABBR {
+		cursor:help;
+		border-bottom:2px dashed red;
+	}
+
+	BODY, TABLE, TH, TD {
+		font-family:"Georgia";
+		font-size:12pt;
+	}
+
+	H1 {
+		padding-top:50px;
+		text-align:center;
+		font-family:"Tahoma";
+		font-size:16pt;
+	}
+
+	H2 {
+		font-family:"Tahoma";
+		font-size:14pt;
+		border-bottom:1px solid black;
+	}
+
+	H3 {
+		margin-left:50px;
+	}
+
+	H4 {
+		margin-left:100px;
+	}
+
+	IMG {
+		border:1px solid black;
+		vertical-align:middle;
+	}
+
+	TABLE {
+		margin:auto;
+		width:75%;
+	}
+
+	TH {
+		background-color:rgb(240,240,240);
+	}
+
+	TH, TD {
+		padding:10px;
+		border:1px solid black;
+	}
+
+
+/*===== Unofficial =====*/
+
+	::-webkit-scrollbar {
+		width: 12px;
+	}
+
+	::-webkit-scrollbar-track {
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color:#808080;
+		border-radius:12px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background-color:black;
+		border-radius:12px;
+	}
