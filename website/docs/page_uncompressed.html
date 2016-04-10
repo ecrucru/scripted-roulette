@@ -4,15 +4,17 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="robots" content="index,nofollow,noarchive" />
 	<title>Scripted Roulette - User and Developer guide</title>
-	<link rel="stylesheet" href="styles.css" />
+	<link rel="stylesheet" href="styles.css" media="all" />
+	<link rel="stylesheet" href="styles_print.css" media="print" />
 </head>
 
 <body>
 
 <div id="page_menu">
-	<p id="page_software"><img class="NoBorder" src="mainicon.png" alt="" /><br/>Scripted Roulette v0.1</p>
+	<p id="page_software"><img class="NoBorder" src="mainicon.png" alt="" /><br/>Scripted Roulette v0.2</p>
 
 	<ul>
+		<li><a href="#page_content">Top of the page</a></li>
 		<li><a href="#chap_intro">Introduction to Scripted Roulette</a>
 			<ul>
 				<li><a href="#sect_story">Story</a></li>
@@ -31,6 +33,7 @@
 						<li><a href="#para_paths">Paths</a></li>
 						<li><a href="#para_struct">Structure</a></li>
 						<li><a href="#para_poptions">Particular options</a></li>
+						<li><a href="#para_uml">UML diagram</a></li>
 					</ul>
 				</li>
 				<li><a href="#sect_compile">Options for the compilation</a></li>
@@ -53,13 +56,18 @@
 		<li><a href="#chap_basics">Understand a script</a>
 			<ul>
 				<li><a href="#sect_formats">File formats</a></li>
-				<li><a href="#sect_struct">Structure of a script</a></li>
+				<li><a href="#sect_struct">Structure of a script</a>
+					<ul>
+						<li><a href="#para_preproc">Preprocessor definitions</a></li>
+					</ul>
+				</li>
 				<li><a href="#sect_comments">Commenting the script</a></li>
 				<li><a href="#sect_control">Control of the syntax</a></li>
 				<li><a href="#sect_execution">Executing a script</a>
 					<ul>
 						<li><a href="#para_cmdline">Command line</a></li>
 						<li><a href="#para_execgui">GUI</a></li>
+						<li><a href="#para_debug">Debugger</a></li>
 					</ul>
 				</li>
 				<li><a href="#sect_randomness">Randomness</a>
@@ -95,6 +103,17 @@
 						<li><a href="#para_statvars">Statistics</a></li>
 					</ul>
 				</li>
+				<li><a href="#sect_defarrays">Define an array</a>
+					<ul>
+						<li><a href="#para_arrsyntax">Syntax</a></li>
+						<li><a href="#para_arrsubnames">Internal naming</a></li>
+						<li><a href="#para_arrnegid">Negative indexes</a></li>
+						<li><a href="#para_arrcombo">Combinations</a></li>
+						<li><a href="#para_arralloc">Allocate an array</a></li>
+						<li><a href="#para_arrunset">Unset an array</a></li>
+						<li><a href="#para_arrcoexist">Coexistence of the dimensions</a></li>
+					</ul>
+				</li>
 				<li><a href="#sect_defconds">Define a condition</a>
 					<ul>
 						<li><a href="#para_syntax">Syntax</a></li>
@@ -112,11 +131,15 @@
 					</ul>
 				</li>
 				<li><a href="#sect_numfmt">Format the numbers</a></li>
+				<li><a href="#sect_defstring">Define a string</a></li>
 			</ul>
 		</li>
 		<li><a href="#chap_index">Index of the available instructions</a>
 			<ul>
+				<li><a href="#inst_allocate">ALLOCATE</a></li>
+				<li><a href="#inst_append">APPEND</a></li>
 				<li><a href="#inst_assert">ASSERT</a></li>
+				<li><a href="#inst_backup">BACKUP</a></li>
 				<li><a href="#inst_beep">BEEP</a></li>
 				<li><a href="#inst_bet">BET</a>
 					<ul>
@@ -130,8 +153,10 @@
 						<li><a href="#para_bet_half">Half</a></li>
 						<li><a href="#para_bet_parity">Even &amp; Odd</a></li>
 						<li><a href="#para_bet_color">Red &amp; Black</a></li>
+						<li><a href="#para_bet_dyn">Dynamic bets for non-straight numbers</a></li>
 					</ul>
 				</li>
+				<li><a href="#inst_bits">BITS</a></li>
 				<li><a href="#inst_break">BREAK</a></li>
 				<li><a href="#inst_buy">BUY</a></li>
 				<li><a href="#inst_cbet">CBET</a></li>
@@ -148,9 +173,15 @@
 						<li><a href="#para_clear_money">CLEAR MONEY</a></li>
 						<li><a href="#para_clear_random">CLEAR RANDOM</a></li>
 						<li><a href="#para_clear_stat">CLEAR STAT</a></li>
+						<li><a href="#para_clear_time">CLEAR TIME</a></li>
 					</ul>
 				</li>
-				<li><a href="#inst_debug">DEBUG</a></li>
+				<li><a href="#inst_debug">DEBUG</a>
+					<ul>
+					<li><a href="#para_debug_onoff">DEBUG ON/OFF</a></li>
+					<li><a href="#para_debug_external">DEBUG EXTERNAL</a></li>
+					</ul>
+				</li>
 				<li><a href="#inst_dec">DEC</a></li>
 				<li><a href="#inst_exist">EXIST</a></li>
 				<li><a href="#inst_goto">GOTO</a>
@@ -179,6 +210,7 @@
 						<li><a href="#para_restart_sequence">RESTART SEQUENCE</a></li>
 					</ul>
 				</li>
+				<li><a href="#inst_rollback">ROLLBACK</a></li>
 				<li><a href="#inst_save">SAVE</a>
 					<ul>
 						<li><a href="#para_save_distribution">SAVE DISTRIBUTION</a></li>
@@ -210,6 +242,7 @@
 				<li><a href="#inst_stat">STAT</a></li>
 				<li><a href="#inst_status">STATUS</a></li>
 				<li><a href="#inst_stop">STOP</a></li>
+				<li><a href="#inst_time">TIME</a></li>
 				<li><a href="#inst_unset">UNSET</a></li>
 				<li><a href="#inst_write">WRITE</a>
 					<ul>
@@ -220,6 +253,7 @@
 			</ul>
 		</li>
 		<li><a href="#chap_bycategory">Appendix - Instructions set by category</a></li>
+		<li><a href="#chap_changelog">Change log</a></li>
 		<li><a href="#chap_contrib">Contributing</a></li>
 		<li><a href="#chap_license">Licenses</a>
 			<ul>
@@ -229,17 +263,18 @@
 				<li><a href="#sect_tt800">TT800</a></li>
 				<li><a href="#sect_mt">Mersenne-Twister</a></li>
 				<li><a href="#sect_random_org">Random.org</a></li>
+				<li><a href="#sect_nuvola">Nuvola</a></li>
 			</ul>
 		</li>
 	</ul>
 
 	<hr/>
-	<p class="Center">Hosted on <a href="http://sourceforge.net/projects/scripted-roulette/" title="Download the application"><img src="http://sourceforge.net/sflogo.php?type=10&group_id=2637992" alt="SourceForge"></a></p>
+	<p class="Center">Hosted on <a href="http://sourceforge.net/projects/scripted-roulette/" title="Download the application"><img src="http://sourceforge.net/sflogo.php?type=10&amp;group_id=2637992" alt="SourceForge" /></a></p>
 </div>
 
 <div id="page_content">
 
-<p><strong><a href="..">Back to the homepage</a> | <a href="http://sourceforge.net/projects/scripted-roulette/">Download the application</a> | <a href="#sect_git">Download with Git</a></strong></p>
+<p><strong><a href="..">Back to the homepage</a> | <a href="http://sourceforge.net/projects/scripted-roulette/">Download the application</a> | <a href="#sect_git">Download the source code with Git</a></strong></p>
 
 <h1 id="chap_intro">Introduction to Scripted Roulette</h1>
 	<p><strong>Scripted Roulette</strong> is an original application which helps you to develop and analyze new betting strategies for the casino game 'Roulette' from a mathematical perspective.</p>
@@ -257,22 +292,22 @@
 	<h2 id="sect_example">Example</h2>
 		<p>The objective of this documentation is to give you all the clues to create simple scripts.</p>
 		<p>The following one consists in generating numbers for the roulette. For more complex examples, you have to refer to the provided demos.</p>
-		<p class="Code">.INIT
-    &quot;=== Settings&quot;
-    SET sys.type      french
-    SET sys.algorithm tt800
-    SET user.count    50 &quot;Number of spins&quot;
+		<p class="Code"><span class="SR_Keyword">.INIT</span>
+    <span class="SR_Comment">"=== Settings"</span>
+    <span class="SR_Keyword">SET</span> sys.type french
+    <span class="SR_Keyword">SET</span> sys.algorithm tt800
+    <span class="SR_Keyword">SET</span> user.count <span class="SR_Numeric">50</span> <span class="SR_Comment">"Number of spins"</span>
 
-.SEQUENCE
-    &quot;=== Get the landed number&quot;
-    SPIN
-    WRITE game.landed.number
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Comment">"=== Get the landed number"</span>
+    <span class="SR_Keyword">SPIN</span>
+    <span class="SR_Keyword">WRITE</span> game.landed.number
 
-    &quot;=== Loop&quot;
-    DEC user.count
-    IF user.count &gt; 0
-        RESTART SEQUENCE
-    ENDIF</p>
+    <span class="SR_Comment">"=== Loop"</span>
+    <span class="SR_Keyword">DEC</span> user.count
+    <span class="SR_Keyword">IF</span> user.count &gt; <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">RESTART</span> <span class="SR_Keyword">SEQUENCE</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p>Let's start and have fun!</p>
 
 
@@ -281,8 +316,11 @@
 
 	<h2 id="sect_git">Get your copy with Git</h2>
 		<p>You can get the source code from the files repository at SourceForge.net but you can also use Git directly.</p>
-		<p>Git is a popular versionning tool which allow to keep a trace of the evolution of the source code (read <a href="https://en.wikipedia.org/wiki/Git_(software)" rel="nofollow">more on Wikipedia</a>). A server is available to get the essential files. Open Git Bash and run this command from the right folder :</p>
+		<p>Git is a popular versionning tool which allow to keep a trace of the evolution of the source code (read <a href="https://en.wikipedia.org/wiki/Git_(software)" rel="nofollow">more on Wikipedia</a>). A server is available at SourceForge to get the essential files. Open Git Bash and run this command from the folder of your choice:</p>
 		<p class="Code">git clone http://git.code.sf.net/p/scripted-roulette/code scripted-roulette-code</p>
+		<p>The hosting is done at SourceForge for historical reasons. You will find a file repository, some space for the website and the versionned files with Git. That's sufficient to deliver to you the application safely.</p>
+		<p>The Git repository is composed of one branch named "MASTER". It contains only the latest files currently released. The absence of a trunk is not a problem: the commits occur only when the files contain an important tested feature.</p>
+		<p>The sole inconvenient is that it is not so easy to manage pull requests. Alternatively, you can post a patch/diff file on the <a href="#chap_contrib">support page</a>.</p>
 
 	<h2 id="sect_compilers">Tested compilers</h2>
 		<p><strong>Scripted Roulette</strong> is available on any platform supporting C++ and wxWidgets 2.8.12/3.0.x. An effort has been made to maximize the compatibility of the application with the different branches of wxWidgets and the compilers you may use.</p>
@@ -375,7 +413,7 @@
 
 	<h2 id="sect_dependencies">Dependencies</h2>
 		<p>We assume that you first successfully compiled wxWidgets 2.8.12 or wxWidgets 3.0.2 by following the official documentation available at <a href="http://www.wxwidgets.org" rel="nofollow">http://www.wxwidgets.org</a>.</p>
-		<p>Then you have to download wxEcMath v0.6.4 (at least) in the sub-folder &quot;src/wxEcMath&quot;. This library is not expected to be shared, but included in your projects. You can download the software online to be sure to always get the latest stable and supported version.</p>
+		<p>Then you have to download wxEcMath v0.6.5 (at least) in the sub-folder &quot;src/wxEcMath&quot;. This library is not expected to be shared, but included in your projects. You can download the software online to be sure to always get the latest stable and supported version.</p>
 			<ul><li><a href="http://sourceforge.net/projects/wxecmath/">http://sourceforge.net/projects/wxecmath/</a></li></ul>
 		<p>If you enable the option to use Scintilla (see below) in order to highlight the syntax of your upcoming scripted roulettes, then you can use the standard class wxStyledTextCtrl.</p>
 			<ul>
@@ -481,7 +519,7 @@
 						<td>For wxWidgets 2.8.12</td>
 					</tr>
 				</table>
-			<p>With wxWidgets 2.8.12, to be able to link with the contributed wxStyledTextCtrl that you compiled, you have to include the OBJ files in your project. You can locate the files in the sub-folders of &quot;%wxmsw%\contrib\build\stc&quot;. If Microsoft Visual Studio tells that there are duplicated OBJ files to link, you can remove the mentioned OBJ files from the current configuration of your project</p>
+			<p>With wxWidgets 2.8.12, to be able to link with the contributed wxStyledTextCtrl that you compiled, you have to include the OBJ files in your project. You can locate the files in the sub-folders of &quot;%wxmsw%\contrib\build\stc&quot;. If Microsoft Visual Studio tells that there are duplicated OBJ files to link, you can remove the mentioned OBJ files from the current configuration of your project.</p>
 
 		<h3 id="para_struct">Structure</h3>
 			<p>The following tree is a suggestion to organize the project in your favorite integrated development environment (IDE):</p>
@@ -499,6 +537,8 @@
 									<li>include\
 										<ul>
 											<li>defs.h</li>
+											<li>debugger.h</li>
+											<li>engine.h</li>
 											<li>helper.h</li>
 											<li>history.h</li>
 											<li>http_prng.h</li>
@@ -517,8 +557,10 @@
 													<li>roulette_*.cpp</li>
 												</ul>
 											</li>
-											<li>instruction.cpp</li>
+											<li>debugger.cpp</li>
+											<li>engine.cpp</li>
 											<li>http_prng.cpp</li>
+											<li>instruction.cpp</li>
 											<li>random.cpp</li>
 											<li>random_*.cpp</li>
 											<li>roulette.cpp</li>
@@ -561,6 +603,16 @@
 			<p>For the files &quot;main.cpp&quot; and &quot;roulette.cpp&quot;, disable the option &quot;Enable minimal rebuild&quot; in order that these files always get recompiled when the include files &quot;roulette_*.cpp&quot; are modified.</p>
 			<p>For the generation of the translations, all the files *.H and *.CPP will be considered by PoEdit. If dedicated file extensions were used, the <a href="#sect_poedit">settings of PoEdit</a> would have been adjusted. The current files having *.INC as file extension don't contain relevant data for PoEdit.</p>
 
+		<h3 id="para_uml">UML diagram</h3>
+			<p>For a better understanding of the application, the following diagrams aims to explain the links between the different classes:</p>
+				<ul>
+					<li>Red: static classes</li>
+					<li>Green: basic classes from wxWidgets</li>
+					<li>Blue: library wxEcMath</li>
+					<li>White: classes of Scripted Roulette</li>
+				</ul>
+			<p class="Center"><img class="Border" src="uml.png" alt="" style="width:100%; height:auto" /></p>
+
 	<h2 id="sect_compile">Options for the compilation</h2>
 		<p>They are available in the source file &quot;defs.h&quot;.</p>
 			<table cellspacing="0" cellpadding="0">
@@ -571,18 +623,23 @@
 				</tr>
 				<tr>
 					<td>roulette_compile_extended</td>
-					<td>0, 1</td>
+					<td>0, 1 (default)</td>
 					<td>When set to 1, the application includes some extended functions leading to a heavier binary file.</td>
 				</tr>
 				<tr>
 					<td>roulette_compile_pick_stc</td>
-					<td>0, 1</td>
+					<td>0, 1 (default)</td>
 					<td>This option activates or deactivates wxStyledTextCtrl, a text editor highlighting the syntax.<br/><br/><ins>Remark</ins>: wxStyledTextCtrl is a wrapper containing quite the same interface than wxTextCtrl. However all the methods are not implemented depending on the version of wxWidgets. Scripted Roulette will adapt to both versions 2.8 and 3.0.x.</td>
 				</tr>
 				<tr>
 					<td>roulette_compile_locale</td>
-					<td>0, 1</td>
+					<td>0, 1 (default)</td>
 					<td>If you need the application to be translated into your local language, set the constant to 1. When you deactivate this option by setting it to 0, you then work with the basics strings of the source code (in English so). They serve <a href="#para_cmdline">later to initialize</a> the PO files.</td>
+				</tr>
+				<tr>
+					<td>roulette_compile_msg_sequence</td>
+					<td>0 (default), 1</td>
+					<td>To help the identification of the sequence which generated a message, the application is able to generate a system message. However, when you have a complex script, the number of messages may increase a lot. To avoid these messages, you can disable the generation of the messages.</td>
 				</tr>
 			</table>
 
@@ -667,28 +724,46 @@
 		<p>Optionally, the script starts with a single block for the initialization. This section named &quot;.INIT&quot; doesn't accept all the commands. It is executed first and once when the script is launched. The main objective is to define the technical attributes of the roulette (layout, algorithm...), to initialize your variables and to display some information.</p>
 		<p>Then the script is a succession of sequences. Each section is declared with the instruction &quot;.SEQUENCE&quot;. A sequence is independent in terms of execution of the instructions, but the variables are always global.</p>
 		<p>Knowing that each instruction is detailed in the next sections, here is a simple <em>hello world</em>, namely a script writing something at the user's attention.</p>
-		<p class="Code">.INIT
-    SET user.number = 5
+		<p class="Code"><span class="SR_Keyword">.INIT</span>
+    <span class="SR_Keyword">SET</span> user.number = <span class="SR_Numeric">5</span>
 
-.SEQUENCE
-    WRITE 'Hello world !'
-    WRITE 'You have defined this number:' user.number</p>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Hello world !'</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You have defined this number:'</span> user.number</p>
+
+		<h3 id="para_preproc">Preprocessor definitions</h3>
+			<p>Starting from the version 0.2, it is possible to use the preprocessor directives. It is a non-executable information telling how the application should react in certain circumstances. The definition applies globally to the script.</p>
+			<p>Here is an example of how to use the functionnality :</p>
+			<p class="Code"><span class="SR_Comment">"#version-min: 020"</span>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Hello world'</span></p>
+			<p>The available directives are in the following table:</p>
+			<table cellspacing="0" cellpadding="0">
+				<tr>
+					<th>Directive</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>#version-min:(version)</td>
+					<td>Introduction in the version 0.2.<br/><br/>The script won't be executed if the version of the application is not at least equal to the mentionned one. To get the version of the interpreter, you can click on the item "About" in the main menubar.<br/><br/>As the version is expected to have the format "a.b.c", the corresponding value will be "abc". For example, the version "0.2" (implicitely "0.2.0") returns the value 20. The variable "sys.version" contains the current value.<br/><br/>When the directive is not declared or when the provided value is incorrect, any version of the interpreter is allowed.</td>
+				</tr>
+			</table>
 
 	<h2 id="sect_comments">Commenting the script</h2>
 		<p>When your script is becoming long, you need to write some comments. It also help to drive the visual aspect of the script.</p>
 		<p>A comment is never executed. It is activated with a quote. Everything after it is removed.</p>
-		<p class="Code">.SEQUENCE
-    SPIN &quot;It spins the ball&quot;</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SPIN</span> <span class="SR_Comment">"It spins the ball"</span></p>
 		<p>The comments can also be used to highlight a group of instructions:</p>
-		<p class="Code">&quot;New script&quot;
-.SEQUENCE
-    &quot;== Let's spin&quot;
-    SPIN
-    WRITE 'You got:' game.landed.number</p>
+		<p class="Code"><span class="SR_Comment">"New script"</span>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Comment">"== Let's spin"</span>
+    <span class="SR_Keyword">SPIN</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You got:'</span> game.landed.number</p>
 		<p>If you use the pretty script, you will see that the comments always end with a quote. This is not mandatory for Scripted Roulette. However, it is an important detail as shown in the next section.</p>
 		<p>A quote used in the middle of a string has no effect:</p>
-		<p class="Code">.SEQUENCE
-    WRITE 'This quote &lt;&quot;&gt; will remain.'</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'This quote &lt;"&gt; will remain.'</span></p>
 
 	<h2 id="sect_control">Control of the syntax</h2>
 		<p>The syntax is controlled on the fly during the execution of the script.</p>
@@ -764,13 +839,31 @@
 			<p>When you use the visual editor, you can run the script by clicking on the button entitled &quot;Execute&quot;. You are not forced to save your current script but it is safer if you use some instructions <a href="#sect_defloops">causing loops</a>.</p>
 			<p>In case the program falls into an infinite loop or is long to terminate, you can use the button entitled &quot;Stop&quot; to end the script. This possibility is not offered all the time. Only some instructions will trigger an event allowing you to click on the button.</p>
 				<ul><li>Example: this code cannot be stopped.</li></ul>
-				<p class="Code">.SEQUENCE
-    LABEL infinite
-    GOTO infinite</p>
+				<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">LABEL</span> infinite
+    <span class="SR_Keyword">GOTO</span> infinite</p>
 				<ul><li>Example: this code can be stopped.</li></ul>
-			<p class="Code">.SEQUENCE
-    RESTART SEQUENCE</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RESTART</span> <span class="SR_Keyword">SEQUENCE</span></p>
 			<p>If you are not granted the right to stop at any moment, the explanation is mainly technical. Allowing it slows down the global performances. Moreover, the application is driven by only one thread.</p>
+
+		<h3 id="para_debug">Debugger</h3>
+			<p>A debugger is a tool which is able to execute a script step by step and to display the status of the memory in live. This feature has been introduced in the version 0.2 to solve the situation in which the script goes wrong.</p>
+			<p>The debugger can be the embedded one or an external tool provided that the application is compiled in debug mode (the official release is not provided as such). Both debuggers are triggered by the unique instruction &quot;<a href="#inst_debug">DEBUG</a>&quot; or by setting a break-point in the margin. Not all the lines are breakable.</p>
+			<p class="Center"><img src="debug_margin.png" alt="" /></p>
+			<p>The embedded degugger is the following screen:</p>
+			<p class="Center"><img class="NoBorder" src="debug.png" alt="" /></p>
+			<p>The top area is a view of the lines of code being processed. The symbol "&gt;&gt;&gt;" is the current statement about to be interpreted. The displayed instructions belong to the same sequence. For few of them, some extra code can be generated and you will see it in this area. To extract the full generated code, you can call the instruction &quot;<a href="#para_show_script">SHOW SCRIPT</a>&quot;.</p>
+			<p>The text area serves to evaluate any mathematical expression. The variables of the list below on the left are reachable. It is not possible to execute an instruction on-the-fly. The result of the calculation is automatically updated when you reach the next instruction (immediate or not).</p>
+			<p>The list on the left exposes all the available <a href="#sect_defvars">variables</a>. The list on the right shows all the modified values: the sign "-" means that the value has disappeared and the sign "+" means that the value has been defined. When a value is changed, you have the two signs and you are able to compare.</p>
+			<p>To modify a variable belonging to a domain name writable by the users, double-click on the right one in the list on the left. The displayed input field accepts a numerical value or a mathematical expression. An error is displayed if the result is wrong. You can't delete any variable.</p>
+			<p>The buttons at the bottom manage the interface:</p>
+				<ul>
+					<li>Continue : the script is executed until another break-point is found.</li>
+					<li>Step : you jump to the next instruction whatever the existihg break-points.</li>
+					<li>Validate  : if you consider that the issue is solved, the debugger will be skipped until the script ends.</li>
+					<li>Stop : the execution of the script is immediately stopped as if you called the instruction &quot;<a href="#inst_stop">STOP</a>&quot;</li>
+				</ul>
 
 	<h2 id="sect_randomness">Randomness</h2>
 
@@ -922,7 +1015,7 @@
 					<p class="Center"><img src="loaded_hotm.png" alt="" /></p>
 
 		<h3 id="para_algo_http_local">LocalHost - HTTP_LOCAL</h3>
-			<p>This algorithm is only available when the application is compiled with the debugging features. In other words, all the final users will never use it.</p>
+			<p>This algorithm is only available when the application is compiled with the debugging features. In other words, the end-users will never use it.</p>
 			<p>After you <a href="#sect_localws">completed the setup of your local server</a>, you can access it in the same way you would do it with Random.org in <a href="#para_algo_http_random_org">another section</a>. Its interest is the ability to develop a client for any remote service without impacting it with incorrect HTTP requests and by saving your daily quota.</p>
 			<p>For your information, the local server is written in PHP which means that the algorithm is equivalent to <a href="#para_algo_rand">RAND</a>.</p>
 
@@ -930,7 +1023,7 @@
 			<p>Random.org is an online service which is able to generate random numbers by using some special built-in algorithms. They are assumed to be more efficient than the other simple algorithms detailed above.</p>
 			<p><ins>Restriction</ins>: by using the service, you consent to be bound by the <a href="#sect_random_org">terms of service</a>. A quota is effective (read below).</p>
 			<p><ins>Restriction</ins>: you can't use a proxy server because a direct connection is needed.</p>
-			<p>Scripted Roulette is not affiliated with the company Randomness and Integrity Services Ltd. The implementation of the client is based on the documentation provided by <a href="http://www.random.org" rel="nofollow">www.random.org</a>. As the license LGPL v3 is not compatible with GPL v2, the suggested client on the website has not been chosen. A new client based on wxWidgets has rather been developed. To configure it, you have several options that you can enable when the application is compiled. Refer to file &quot;defs.h&quot;:</p>
+			<p>Scripted Roulette is not affiliated with the company Randomness and Integrity Services Ltd. The implementation of the client is based on the documentation provided by <a href="http://www.random.org" rel="nofollow">www.random.org</a>. As the license LGPL v3 is not compatible with GPL v2, the suggested client on the website has not been chosen. A new client based on wxWidgets has rather been developed. To configure it, you have several options that you can enable when the application is compiled. Refer to the file &quot;defs.h&quot;:</p>
 
 			<table cellspacing="0" cellpadding="0">
 				<tr>
@@ -1035,6 +1128,10 @@
 					<td>Some instructions will return their result in this variable.</td>
 				</tr>
 				<tr>
+					<td>sys.input.length</td>
+					<td>In complement to the update of the variable "sys.input", some instructions will return the length of the input in this variable.</td>
+				</tr>
+				<tr>
 					<td>sys.last_if</td>
 					<td>This variable contains <a href="#para_lastcond">the result</a> of the last executed conditional statement.</td>
 				</tr>
@@ -1086,8 +1183,8 @@
 							<li><em>Balanced American</em> = American layout with no zero.</li>
 							<li><em>Balanced Mexican</em> = Mexican layout with no zero.</li>
 						</ul>
-						<p class="Code">.INIT
-   SET sys.type French</p>
+						<p class="Code"><span class="SR_Keyword">.INIT</span>
+    <span class="SR_Keyword">SET</span> sys.type french</p>
 						To view the exact layout, you can call &quot;<a href="#para_show_layout">SHOW LAYOUT</a>&quot;.
 					</td>
 				</tr>
@@ -1096,8 +1193,8 @@
 					<td>It defines the pseudo-random number generator to be used. The list is given is this <a href="#sect_randomness">paragraph</a>.
 						<br/>
 						<br/>The variable is never stored as a value. When you write the following, the algorithm is selected and the variable is dropped:
-						<p class="Code">.SEQUENCE
-    SET sys.algorithm equi</p>
+						<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> sys.algorithm equi</p>
 					</td>
 				</tr>
 			</table>
@@ -1144,20 +1241,20 @@
 			<p>The user has a domain to define his own variables, named &quot;user&quot;. The name is free provided that it contains only authorized characters.</p>
 			<p>The use of custom variables is needed for loops, conditional statements or to store a value reused later.</p>
 			<p>If you want to make sure you have saved correctly a variable, you can use the following code or to read the memory directly from the user-interface in GUI mode:</p>
-				<p class="Code">.SEQUENCE
-    SET user.test = 5
-    SHOW MEMORY</p>
+				<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.test = <span class="SR_Numeric">5</span>
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">MEMORY</span></p>
 			<p>Some special names in Unicode are normally supported, but not all the characters of the ASCII table (from 0 to 255).</p>
 
 		<h3 id="para_landedvars">Landed numbers</h3>
 			<p>In the game, you bet and you spin. Then the result is provided through the domain &quot;game.landed&quot;. You can disclose all the variables by running this code:</p>
-			<p class="Code">.INIT
-    SET game.cash = 100
+			<p class="Code"><span class="SR_Keyword">.INIT</span>
+    <span class="SR_Keyword">SET</span> game.cash = <span class="SR_Numeric">100</span>
 
-.SEQUENCE
-    BET straight 9 &quot;Pick a number of your choice&quot;
-    SPIN
-    SHOW MEMORY</p>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BET</span> straight <span class="SR_Numeric">9</span> <span class="SR_Comment">"Pick a number of your choice"</span>
+    <span class="SR_Keyword">SPIN</span>
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">MEMORY</span></p>
 
 			<table cellspacing="0" cellpadding="0">
 				<tr>
@@ -1246,10 +1343,10 @@
 			</table>
 
 			<p>To test if the landed number was a zero, two conditions are available. Pick one of both:</p>
-			<p class="Code">.SEQUENCE
-    IF game.landed.green OR game.landed.zero &gt; 0
-       WRITE 'Green / Zeros !'
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> game.landed.green <span class="SR_Keyword">OR</span> game.landed.zero &gt; <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Green / Zeros !'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 		<h3 id="para_statvars">Statistics</h3>
 			<p>During the game, some statistics can be generated. The easiest way to determine them is to call the instruction &quot;<a href="#inst_stat">STAT</a>&quot;. It will then propose to you the following variables:</p>
@@ -1281,41 +1378,139 @@
 				</tr>
 			</table>
 
+	<h2 id="sect_defarrays">Define an array</h2>
+		<p>This new feature is available since the version 0.2.</p>
+
+		<h3 id="para_arrsyntax">Syntax</h3>
+			<p>An array is a mono- or multi-dimensional group of variables assigned to the same technical name. By using a numerical identifier, you have access to the individual values. The syntax is:</p>
+			<p class="Code">user.arrayname[dimension1]([dimension2](...))</p>
+				<ul>
+					<li>"user" is the domain of the variable. You can only use this one safely.</li>
+					<li>"arrayname" is the free name that you can give to identify your array.</li>
+					<li>"dimension" is a signed numerical index described the position of a value within the array. If you repeat the dimension, you increase the depth of the array.</li>
+				</ul>
+			<p>If you want to define the decimals of PI, the array has only 1 dimension:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.pi[<span class="SR_Numeric">0</span>] = <span class="SR_Numeric">3</span>
+    <span class="SR_Keyword">SET</span> user.pi[<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">SET</span> user.pi[<span class="SR_Numeric">2</span>] = <span class="SR_Numeric">4</span>
+    <span class="SR_Keyword">SET</span> user.pi[<span class="SR_Numeric">3</span>] = <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">SET</span> user.pi[<span class="SR_Numeric">4</span>] = <span class="SR_Numeric">5</span>
+    <span class="SR_Keyword">SET</span> user.pi[<span class="SR_Numeric">5</span>] = <span class="SR_Numeric">9</span></p>
+			<p>If you want to define the identity matrix 2x2, the array will have 2 dimensions:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">1</span>][<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">1</span>][<span class="SR_Numeric">2</span>] = <span class="SR_Numeric">0</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">2</span>][<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">0</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">2</span>][<span class="SR_Numeric">2</span>] = <span class="SR_Numeric">1</span></p>
+			<p>With the two examples above, there is no convention for the indexes. Let's suppose that N is the size of the array. Traditionally, the users will choose to start from 1 and end with N because it is natural for them. But the software developers prefer to work with an interval starting from 0 and ending with N-1 because it is how the memory is always managed. For Scripted Roulette, there is no particular rule: it depends on how you want to write your scripts.</p>
+
+		<h3 id="para_arrsubnames">Internal naming</h3>
+			<p>To be able to store an array, a flat name is used. The index is part of the underlying name of the variable. The following example is two ways of doing the same thing:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">SET</span> user.array_1 = <span class="SR_Numeric">10</span></p>
+			<p>With multi-dimensional arrays, you have the same effect:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span>][<span class="SR_Numeric">2</span>] = <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">SET</span> user.array_1_2 = <span class="SR_Numeric">10</span></p>
+			<p class="Important"><strong>Warning:</strong> as the square brackets are replaced by an underscore to support the arrays, if you want to have 2 normal variables with the same name, please name the second one like "user.var2" instead of "user.var_2".</p>
+			<p>When the evaluation of a square bracket fails, the resulting name contains the underscore but no number after it. In such case, you get a warning message in the log.</p>
+
+		<h3 id="para_arrnegid">Negative indexes</h3>
+			<p>The direct consequence of implicitly using flat names is that you can, as a very special feature, use negative indexes !</p>
+			<p>The minus sign is replaced by a zero. So the following example is two ways of doing the same thing:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.array[-<span class="SR_Numeric">1</span>][<span class="SR_Numeric">0</span>] = <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">SET</span> user.array_01_0 = <span class="SR_Numeric">10</span></p>
+			<p>On contrary to the underscore, the zero is convenient and doesn't contradict the dimensions of the array. Look at this example:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">01</span>] = <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">SET</span> user.array[-<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">20</span>
+    <span class="SR_Keyword">WRITE</span> user.array[<span class="SR_Numeric">01</span>] <span class="SR_String">'vs.'</span> user.array[-<span class="SR_Numeric">1</span>]
+    <span class="SR_Keyword">ASSERT</span> user.array[<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">10</span></p>
+
+		<h3 id="para_arrcombo">Combinations</h3>
+			<p>An array is handled as a variable. Therefore, you can combine it in complex statements.</p>
+			<p>The following example is correct: it will bet on the number 22.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.tab[<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">30</span>
+    <span class="SR_Keyword">SET</span> user.tab[-<span class="SR_Numeric">29</span>] = <span class="SR_Numeric">22</span>
+    <span class="SR_Keyword">BET</span> user.tab[-(user.tab[<span class="SR_Numeric">1</span>]-<span class="SR_Numeric">1</span>)]
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">TABLE</span></p>
+
+		<h3 id="para_arralloc">Allocate an array</h3>
+			<p>If you try to access an uninitialized value of the array, you will get into trouble.</p>
+			<p>To ensure that it will not happen, you can write your script carefully or try to set by default to zero all the values of the single or multi-dimensional array with the instruction &quot;<a href="#inst_allocate">ALLOCATE</a>&quot;.</p>
+			<p>It is assumed that having large arrays is not recommended.</p>
+
+		<h3 id="para_arrunset">Unset an array</h3>
+			<p>It is not mandatory to initialize all the values of an array. You may keep it empty (in fact, you never set its size) or jump an index during the initialization. In compensation, you must not access to a non-initialized position.</p>
+			<p>To remove a single value from an array, write:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">UNSET</span> user.array[<span class="SR_Numeric">1</span>]
+    <span class="SR_Keyword">UNSET</span> user.array[<span class="SR_Numeric">3</span>][<span class="SR_Numeric">1</span>]</p>
+			<p>To unset a mono-dimensional array completely, you can use one of the two following syntaxes. It will apply as well for the multi-dimensional arrays because of the <a href="#para_arrsubnames">naming convention</a>.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">UNSET</span> user.array[]
+    <span class="SR_Keyword">UNSET</span> user.array*</p>
+			<p>With multi-dimensional arrays, you can remove one dimension at the same time without changing the other ones:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Comment">"Define the values"</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">1</span>][<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">1</span>][<span class="SR_Numeric">2</span>] = <span class="SR_Numeric">0</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">2</span>][<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">0</span>
+    <span class="SR_Keyword">SET</span> user.matrix[<span class="SR_Numeric">2</span>][<span class="SR_Numeric">2</span>] = <span class="SR_Numeric">1</span>
+
+    <span class="SR_Comment">"Unset the dimension of your choice"</span>
+    <span class="SR_Keyword">UNSET</span> user.matrix[][<span class="SR_Numeric">2</span>]
+    <span class="SR_Keyword">UNSET</span> user.matrix[<span class="SR_Numeric">1</span>][]</p>
+			<p>To be effective, you have to specify all the dimensions of your array.</p>
+
+		<h3 id="para_arrcoexist">Coexistence of the dimensions</h3>
+			<p>The full implicit name of the array is given by its dimensions. Therefore, it is possible to have several arrays of the same name at the condition that they have different dimensionalities.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.var = <span class="SR_Numeric">0</span>
+    <span class="SR_Keyword">SET</span> user.var[<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">SET</span> user.var[<span class="SR_Numeric">1</span>][<span class="SR_Numeric">1</span>] = <span class="SR_Numeric">2</span></p>
+			<p>This way of coding is <strong>not</strong> recommended because it collides with the deletion of the arrays. With the previous example, to unset the mono-dimensional array, you can write "UNSET user.var[]" but it will remove the multi-dimensional array as well, which is probably not expected.</p>
+			<p>The workaround is to unset the array explicitely, position by position. It will result in a higher quantity of lines in the script and the performances will be lower.</p>
+
 	<h2 id="sect_defconds">Define a condition</h2>
 		<p>In conditions, we use the Boolean logic. As there is no Boolean format, only numbers are used: &quot;sys.true&quot; is equal to 1, and &quot;sys.false&quot; is equal to 0.</p>
 
 		<h3 id="para_syntax">Syntax</h3>
 			<p>A condition is given by the instructions IF...ELSE...ENDIF written on dedicated lines.</p>
-			<p class="Code">.SEQUENCE
-    IF (statement)
-        WRITE 'True case'
-    ELSE
-        WRITE 'False case'
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (statement)
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'True case'</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'False case'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 			<p>If the statement is true, the first block is processed. Else, the second block is processed.</p>
 			<p>The block &quot;ELSE&quot; is optional:</p>
-			<p class="Code">.SEQUENCE
-    IF (statement)
-        WRITE 'True case'
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (statement)
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'True case'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 			<p>The conditions can be imbricated like Russian dolls. In such an example, we understand why indenting the script is important for its understanding.</p>
-			<p class="Code">.SEQUENCE
-    IF (statement 1)
-        WRITE 'The first condition is true'
-        IF (statement 2)
-            WRITE 'The second condition is true'
-        ELSE
-            WRITE 'The second condition is false'
-        ENDIF
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (statement 1)
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The first condition is true'</span>
+        <span class="SR_Keyword">IF</span> (statement 2)
+            <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The second condition is true'</span>
+        <span class="SR_Keyword">ELSE</span>
+            <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The second condition is false'</span>
+        <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 		<h3 id="para_statement">Statement</h3>
 			<p>A statement is composed of a left part, a right part and a sign.</p>
-			<p class="Code">IF game.landed.half = 2
-IF game.landed.zero &gt; 0
-IF game.landed.red
-IF game.landed.number != user.magic_number
-IF NOT game.landed.green AND game.landed.red</p>
+			<p class="Code"><span class="SR_Keyword">IF</span> game.landed.half = <span class="SR_Numeric">2</span>
+<span class="SR_Keyword">IF</span> game.landed.zero &gt; <span class="SR_Numeric">0</span>
+<span class="SR_Keyword">IF</span> game.landed.red
+<span class="SR_Keyword">IF</span> game.landed.number != user.magic_number
+<span class="SR_Keyword">IF</span> <span class="SR_Keyword">NOT</span> game.landed.green <span class="SR_Keyword">AND</span> game.landed.red</p>
 			<p>The logical signs are:</p>
 
 			<table cellspacing="0" cellpadding="0">
@@ -1455,13 +1650,13 @@ IF NOT game.landed.green AND game.landed.red</p>
 				</table>
 
 			<p>If the right part of the expression is missing, it is assumed to be equal to &quot;sys.true&quot;. The following conditions have the same effects:</p>
-			<p class="Code">IF game.landed.red
-IF game.landed.red = 1
-IF game.landed.red = sys.true
-IF game.landed.red = NOT sys.false</p>
+			<p class="Code"><span class="SR_Keyword">IF</span> game.landed.red
+<span class="SR_Keyword">IF</span> game.landed.red = <span class="SR_Numeric">1</span>
+<span class="SR_Keyword">IF</span> game.landed.red = sys.true
+<span class="SR_Keyword">IF</span> game.landed.red = <span class="SR_Keyword">NOT</span> sys.false</p>
 
 		<h3 id="para_priorities">Priorities</h3>
-			<p class="Important"><strong>VERY IMPORTANT:</strong> The priorities in the logical expressions are <ins>NOT</ins> considered.</p>
+			<p class="Important"><strong>Very important:</strong> The priorities in the logical expressions are <ins>NOT</ins> considered.</p>
 			<p>The expressions are processed from the left to the right like the simplest calculators. To support complex conditions, you have to use coding tricks or standard Boolean transforms to simplify the expression.</p>
 
 			<table cellspacing="0" cellpadding="0">
@@ -1545,63 +1740,63 @@ IF game.landed.red = NOT sys.false</p>
 
 		<h3 id="para_boolnot">Apply NOT on a Boolean variable</h3>
 			<p>If you want the value of a variable to become &quot;sys.true&quot; when it is equal to &quot;sys.false&quot;, and reciprocally, you can write this long syntax:</p>
-			<p class="Code">.SEQUENCE
-    IF user.bool
-        user.bool = sys.false
-    ELSE
-        user.bool = sys.true
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> user.bool
+        <span class="SR_Keyword">SET</span> user.bool = sys.false
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">SET</span> user.bool = sys.true
+    <span class="SR_Keyword">ENDIF</span></p>
 			<p>You cannot write the following instruction because &quot;NOT&quot; is interpreted like a variable with no domain. The mathematical parser doesn't support logical operators in such conditions:</p>
-			<p class="Code">.SEQUENCE
-   SET user.bool = NOT user.bool &quot;It doesn't work&quot;</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.bool = not user.bool <span class="SR_Comment">"It doesn't work"</span></p>
 			<p>The solution is to call &quot;NOT&quot; as a function thanks to parenthesis. It makes a decisive difference because it is now an expression:</p>
-			<p class="Code">.SEQUENCE
-    SET user.bool = not(user.bool)</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.bool = not(user.bool)</p>
 			<p>Or you can simply use this mathematical property:</p>
-			<p class="Code">.SEQUENCE
-    user.bool = 1 – user.bool</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.bool = <span class="SR_Numeric">1</span> – user.bool</p>
 
 	<h2 id="sect_defloops">Define a loop</h2>
 		<p>There is no dedicated instruction &quot;LOOP&quot; to execute some instructions several times.</p>
 		<p>The best solution is to use a counter along with the instructions &quot;<a href="#inst_goto">GOTO</a>&quot; and &quot;<a href="#inst_label">LABEL</a>&quot; which are dedicated to jump.</p>
-		<p class="Code">.SEQUENCE
-    SET user.loop 50
-    LABEL loop
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.loop <span class="SR_Numeric">50</span>
+    <span class="SR_Keyword">LABEL</span> loop
 
-    &quot;Do something...&quot;
+        <span class="SR_Comment">"Do something..."</span>
 
-    DEC user.loop
-    IF user.loop &gt; 0
-        GOTO loop
-    ENDIF</p>
+    <span class="SR_Keyword">DEC</span> user.loop
+    <span class="SR_Keyword">IF</span> user.loop &gt; <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">GOTO</span> loop
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p>In case you have to imbricate loops, just use another counter and another label.</p>
-		<p class="Code">.SEQUENCE
-    SET user.loop_one 50
-    LABEL loop_one
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.loop_one <span class="SR_Numeric">50</span>
+    <span class="SR_Keyword">LABEL</span> loop_one
 
-        SET user.loop_two 10
-        LABEL loop_two
+        <span class="SR_Keyword">SET</span> user.loop_two <span class="SR_Numeric">10</span>
+        <span class="SR_Keyword">LABEL</span> loop_two
 
-        &quot;Do something 500 times&quot;
+        <span class="SR_Comment">"Do something 500 times"</span>
 
-        DEC user.loop_two
-        IF user.loop_two &gt; 0
-            GOTO loop_two
-        ENDIF
+        <span class="SR_Keyword">DEC</span> user.loop_two
+        <span class="SR_Keyword">IF</span> user.loop_two &gt; <span class="SR_Numeric">0</span>
+            <span class="SR_Keyword">GOTO</span> loop_two
+        <span class="SR_Keyword">ENDIF</span>
 
-    DEC user.loop_one
-    IF user.loop_one &gt; 0
-        GOTO loop_one
-    ENDIF</p>
+    <span class="SR_Keyword">DEC</span> user.loop_one
+    <span class="SR_Keyword">IF</span> user.loop_one &gt; <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">GOTO</span> loop_one
+    <span class="SR_Keyword">ENDIF</span></p>
 
 		<p>If you need to restart a loop inside the loop, you can directly change the value of the counter. But beware of the infinite loops which are not monitored. If you fall into this situation, Scripted Roulette will never stop, so you will have to kill the process with the process monitor of your operating system.</p>
 
 	<h2 id="sect_hidew">Hide the generated warnings</h2>
 		<p>For some commands, the application is able to generate warnings.</p>
 		<p>To ignore them, you have to add &quot;@&quot; before the instruction.</p>
-		<p class="Code">.INIT
-     SET sys.type balanced mexican
-    @SET sys.type balanced mexican</p>
+		<p class="Code"><span class="SR_Keyword">.INIT</span>
+     <span class="SR_Keyword">SET</span> sys.type balanced mexican
+    @<span class="SR_Keyword">SET</span> sys.type balanced mexican</p>
 		<p>Some messages cannot be avoided, like most of the encountered errors.</p>
 
 	<h2 id="sect_maths">Use mathematical expressions</h2>
@@ -1620,40 +1815,113 @@ IF game.landed.red = NOT sys.false</p>
 			<p>You cannot use complex numbers.</p>
 
 	<h2 id="sect_numfmt">Format the numbers</h2>
-		<p>As <a href="#sect_defvars">said previously</a>, all the numbers are stored as floating-point values. However, you will mostly use them as integers.</p>
-		<p>The translation is always implicit. With the instructions dedicated to display some text (&quot;<a href="#inst_write">WRITE</a>&quot;, &quot;<a href="#inst_status">STATUS</a>&quot;...), you have to force the value if you need the decimals by using the key &quot;f:&quot;.</p>
-			<p class="Code">.SEQUENCE
-    SET user.value = 8.5
-    WRITE 'Integer:' user.value
-    WRITE 'Float:' f:user.value</p>
-		<p>You can refer to the sample &quot;function_decimals.sr&quot; for another example.</p>
-		<p>The use of this flag is required when you make some final statistics: display of percentages, etc...</p>
+
+		<h3 id="para_fmtfloat">As a floating-point number</h3>
+			<p>As <a href="#sect_defvars">written previously</a>, all the numbers are stored as floating-point values. However, you will mostly use them as integers.</p>
+			<p>The translation is always implicit. With the instructions dedicated to display some text (&quot;<a href="#inst_write">WRITE</a>&quot;, &quot;<a href="#inst_status">STATUS</a>&quot;...), you have to force the value if you need the decimals by using the key &quot;f:&quot;.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.value = <span class="SR_Numeric">8.5</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Integer:'</span> user.value
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Float:'</span> f:user.value</p>
+			<p>You can refer to the sample &quot;function_decimals.sr&quot; for another example.</p>
+			<p>The use of this flag is required when you make some final statistics: display of percentages, etc...</p>
+
+		<h3 id="para_fmtchar">As a character</h3>
+			<p>Scripted Roulette doesn't really handle the characters because the principal objective is to manipulate the numbers.</p>
+			<p>Each character (like 'a', 'b', '.', '-'...) is represented with an internal numerical identifier. Historically, it is named the &quot;<a href="https://en.wikipedia.org/wiki/ASCII" rel="nofollow">ASCII table</a>&quot;.</p>
+			<p>To print the character associated to a number, you have to use the prefix "c:" as follows:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The 50th character is'</span> c:<span class="SR_Numeric">50</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The 100th character is'</span> c:<span class="SR_Numeric">100</span></p>
+			<p>Some character codes are not printable. Therefore, you will see a rectangle in the output text.</p>
+
+	<h2 id="sect_defstring">Define a string</h2>
+		<p>A string is a collection of characters put together to make a sentence readable by a human being.</p>
+		<p>As each character is assigned to a fixed number, any string can be converted into an <a href="#sect_defarrays">array</a> of numbers.</p>
+		<p>Starting from the version 0.2, Scripted Roulette is equiped with few string-related functions:</p>
+			<ul>
+				<li><a href="#inst_input">INPUT</a> : with the modifier "string", the input text is converted into an array of numbers.</li>
+				<li><a href="#inst_write">WRITE</a> : with the modifier &quot;<a href="#sect_numfmt">c:</a>&quot;, any numerical code can be represented by its corresponding character.
+					<ul>
+						<li>Remark: if the font of the output doesn't support the character, it will be display like a blank rectangle.</li>
+					</ul>
+				</li>
+			</ul>
+		<p>By essence, you can consider that handling strings is not the purpose of Scripted Roulette. Indeed, when you play the roulette, you don't concatenate characters. The strings must be seen as a way of obtaining complex bits for mathematical purposes.</p>
+		<p>To see the strings in action, you can refer to the sample named "Base64".</p>
 
 
 <h1 id="chap_index">Index of the available instructions</h1>
 
+	<h2 id="inst_allocate">ALLOCATE</h2>
+		<p>Characteristics:</p>
+			<ul>
+				<li>Introduction in the version 0.2.</li>
+				<li>Supported in GUI and Console.</li>
+				<li>2 or more composite arguments.</li>
+			</ul>
+		<p>The instruction initializes to zero (not changeable) all the values of an array.</p>
+		<p>The first argument is the name of the target variable to be defined as an array. The domain of the variable must be "user".</p>
+		<p>The next arguments are separated with a space. They define the size of the array for each dimension. The range is from 1 to N. Each argument can be a formula provided that there is no space in it. The allocation fails if the formula returns a wrong value (negative, zero, error during the calculation...).</p>
+		<p>The following example initializes several arrays having different dimensions :</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">ALLOCATE</span> user.onedimensions <span class="SR_Numeric">4</span>
+    <span class="SR_Keyword">ALLOCATE</span> user.twodimensions <span class="SR_Numeric">2</span>*<span class="SR_Numeric">2</span> <span class="SR_Numeric">3</span>
+    <span class="SR_Keyword">ALLOCATE</span> user.threedimensions <span class="SR_Numeric">4</span> <span class="SR_Numeric">3</span> <span class="SR_Numeric">5</span>-<span class="SR_Numeric">3</span></p>
+		<p>Reallocating the array over the same technical name doesn't remove the previous values. Therefore, it is recommended that you follow <a href="#para_arrunset">the procedure</a> with the help of the instruction &quot;<a href="#inst_unset">UNSET</a>&quot; called before.</p>
+		<p>To prevent the memory from being abused, you will get an error if you try to allocate an array greater than 16384 values. For multi-dimensional arrays, the size is the product of the size of each dimension. To bypass this limitation (at your own risk), you have to use an '@' in front of the instruction.</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    @<span class="SR_Keyword">ALLOCATE</span> user.too_much <span class="SR_Numeric">50</span> <span class="SR_Numeric">50</span> <span class="SR_Numeric">50</span></p>
+		<p>At the end of the execution of the script, the user interface (in <a href="#sect_modes">GUI mode</a>) will try to display all the variables known by the script. If you have used a large array, this operation can be slow and the interface may not respond. To avoid that, at the end of the script, you can delete the array or all the variables.</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    @<span class="SR_Keyword">ALLOCATE</span> user.too_much <span class="SR_Numeric">50</span> <span class="SR_Numeric">50</span> <span class="SR_Numeric">50</span>
+    <span class="SR_Comment">"...Do something..."</span>
+    <span class="SR_Keyword">UNSET</span> all</p>
+
+	<h2 id="inst_append">APPEND</h2>
+		<p>Characteristics:</p>
+			<ul>
+				<li>Introduction in the version 0.2.</li>
+				<li>Supported in GUI and Console.</li>
+				<li>1 composite argument.</li>
+			</ul>
+		<p>The instruction &quot;<a href="#inst_write">WRITE</a>&quot; is used to generate a message in the log. If you want to complete it without adding a new line in the log, you can use this new instruction.</p>
+		<p>The added text will be concatenated to the last message with no space in between. If it doesn't exist, the message is created.</p>
+
 	<h2 id="inst_assert">ASSERT</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>An assertion is a logical expression which is expected to be always true. The arguments are evaluated and if the result is false, then the execution of the script is stopped (see the instruction &quot;<a href="#inst_stop">STOP</a>&quot;).</p>
 		<p>The logical expression must be written in conformance with the recommendations of the instruction &quot;<a href="#inst_if">IF</a>&quot;.</p>
 		<p>This instruction is in fact a macro which implicitly generates the following code:</p>
-		<p class="Code">.SEQUENCE
-    IF (statement)
-    ENDIF
-    IF NOT sys.last_if
-        STOP
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (statement)
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> <span class="SR_Keyword">NOT</span> sys.last_if
+        <span class="SR_Keyword">STOP</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p>Consequently, you can't rely on the value of &quot;sys.last_if&quot; after a call to the instruction &quot;ASSERT&quot;.</p>
+
+	<h2 id="inst_backup">BACKUP</h2>
+		<p>Characteristics:</p>
+			<ul>
+				<li>Introduction in the version 0.2.</li>
+				<li>Supported in GUI and Console.</li>
+				<li>No argument.</li>
+			</ul>
+		<p>This instruction allows you save all the current variables of the simulation in a temporary memory space. The affected variables can be listed with the instruction &quot;<a href="#para_show_memory">SHOW MEMORY</a>&quot;.</p>
+		<p>To restore the variables to their initial state, you have to call the instruction &quot;<a href="#inst_rollback">ROLLBACK</a>&quot;.</p>
+		<p>To remove the backup, you can call the instruction &quot;<a href="#para_clear_backup">CLEAR BACKUP</a>&quot;.</p>
+		<p>You are not supposed to use the instruction &quot;<a href="#inst_spin">SPIN</a>&quot; between the moments when you save and restore the variables because the log is not saved and it won't be restored. Else unexpected discrepancy may arise.</p>
 
 	<h2 id="inst_beep">BEEP</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console, but not for a Linux console.</li>
 				<li>No argument.</li>
 			</ul>
@@ -1665,111 +1933,82 @@ IF game.landed.red = NOT sys.false</p>
 	<h2 id="inst_bet">BET</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in version 0.1.</li>
+				<li>Introduction in the version 0.1. Enhanced in the version 0.2.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument or more.</li>
 			</ul>
 
-		<h3 id="para_bet_desc">Behavior</h3>
-			<p>This instruction is one of the most important because it validates the bets for the roulette. Its behavior is influenced by the following variables:</p>
+		<h3 id="para_bet_desc">Description</h3>
+			<p>This instruction is one of the most important because it validates your bets for the roulette. Its behavior is influenced by the following variables:</p>
 				<ul>
-					<li>The amount of the bet is given by &quot;game.bet&quot;. But if the target pays 1 to 2, then the bet will be doubled to avoid partial counters.</li>
+					<li>The amount of the bet is given by the variable &quot;game.bet&quot;. But if the target pays 1 to 2, then the bet will be doubled to avoid partial counters.</li>
 					<li>The ability to bet is given by &quot;sys.can_bet&quot;. Unless you use the instruction &quot;<a href="#inst_cbet">CBET</a>&quot;, the bet is by default unlimited and will open a credit line if you have insufficient funds. As a restriction, this variable applies for 1 amount of the bet. Then if you are betting 2 numbers at a time, it doesn't guarantee that a credit line will not be contracted.</li>
 				</ul>
 			<p>After it is played, the instruction updates some statistics (refer to the <a href="#sect_defvars">corresponding section</a>), especially &quot;sys.game.stake&quot; which represents the money you will pay out to play the current round.</p>
-			<p>It is possible to bet on one number, multiple numbers or groups of numbers at a time.</p>
+			<p>It is possible to bet on one number, multiple numbers or groups of numbers at a time. Starting from the version 0.2, it is possible to use dynamic bets for the non-straight numbers.</p>
 
 		<h3 id="para_bet_straight">Straight number</h3>
 			<p>Betting on 1 number allows the highest return as it pays 35 to 1.</p>
 			<p>The number can be named directly, stored in a variable or calculated. If you calculate, don't use any space in the formula else it will be considered as separate bets.</p>
-			<p class="Code">&quot;1 bet&quot;
-BET straight 1
-&quot;Several bets at a time&quot;
-BET 7 21 33
-&quot;Bet on zeros&quot;
-BET sys.double_zero 17
-&quot;Dynamic bet #1&quot;
-SET user.next_number = 20
-BET user.next_number+1
-&quot;Dynamic bet #2&quot;
-RANDOM
-BET sys.random</p>
+			<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> straight <span class="SR_Numeric">1</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">7</span> <span class="SR_Numeric">21</span> <span class="SR_Numeric">33</span>
+<span class="SR_Comment">"Bet on zeros"</span>
+<span class="SR_Keyword">BET</span> sys.double_zero <span class="SR_Numeric">17</span>
+<span class="SR_Comment">"Dynamic bet #1"</span>
+<span class="SR_Keyword">SET</span> user.next_number = <span class="SR_Numeric">20</span>
+<span class="SR_Keyword">BET</span> user.next_number+<span class="SR_Numeric">1</span>
+<span class="SR_Comment">"Dynamic bet #2"</span>
+<span class="SR_Keyword">RANDOM</span>
+<span class="SR_Keyword">BET</span> sys.random</p>
 			<p>The keywords &quot;<em>straight</em>&quot;, &quot;<em>single</em>&quot;, &quot;<em>mono</em>&quot;, &quot;<em>solo</em>&quot; and &quot;<em>one</em>&quot; are removed from the parameter list if you type a syntax like this:</p>
-			<p class="Code">BET straight 22</p>
+			<p class="Code"><span class="SR_Keyword">BET</span> straight <span class="SR_Numeric">22</span></p>
 
 		<h3 id="para_bet_split">Split</h3>
 			<p>A split occurs when you play 2 numbers at a time. It can be horizontal (example: 29-30) or vertical (example: 11-14). It pays 17 to 1.</p>
 			<p>You have to name the numbers in the ascending order.</p>
 			<p>The bet can only be explicit:</p>
-			<p class="Code">&quot;1 bet&quot;
-BET 8-11
-&quot;Several bets at a time&quot;
-BET 13-14 22-23</p>
+			<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">8</span>-<span class="SR_Numeric">11</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">13</span>-<span class="SR_Numeric">14</span> <span class="SR_Numeric">22</span>-<span class="SR_Numeric">23</span></p>
 			<p>The keywords &quot;<em>split</em>&quot;, &quot;<em>double</em>&quot;, &quot;<em>duo</em>&quot;, &quot;<em>two</em>&quot; are removed from the parameter list if the syntax is like this:</p>
-			<p class="Code">BET split 13-15</p>
+			<p class="Code"><span class="SR_Keyword">BET</span> split <span class="SR_Numeric">13</span>-<span class="SR_Numeric">15</span></p>
 
 		<h3 id="para_bet_street">Street</h3>
 			<p>A street occurs when you play 3 numbers at a time. It is necessarily horizontal (example: 16-18). It pays 11 to 1.</p>
 			<p>You have to name the numbers in the ascending order.</p>
 			<p>The bet can only be explicit:</p>
-			<p class="Code">&quot;1 bet&quot;
-BET 4-6
-&quot;Several bets at a time&quot;
-BET 28-30 31-33</p>
+			<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">4</span>-<span class="SR_Numeric">6</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">28</span>-<span class="SR_Numeric">30</span> <span class="SR_Numeric">31</span>-<span class="SR_Numeric">33</span></p>
 			<p>The keywords &quot;<em>street</em>&quot;, &quot;<em>trio</em>&quot; and &quot;<em>three</em>&quot; are removed from the parameter list if the syntax is like:</p>
-			<p class="Code">BET street 13-15</p>
-			<p>If you want to bet randomly on 3 numbers, you can use the following sample:</p>
-			<p class="Code">.SEQUENCE
-    RANDOM 12 &quot;Returning from 0 to 11&quot;
-    IF sys.random = 0
-        BET 1-3
-    ENDIF
-    IF sys.random = 1
-        BET 4-6
-    ENDIF
-    &quot;...&quot;
-    IF sys.random = 11
-        BET 34-36
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">BET</span> street <span class="SR_Numeric">13</span>-<span class="SR_Numeric">15</span></p>
 
 		<h3 id="para_bet_corner">Corner</h3>
 			<p>A corner occurs when you play 4 numbers at a time. It pays 8 to 1.</p>
 			<p>You have to name the numbers in the ascending order.</p>
 			<p>The bet can only be explicit:</p>
-			<p class="Code">&quot;1 bet&quot;
-BET 22-26
-&quot;Several bets at a time&quot;
-BET 8-12 19-23</p>
+			<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">22</span>-<span class="SR_Numeric">26</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">8</span>-<span class="SR_Numeric">12</span> <span class="SR_Numeric">19</span>-<span class="SR_Numeric">23</span></p>
 			<p>The keywords &quot;<em>corner</em>&quot;, &quot;<em>square</em>&quot; and &quot;<em>four</em>&quot; are removed from the parameter list if the syntax is like this:</p>
-			<p class="Code">BET corner 26-30</p>
-			<p>If you want to bet randomly on 4 numbers, you can use the following sample:</p>
-			<p class="Code">.SEQUENCE
-    RANDOM 22 &quot;Returning from 0 to 21
-    IF sys.random = 0
-        BET 1-5
-    ENDIF
-    IF sys.random = 1
-        BET 2-6
-    ENDIF
-    IF sys.random = 2
-        BET 4-8
-    ENDIF
-    &quot;...&quot;
-    IF sys.random = 21
-        BET 32-36
-    ENDIF</p>
+			<p class="Code"><span class="SR_Keyword">BET</span> corner <span class="SR_Numeric">26</span>-<span class="SR_Numeric">30</span></p>
 
 		<h3 id="para_bet_line">Line</h3>
 			<p>A line occurs when you play 6 numbers at a time. It pays 5 to 1.</p>
 			<p>You have to name the numbers in the ascending order.</p>
 			<p>The bet can only be explicit:</p>
-			<p class="Code">&quot;1 bet&quot;
-BET 4-9
-&quot;Several bets at a time&quot;
-BET 10-15 19-24</p>
+			<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">4</span>-<span class="SR_Numeric">9</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">10</span>-<span class="SR_Numeric">15</span> <span class="SR_Numeric">19</span>-<span class="SR_Numeric">24</span></p>
 			<p>The keywords &quot;<em>line</em>&quot; and &quot;<em>six</em>&quot; are removed from the parameter list if the syntax is like this:</p>
-			<p class="Code">BET line 13-18</p>
-			<p>You can bet randomly on lines by adapting the samples from the other types of bet.</p>
+			<p class="Code"><span class="SR_Keyword">BET</span> line <span class="SR_Numeric">13</span>-<span class="SR_Numeric">18</span></p>
+			<p>You can bet randomly on the lines by adapting the samples from the other types of bet.</p>
 
 		<h3 id="para_bet_dozcol">Dozen &amp; Dozens / Column &amp; Columns</h3>
 			<p>It pays 2 to 1 if you play 12 numbers:</p>
@@ -1784,12 +2023,12 @@ BET 10-15 19-24</p>
 				</ul>
 			<p>You have to name the numbers in the ascending order.</p>
 			<p>The bet can only be explicit:</p>
-			<p class="Code">&quot;1 bet&quot;
-BET 1-12
-&quot;Several bets at a time&quot;
-BET 13-24 25-36</p>
+			<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">1</span>-<span class="SR_Numeric">12</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">13</span>-<span class="SR_Numeric">24</span> <span class="SR_Numeric">25</span>-<span class="SR_Numeric">36</span></p>
 			<p>The keywords &quot;<em>dozen</em>&quot;, &quot;<em>dozens</em>&quot;, &quot;<em>column</em>&quot;, &quot;<em>columns</em>&quot;, &quot;<em>twelve</em>&quot; and &quot;<em>twenty-four</em>&quot; are removed from the parameter list if the syntax is like this:</p>
-			<p class="Code">BET dozen 13-24</p>
+			<p class="Code"><span class="SR_Keyword">BET</span> dozen <span class="SR_Numeric">13</span>-<span class="SR_Numeric">24</span></p>
 			<p>To simplify the bets, some keywords are specially added:</p>
 				<ul>
 					<li>&quot;dozen_1&quot; for 1-12.</li>
@@ -1813,52 +2052,141 @@ BET 13-24 25-36</p>
 				</ul>
 			<p>You have to name the numbers in ascending order.</p>
 			<p>The bet can only be explicit:</p>
-				<p class="Code">&quot;1 bet&quot;
-BET 1-18
-&quot;Several bets at a time&quot;
-BET half_1 half_2</p>
+				<p class="Code"><span class="SR_Comment">"1 bet"</span>
+<span class="SR_Keyword">BET</span> <span class="SR_Numeric">1</span>-<span class="SR_Numeric">18</span>
+<span class="SR_Comment">"Several bets at a time"</span>
+<span class="SR_Keyword">BET</span> half_1 half_2</p>
 			<p>The keywords &quot;<em>half</em>&quot; and &quot;<em>eighteen</em>&quot; are removed from the parameter list if the syntax is like this:</p>
-			<p class="Code">BET half 1-18</p>
-			<p>You can bet randomly 18 numbers by using two different techniques:</p>
-			<p class="Code">.SEQUENCE
-    RANDOM 1 &quot;Returning from 0 to 1&quot;
-    IF sys.random = 0
-        BET half_1
-    ELSE
-        BET half_2
-    ENDIF
+			<p class="Code"><span class="SR_Keyword">BET</span> half <span class="SR_Numeric">1</span>-<span class="SR_Numeric">18</span></p>
+			<p>You can bet randomly 18 numbers by using several techniques:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span> <span class="SR_Comment">"Returning from 0 to 1"</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">BET</span> half_1
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">BET</span> half_2
+    <span class="SR_Keyword">ENDIF</span>
 
-.SEQUENCE
-    IF even(rand() % 2) &quot;Call of the mathematical parser and modulo&quot;
-        BET half_1
-    ELSE
-        BET half_2
-    ENDIF</p>
+<span class="SR_Keyword">.SEQUENCE</span> <span class="SR_Comment">"Call of the mathematical parser and modulo"</span>
+    <span class="SR_Keyword">IF</span> even(rand() % <span class="SR_Numeric">2</span>)
+        <span class="SR_Keyword">BET</span> half_1
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">BET</span> half_2
+    <span class="SR_Keyword">ENDIF</span>
+
+<span class="SR_Keyword">.SEQUENCE</span> <span class="SR_Comment">"Starting from the version 0.2"</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">BET</span> <span class="SR_Numeric">18</span>*sys.random+<span class="SR_Numeric">1</span>|<span class="SR_Numeric">18</span>*(sys.random+<span class="SR_Numeric">1</span>)</p>
 
 		<h3 id="para_bet_parity">Even &amp; Odd</h3>
 			<p>To bet on even numbers (2, 4, 6...), you can call this instruction:</p>
-			<p class="Code">.SEQUENCE
-    BET even</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BET</span> even</p>
 			<p>To bet on odd numbers (1, 3, 5...), you can call this instruction:</p>
-			<p class="Code">.SEQUENCE
-    BET odd</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BET</span> odd</p>
 			<p>The zeros are neither even, nor odd. When you use the functions EVEN() or ODD() as part of a <a href="#sect_maths">mathematical expression</a>, the zeros may return unexpected results. Indeed &quot;00&quot; and &quot;000&quot; have their internal numerical identifier.</p>
 			<p>It pays 1 to 1.</p>
 
 		<h3 id="para_bet_color">Red &amp; Black</h3>
 			<p>To bet on the red numbers, you can call this instruction:</p>
-			<p class="Code">.SEQUENCE
-    BET red</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BET</span> red</p>
 			<p>To bet on the black numbers, you can call this instruction:</p>
-			<p class="Code">.SEQUENCE
-    BET black</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BET</span> black</p>
 			<p>The color of a number depends on the layout of the roulette. The zeros are considered as green. To bet the green color, you rather have to bet on a straight zero.</p>
 			<p>It pays 1 to 1.</p>
+
+		<h3 id="para_bet_dyn">Dynamic bets for non-straight numbers</h3>
+			<p>To understand this feature introduced with the version 0.2, let's consider a simple case.</p>
+			<p>If you want to bet randomly on 3 numbers (&quot;<a href="#para_bet_street">street</a>&quot;), you can use the following sample:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">11</span> <span class="SR_Comment">"Returning from 0 to 11"</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">1</span>-<span class="SR_Numeric">3</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">1</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">4</span>-<span class="SR_Numeric">6</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Comment">"...etc..."</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">11</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">34</span>-<span class="SR_Numeric">36</span>
+    <span class="SR_Keyword">ENDIF</span></p>
+			<p>The syntax can be very long and subject to mistakes. So the new feature consists in having two different expressions designing the same bet. The character used to separate them is the vertical bar "|". The example above is equivalent to this one:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">11</span> <span class="SR_Comment">"Returning from 0 to 11"</span>
+    <span class="SR_Keyword">BET</span> <span class="SR_Numeric">3</span>*sys.random+<span class="SR_Numeric">1</span>|<span class="SR_Numeric">3</span>*(sys.random+<span class="SR_Numeric">1</span>)</p>
+			<p>It is important that the expressions contain no space, else they will be considered as separate bets. An error will generally be generated if you don't respect that rule.</p>
+			<p>To increase the complexity of the demo, if you want to bet randomly on 4 numbers (&quot;<a href="#para_bet_corner">corner</a>&quot;), you can use the following sample:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">21</span> <span class="SR_Comment">"Returning from 0 to 21"</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">1</span>-<span class="SR_Numeric">5</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">1</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">2</span>-<span class="SR_Numeric">6</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">2</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">4</span>-<span class="SR_Numeric">8</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Comment">"...etc..."</span>
+    <span class="SR_Keyword">IF</span> sys.random = <span class="SR_Numeric">21</span>
+        <span class="SR_Keyword">BET</span> <span class="SR_Numeric">32</span>-<span class="SR_Numeric">36</span>
+    <span class="SR_Keyword">ENDIF</span></p>
+			<p>However, it is easier to adopt the new syntax where each corner is vertically assigned to an identifier.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">10</span> <span class="SR_Comment">"Returning from 0 to 10"</span>
+    <span class="SR_Keyword">SET</span> user.choice = <span class="SR_Numeric">3</span>*sys.random+<span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">IF</span> even(sys.random)
+        <span class="SR_Keyword">BET</span> user.choice|user.choice+<span class="SR_Numeric">4</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">BET</span> user.choice+<span class="SR_Numeric">1</span>|user.choice+<span class="SR_Numeric">5</span>
+    <span class="SR_Keyword">ENDIF</span></p>
+			<p>Finally, when you have to choose between two values, you can do differently <a href="#para_bet_half">with a function</a> for example.</p>
+
+	<h2 id="inst_bits">BITS</h2>
+		<p>Characteristics:</p>
+			<ul>
+				<li>Introduction in the version 0.2.</li>
+				<li>Supported in GUI and Console.</li>
+				<li>2 composite arguments.</li>
+			</ul>
+		<p>This instruction converts an integer into an <a href="#sect_defarrays">array</a> of bits.</p>
+		<p>The first argument is the name of the target variable to be defined as an array. The domain of the variable must be "user".</p>
+		<p>The second argument (and following ones) is an expression to evaluate as a whole and whose result is converted into a positive (then unsigned) integer.</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BITS</span> user.bits <span class="SR_Numeric">52</span>
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">MEMORY</span></p>
+		<p>You will get the following array:</p>
+		<p class="Code">user.bits_0 = 0,000000
+user.bits_1 = 0,000000
+user.bits_2 = 1,000000
+user.bits_3 = 0,000000
+user.bits_4 = 1,000000
+user.bits_5 = 1,000000</p>
+		<p>Each position of the array corresponds to a power of 2 as per the design of the computers. The position 0 is the least significant bit and the highest position (which depends on the size of the converted integer) is the most significant bit. Consequently, the first index of the array is 0.</p>
+		<p>To find the size of the array when the instruction is called, you can iterate with the help of the instruction &quot;<a href="#inst_exist">EXIST</a>&quot;. Else you can use the following mathematical relation which can be simplified if you know the parity of the converted number.</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.number = <span class="SR_Numeric">52</span>
+
+    <span class="SR_Keyword">IF</span> user.number = <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">SET</span> user.max_index = <span class="SR_Numeric">0</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">IF</span> user.number &gt; <span class="SR_Numeric">0</span>
+            <span class="SR_Keyword">SET</span> user.max_index = ceil(log(int(user.number))/log(<span class="SR_Numeric">2</span>)) - <span class="SR_Numeric">1</span>
+        <span class="SR_Keyword">ELSE</span>
+            <span class="SR_Keyword">SET</span> user.max_index = ceil(log(int(-user.number))/log(<span class="SR_Numeric">2</span>)) - <span class="SR_Numeric">1</span>
+        <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">ENDIF</span></p>
+		<p>With the example above: 2<sup>2</sup> + 2<sup>4</sup> + 2<sup>5</sup> = 4 + 16 + 32 = 52.</p>
+		<p>When you call this instruction, the target variable is implicitly deleted with the instruction &quot;<a href="#inst_unset">UNSET</a>&quot;, making useless any call to the instruction &quot;<a href="#inst_allocate">ALLOCATE</a>&quot;. You have to make sure that you respect the constraints of the <a href="#para_arrunset">deletion of the arrays</a>.</p>
 
 	<h2 id="inst_break">BREAK</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
@@ -1868,88 +2196,92 @@ BET half_1 half_2</p>
 	<h2 id="inst_buy">BUY</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>When you run out of money, you have to refill your stock of counters. Therefore, you go to the cashier to buy new ones. The bought amount will first reimburse the credit and then will increase your current cash.</p>
 		<p>In fact, you can bet unlimitedly but you have to take care of your credit line that will have to be reimbursed at the end. The net result is given by the variable &quot;game.net&quot;.</p>
 		<p>The following examples are equivalent:</p>
-		<p class="Code">.SEQUENCE
-    BUY 10
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BUY</span> <span class="SR_Numeric">10</span>
 
-.SEQUENCE
-    SET user.amount = 10
-    BUY user.amount</p>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.amount = <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">BUY</span> user.amount</p>
 
 	<h2 id="inst_cbet">CBET</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in version 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument or more.</li>
 			</ul>
 		<p>&quot;CBET&quot; means &quot;conditional bet&quot;. It is a macro which will check for you if you have sufficient cash and in the limit given by the maximal bet of the casino. It generates implicitly the following code:</p>
-		<p class="Code">.SEQUENCE
-    IF sys.game.can_bet
-        BET (arguments)
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> sys.game.can_bet
+        <span class="SR_Keyword">BET</span> (arguments)
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p>The check is based on the variable &quot;sys.game.can_bet&quot; for which <a href="#para_sysvars">a limitation applies</a>. Except if you are sure, instruction &quot;CBET&quot; is recommended to be used with one bet at a time.</p>
-		<p class="Code">.SEQUENCE
-    CBET 10 12 &quot;It is not recommended&quot;
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">CBET</span> <span class="SR_Numeric">10</span> <span class="SR_Numeric">12</span> <span class="SR_Comment">"It is not recommended"</span>
 
-.SEQUENCE
-    CBET 10
-    CBET 12</p>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">CBET</span> <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">CBET</span> <span class="SR_Numeric">12</span></p>
 
 	<h2 id="inst_confirm">CONFIRM</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI mode only. Equivalent to &quot;<a href="#inst_write">WRITE</a>&quot; in console mode.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>This instruction displays a text in a popup window. The user has then the possibility to reply Yes, No or Cancel.</p>
 		<p>This instruction has the same technical behavior than the instruction &quot;<a href="#inst_popup">POPUP</a>&quot;. The difference is in the processing of the return code. By checking the value of the variable &quot;sys.popup&quot;, you can know which button was pressed.</p>
-		<p class="Code">.SEQUENCE
-    CONFIRM 'Do you want to continue ?'
-    IF sys.popup = sys.popup.yes
-        WRITE 'You pressed YES'
-    ENDIF
-    IF sys.popup = sys.popup.no
-        WRITE 'You pressed NO'
-    ENDIF
-    IF sys.popup = sys.popup.cancel
-        WRITE 'You pressed CANCEL'
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">CONFIRM</span> <span class="SR_String">'Do you want to continue ?'</span>
+    <span class="SR_Keyword">IF</span> sys.popup = sys.popup.yes
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You pressed YES'</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> sys.popup = sys.popup.no
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You pressed NO'</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> sys.popup = sys.popup.cancel
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You pressed CANCEL'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p><ins>Restriction</ins>: you should never use directly the integer values stored behind &quot;sys.popup.yes&quot;, &quot;sys.popup.no&quot; or &quot;sys.popup.cancel&quot;. They are dependent on the operating system.</p>
 
 	<h2 id="inst_check">CHECK</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>A check is a logical expression which is expected to be always true. It is different from the instruction &quot;<a href="#inst_assert">ASSERT</a>&quot; because when the condition is false, you simply exit the current sequence (not the script globally). This is the effect of the instruction &quot;<a href="#inst_break">BREAK</a>&quot;.</p>
 		<p>The logical expression must be written in conformance with the recommendations of instruction &quot;<a href="#inst_if">IF</a>&quot;.</p>
 		<p>This instruction is in fact a macro which implicitly generates the following code:</p>
-		<p class="Code">.SEQUENCE
-    IF (statement)
-    ENDIF
-    IF NOT sys.last_if
-        BREAK
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (statement)
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">IF</span> <span class="SR_Keyword">NOT</span> sys.last_if
+        <span class="SR_Keyword">BREAK</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 	<h2 id="inst_clear">CLEAR</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>This instruction allows deleting data not related to the classical variables set by the instruction &quot;<a href="#inst_set">SET</a>&quot;. Because it is not direct to access some settings of the roulette, special instructions have been reserved.</p>
 		<p>The syntax is simple. The instruction &quot;CLEAR&quot; is followed by a composite argument among the following list.</p>
+
+		<h3 id="para_clear_backup">CLEAR BACKUP</h3>
+			<p>This instruction has been introduced from the version 0.2.</p>
+			<p>It resets the backup that you have created with the instruction &quot;<a href="#inst_backup">BACKUP</a>&quot;. The effect is like as if you never called the latter.</p>
 
 		<h3 id="para_clear_bets">CLEAR BETS</h3>
 			<p>When you bet on 1 or several numbers with the instruction &quot;<a href="#inst_bet">BET</a>&quot;, you have no way to undo that bet without removing all the bets from the table.</p>
@@ -1988,54 +2320,84 @@ BET half_1 half_2</p>
 			<p>With the instruction &quot;<a href="#inst_stat">STAT</a>&quot;, it is possible to get some statistical information about all the landed numbers. Concretely, it creates variables inside the domain &quot;stat&quot;.</p>
 			<p>To remove these variables, the instruction &quot;CLEAR STAT&quot; can be used.</p>
 
+		<h3 id="para_clear_time">CLEAR TIME</h3>
+			<p>This instruction has been introduced from the version 0.2.</p>
+			<p>It resets the time stamp that you have saved with the instruction &quot;<a href="#inst_time">TIME</a>&quot;. The effect is like as if you never called the latter.</p>
+
 	<h2 id="inst_debug">DEBUG</h2>
-		<p>Characteristics:</p>
+		<p>With the development of the debugger in the version 0.2, this instruction has been refactored. It exists in two versions:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
-				<li>Supported in GUI and Console if the debug mode is enabled at the time of the compilation.</li>
-				<li>No argument.</li>
+				<li>"DEBUG" to call the internal debugger (GUI only).</li>
+				<li>"DEBUG EXTERNAL" to call the external debugger (GUI and console).</li>
 			</ul>
-		<p>Scripted Roulette is a compiled application written in C++ and Assembly language. The sources can be downloaded from the official website. For the purposes of its further development, it may be necessary to crash the application in certain conditions with a trap in order that it gets rescued by a <em>debugger</em>. Such a tool used by software developers can analyze the memory of the computer and the execution of the program in parallel of the source code. It helps to understand why the execution of a script is not working well or how it can run better.</p>
-		<p>For the users of the real world, this function is strictly useless. Moreover, if you try to call the function in the public version of the application, you will get an error telling that the instruction is not enabled, unless you write:</p>
-		<p class="Code">.SEQUENCE
-    IF sys.debug
-        DEBUG
-    ENDIF</p>
+		<p>The debugger is a screen which interrupts the execution of the script for the purpose of analysing its behaviour. A dedicated section explains <a href="#para_debug">how the debugger works</a>.</p>
+		<p>If you use the sign "@" before the instruction, the break is done on the next instruction. It makes it more discrete.</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    @<span class="SR_Keyword">DEBUG</span>
+    <span class="SR_Keyword">BEEP</span></p>
+
+		<h3 id="para_debug_onoff">DEBUG ON/OFF</h3>
+			<p>You can prevent the debugger from being called for a time. For that, you have to write the following instruction. This operation is equivalent to clicking on the <a href="#para_debug">button "Validate"</a> in the debugger.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">OFF</span></p>
+			<p>The reverse operation which reactivates the debugger is trivial:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">ON</span></p>
+			<p>These instructions are convenient if you want to debug the scripts having long processing times. Indeed, you define once a condition and every instruction "DEBUG" will inherit from the activation status. From the screen of the debugger, the user has an additionnal control of the execution of the script.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (a given condition)
+        <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">ON</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">OFF</span>
+    <span class="SR_Keyword">ENDIF</span>
+
+    <span class="SR_Comment">"... Do something here ..."</span>
+    <span class="SR_Keyword">DEBUG</span> <span class="SR_Comment">"It will be triggered conditionally even if there is no immediate surrounding condition"</span>
+    <span class="SR_Comment">"... Do something here ..."</span></p>
+
+		<h3 id="para_debug_external">DEBUG EXTERNAL</h3>
+			<p>Scripted Roulette is a compiled application written in C++ and Assembly language. The sources can be downloaded from the official website. For the purposes of its further development, it may be necessary to crash the application in certain conditions with a trap in order that it gets rescued by a <em>debugger</em>. Such a tool used by the software developers can analyze the memory of the computer and the execution of the program in parallel of the source code. It helps to understand why the execution of a script is not working well or how it can run better.</p>
+			<p>For the end users, this instruction is strictly useless. Moreover, if you try to call the function in the public version of the application, you will get an error telling that the instruction is not enabled, unless you write:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> sys.debug
+        <span class="SR_Keyword">DEBUG EXTERNAL</span>
+    <span class="SR_Keyword">ENDIF</span></p>
+			<p>This instruction considers the status of the debugger set with the instruction "DEBUG ON/OFF".</p>
 
 	<h2 id="inst_dec">DEC</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument.</li>
 			</ul>
 		<p>This instruction stands for &quot;decrement&quot;. In other words, it subtracts 1 from the variable given as unique parameter.</p>
 		<p>This instruction is popular to manage <a href="#sect_defloops">loops</a>.</p>
 		<p>This instruction is in fact a macro which implicitly generates the following code:</p>
-		<p class="Code">.SEQUENCE
-    SET (variable) = (variable) - 1</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> (variable) = (variable) - <span class="SR_Numeric">1</span></p>
 
 	<h2 id="inst_exist">EXIST</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 or several arguments.</li>
 			</ul>
 		<p>This instruction verifies that all the variables of the argument list exist.</p>
 		<p>The result is returned in the variable named &quot;sys.return&quot; which takes &quot;sys.true&quot; or &quot;sys.false&quot; as a possible value.</p>
-		<p class="Code">.SEQUENCE
-    EXIST game.cash game.credit user.flag
-    IF sys.result
-        WRITE 'All the variables exist.'
-    ELSE
-        WRITE 'At least one of the variables doesn''t exist.'
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">EXIST</span> game.cash game.credit user.flag
+    <span class="SR_Keyword">IF</span> sys.result
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'All the variables exist.'</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'At least one of the variables doesn'</span><span class="SR_String">'t exist.'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 	<h2 id="inst_goto">GOTO</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument.</li>
 			</ul>
@@ -2043,172 +2405,185 @@ BET half_1 half_2</p>
 		<h3 id="para_goto_mechanism">Mechanism</h3>
 			<p>This instruction performs a jump to another instruction. Precisely it targets an instruction &quot;<a href="#inst_label">LABEL</a>&quot; which handles a name. This name to reach is specified after the instruction.</p>
 			<p>In the following example, an instruction is never executed because the jump in not conditional:</p>
-			<p class="Code">.SEQUENCE
-    GOTO jump
-    WRITE 'This text will not be shown.'
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">GOTO</span> jump
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'This text will not be shown.'</span>
 
-    LABEL jump
-    WRITE 'However, this text will be displayed.'</p>
+    <span class="SR_Keyword">LABEL</span> jump
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'However, this text will be displayed.'</span></p>
 			<p>To jump conditionally, you can use conditions. The previous code can be rewritten as follows, and no instruction &quot;GOTO&quot; is used.</p>
-			<p class="Code">.SEQUENCE
-    IF sys.false
-        WRITE 'This text will not be shown.'
-    ENDIF
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> sys.false
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'This text will not be shown.'</span>
+    <span class="SR_Keyword">ENDIF</span>
 
-    WRITE 'However, this text will be displayed.'</p>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'However, this text will be displayed.'</span></p>
 			<p>If you use the instruction &quot;GOTO&quot; with no condition, you face the risk of falling into an infinite loop. To stop this situation, you have to kill the application with the task manager.</p>
-			<p class="Code">.SEQUENCE
-    LABEL infinite
-    &quot;Do something until the end of your infinite life&quot;
-    GOTO infinite</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">LABEL</span> infinite
+    <span class="SR_Comment">"Do something until the end of your infinite life"</span>
+    <span class="SR_Keyword">GOTO</span> infinite</p>
 			<p>By using a conditional statement, you are able to execute several times a set of instructions and to pilot its end. This is called &quot;managing loops&quot;. In many algorithms, you will be forced to master the use of loops. This is a simple example issued from the demo files:</p>
-			<p class="Code">.SEQUENCE
-    SET user.loop 3
-    LABEL loop
-    WRITE user.loop '...'
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.loop <span class="SR_Numeric">3</span>
+    <span class="SR_Keyword">LABEL</span> loop
+    <span class="SR_Keyword">WRITE</span> user.loop <span class="SR_String">'...'</span>
 
-    DEC user.loop
-    IF user.loop &gt; 0
-        @GOTO loop
-    ENDIF
+    <span class="SR_Keyword">DEC</span> user.loop
+    <span class="SR_Keyword">IF</span> user.loop &gt; <span class="SR_Numeric">0</span>
+        @<span class="SR_Keyword">GOTO</span> loop
+    <span class="SR_Keyword">ENDIF</span>
 
-    WRITE '... Ignition!! ...'</p>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'... Ignition!! ...'</span></p>
 
 		<h3 id="para_goto_jumps">Cross jumps</h3>
 			<p>You are not allowed to jump to another section of the main script. The following code will fail:</p>
-			<p class="Code">.SEQUENCE
-    GOTO next_sequence
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">GOTO</span> next_sequence
 
-.SEQUENCE
-    LABEL next_sequence
-    &quot;Do something...&quot;</p>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">LABEL</span> next_sequence
+    <span class="SR_Comment">"Do something..."</span></p>
 			<p>If you have to exit a sequence, you simply have to call instruction &quot;<a href="#inst_break">BREAK</a>&quot;.</p>
 			<p>If you have to jump to the end of the script, you simply have to call instruction &quot;<a href="#inst_stop">STOP</a>&quot;.</p>
 			<p>If you have to jump deeper in the next sequence, you have to use a global flag stored in a variable and write something like the following:</p>
-			<p class="Code">.INIT
-    SET user.far_jump = 0
+			<p class="Code"><span class="SR_Keyword">.INIT</span>
+    <span class="SR_Keyword">SET</span> user.far_jump = <span class="SR_Numeric">0</span>
 
-.SEQUENCE
-    IF &quot;Write your condition&quot;
-        SET user.far_jump = 1
-        BREAK
-    ENDIF
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> <span class="SR_Comment">"Write your condition"</span>
+        <span class="SR_Keyword">SET</span> user.far_jump = <span class="SR_Numeric">1</span>
+        <span class="SR_Keyword">BREAK</span>
+    <span class="SR_Keyword">ENDIF</span>
 
-    &quot;Do something&quot;
+    <span class="SR_Comment">"Do something"</span>
 
-.SEQUENCE
-    IF user.far_jump = 1
-        GOTO next
-    ENDIF
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> user.far_jump = <span class="SR_Numeric">1</span>
+        <span class="SR_Keyword">GOTO</span> next
+    <span class="SR_Keyword">ENDIF</span>
 
-    &quot;Do something if user.far_jump is not equal to 1&quot;
+    <span class="SR_Comment">"Do something if user.far_jump is not equal to 1"</span>
 
-    LABEL next
-    &quot;Do something&quot;</p>
+    <span class="SR_Keyword">LABEL</span> next
+    <span class="SR_Comment">"Do something"</span></p>
 
 		<h3 id="para_goto_deep">Deeper targets</h3>
 			<p>You are able to jump at any location of the script. However the context is not checked. Especially, if you jump at a level which is not expected you can assign wrong data.</p>
 			<p>In the following example, without the unconditional instruction &quot;GOTO&quot;, the target result would have been 2 but is equal to 5 finally.</p>
-			<p class="Code">.SEQUENCE
-    @GOTO deeper
-    IF sys.false
-        LABEL deeper
-        SET user.number 5
-    ELSE
-        SET user.number 2
-    ENDIF
-    WRITE 'You picked:' user.number</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    @<span class="SR_Keyword">GOTO</span> deeper
+    <span class="SR_Keyword">IF</span> sys.false
+        <span class="SR_Keyword">LABEL</span> deeper
+        <span class="SR_Keyword">SET</span> user.number <span class="SR_Numeric">5</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">SET</span> user.number <span class="SR_Numeric">2</span>
+    <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You picked:'</span> user.number</p>
 
 	<h2 id="inst_if">IF, ELSE and ENDIF</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>The definition of conditions has been detailed in a <a href="#sect_defconds">previous section</a>. You will not be able to write a scripted roulette without conditions.</p>
 		<p>The syntax is easy:</p>
-		<p class="Code">.SEQUENCE
-    IF [statement]
-        &quot;Instructions if the statement is true&quot;
-    ELSE
-        &quot;Instructions if the statement is false&quot;
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> [statement]
+        <span class="SR_Comment">"Instructions if the statement is true"</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Comment">"Instructions if the statement is false"</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p>A statement is a combination of expressions separated by a logical operator. You simply have to be very careful about the way the <a href="#para_priorities">priorities</a> are <ins>not</ins> managed.</p>
 		<p>The block &quot;ELSE&quot; is not mandatory:</p>
-		<p class="Code">.SEQUENCE
-    IF [statement]
-        &quot;Instructions if the statement is true&quot;
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> [statement]
+        <span class="SR_Comment">"Instructions if the statement is true"</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 		<p>The instruction &quot;ELIF&quot;, a merge of an &quot;ELSE&quot; and an &quot;IF&quot;, is not supported. In case you have to combine conditions, you just have to follow this example:</p>
-		<p class="Code">.SEQUENCE
-    IF (statement1)
-        &quot;Do something here if statement_1 is true&quot;
-    ELSE
-        IF (statement2)
-            &quot;Do something here if statement_1 is false and statement_2 is true&quot;
-        ELSE
-            &quot;Do something here if statement_1 and statement_2 are false&quot;
-        ENDIF
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> (statement1)
+        <span class="SR_Comment">"Do something here if statement_1 is true"</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">IF</span> (statement2)
+            <span class="SR_Comment">"Do something here if statement_1 is false and statement_2 is true"</span>
+        <span class="SR_Keyword">ELSE</span>
+            <span class="SR_Comment">"Do something here if statement_1 and statement_2 are false"</span>
+        <span class="SR_Keyword">ENDIF</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 	<h2 id="inst_inc">INC</h2>
 		<p>Characteristics:</p>
 		<ul>
-			<li>Introduction in 0.1.</li>
+			<li>Introduction in the version 0.1.</li>
 			<li>Supported in GUI and Console.</li>
 			<li>1 argument.</li>
 		</ul>
 		<p>This instruction stands for &quot;increment&quot;. In other words, it adds 1 to the variable given as unique parameter.</p>
 		<p>This instruction is popular to manage <a href="#sect_defloops">loops</a>.</p>
 		<p>This instruction is in fact a macro which implicitly generates the following code:</p>
-		<p class="Code">.SEQUENCE
-    SET (variable) = (variable) + 1</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> (variable) = (variable) + <span class="SR_Numeric">1</span></p>
 
 	<h2 id="inst_include">INCLUDE</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument.</li>
 			</ul>
 		<p>This instruction is a macro used during the preprocessing of the current script to include the content of an external file. If you share some common lines of codes between several scripted roulettes, using the include files will reduce the global workload of maintenance. The demos of Scripted Roulette heavily rely on this technique.</p>
 		<p>An include file has a <a href="#sect_formats">dedicated file extension</a> and cannot be executed directly. The argument of the instruction is the name of the include file without the extension. You don't use the apostrophes to delimit the string.</p>
-		<p class="Code">.INIT
-    INCLUDE external_file &quot;The file is 'external_file.sri' and its content will be pasted here&quot;</p>
+		<p class="Code"><span class="SR_Keyword">.INIT</span>
+    <span class="SR_Keyword">INCLUDE</span> external_file <span class="SR_Comment">"The file is 'external_file.sri' and its content will be pasted here"</span></p>
 		<p>You can put &quot;INCLUDE&quot; at any position of the script, even outside of the blocks &quot;.INIT&quot; and &quot;.SEQUENCE&quot;. The include file can indeed contain these two keywords. Everything is possible because the instruction is used for the preprocessing. However, at the end, the script must have a <a href="#sect_struct">valid structure</a>.</p>
 		<p>If you fall into recursive inclusions, a limit will apply.</p>
 
 	<h2 id="inst_input">INPUT</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
-		<p>This instruction gets a number from the user. It is not possible to ask for a string because the result is stored as a number.</p>
+		<p>By default, this instruction gets a number from the user. If you use the modifier "string", you get a chain of characters stored in <a href="#sect_defarrays">an array</a> starting from the position 1.</p>
 		<p class="Center"><img class="NoBorder" src="input.png" alt="" /></p>
 		<p>The arguments are used to build the text which appears in the input dialog. The technical rules are the same than for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;.</p>
-		<p>There are 2 outputs for the function:</p>
+		<p>There are several outputs for the function:</p>
 			<ul>
-				<li>The button validated by the user is stored in &quot;sys.popup&quot;. The button OK corresponds to the value &quot;sys.popup.yes&quot; and the button Cancel corresponds to the value &quot;sys.popup.cancel&quot;.</li>
-				<li><ins>Restriction</ins>: you should never use directly the integer value stored behind &quot;sys.popup.yes&quot;. It is dependent on the operating system.</li>
-				<li>Even if the user has clicked on the button OK, the input can be wrong. If there is no error, the variable &quot;sys.input&quot; is saved, else it is deleted. Therefore, you have to check for the existence of the variable with the instruction &quot;EXIST&quot; (it updates the variable &quot;sys.result&quot;).</li>
+				<li>The button validated by the user is stored in &quot;sys.popup&quot;. The button OK corresponds to the value &quot;sys.popup.yes&quot; and the button Cancel corresponds to the value &quot;sys.popup.cancel&quot;.
+					<ul>
+					<li><ins>Restriction</ins>: you should never use directly the integer value stored behind &quot;sys.popup.yes&quot;. It is dependent on the operating system.</li>
+					</ul>
+				</li>
+				<li>Even if the user has clicked on the button OK, the input can be wrong. If there is no error, the variable &quot;sys.input&quot; is saved, else it is deleted. Therefore, you have to check for the existence of the variable with the instruction &quot;EXIST&quot; which updates the variable &quot;sys.result&quot;. If you used the modifier "string", you can test for the existence of the variable "sys.input[1]".</li>
+				<li>If you prompt for a string (see below), the length of the input is stored in the variable "sys.input.length".</li>
 			</ul>
-		<p>A complete validation can be written as follows:</p>
-			<p class="Code">.SEQUENCE
-    INPUT 'Type a value :'
-    EXIST sys.input
-    IF sys.popup = sys.popup.yes AND sys.result
-        WRITE 'You have chosen :' sys.input
-    ELSE
-        WRITE 'You have typed a wrong number.'
-    ENDIF</p>
+		<p>For an integer, a complete validation can be written as follows:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">INPUT</span> <span class="SR_String">'Type a number :'</span>
+    <span class="SR_Keyword">EXIST</span> sys.input
+    <span class="SR_Keyword">IF</span> sys.popup = sys.popup.yes <span class="SR_Keyword">AND</span> sys.result
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You have chosen :'</span> sys.input
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You have typed a wrong number.'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
+		<p>For a string of characters, a complete validation can be written as follows. The length of the input is stored in the variable "sys.input.length".</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">INPUT</span> <span class="SR_String">'Type a string :'</span>
+    <span class="SR_Keyword">EXIST</span> sys.input[<span class="SR_Numeric">1</span>]
+    <span class="SR_Keyword">IF</span> sys.popup = sys.popup.yes <span class="SR_Keyword">AND</span> sys.result
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The string is saved in the array named "sys.input".'</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'You have typed nothing.'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 	<h2 id="inst_label">LABEL</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument.</li>
 			</ul>
@@ -2217,7 +2592,7 @@ BET half_1 half_2</p>
 	<h2 id="inst_leave">LEAVE</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
@@ -2227,7 +2602,7 @@ BET half_1 half_2</p>
 	<h2 id="inst_pause">PAUSE</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
@@ -2237,7 +2612,7 @@ BET half_1 half_2</p>
 	<h2 id="inst_plot">PLOT</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
@@ -2251,16 +2626,16 @@ BET half_1 half_2</p>
 				<li>A mathematical expression: the active status corresponds to the value 1, all other values are equal to &quot;OFF&quot;.</li>
 			</ul>
 		<p>To activate the plot (which is the case by default), the following instructions are equivalent:</p>
-		<p class="Code">.SEQUENCE
-    PLOT ON
-    PLOT sys.true
-    PLOT 1
-    PLOT 10/10</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">PLOT</span> <span class="SR_Keyword">ON</span>
+    <span class="SR_Keyword">PLOT</span> sys.true
+    <span class="SR_Keyword">PLOT</span> <span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">PLOT</span> <span class="SR_Numeric">10</span>/<span class="SR_Numeric">10</span></p>
 		<p>To deactivate the plot, the following instructions are equivalent.</p>
-		<p class="Code">.SEQUENCE
-    PLOT OFF
-    PLOT sys.false
-    PLOT 0</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">PLOT</span> <span class="SR_Keyword">OFF</span>
+    <span class="SR_Keyword">PLOT</span> sys.false
+    <span class="SR_Keyword">PLOT</span> <span class="SR_Numeric">0</span></p>
 		<p>You can access the status of the plot by reading the variable &quot;sys.plot&quot;.</p>
 		<p>If you don't need the plot, it is a good idea to call &quot;PLOT OFF&quot; to save some memory and increase the
 performances.</p>
@@ -2269,26 +2644,26 @@ performances.</p>
 	<h2 id="inst_popup">POPUP</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI mode only. Equivalent to &quot;<a href="#inst_write">WRITE</a>&quot; in console mode.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>This instruction displays a text directly in a popup window. The objective is to have a higher level of attention from the user.</p>
 		<p class="Center"><img class="NoBorder" src="message.png" alt="" /></p>
 		<p>The arguments are used to build the message. The rules are the same than for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;. When you use modifiers to classify the popup, the icon will be adapted accordingly.</p>
-		<p class="Code">.SEQUENCE
-    POPUP error 'An error occurred.'</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">POPUP</span> error <span class="SR_String">'An error occurred.'</span></p>
 		<p>The execution of the script is suspended while the message is not validated by clicking on &quot;OK&quot;. No other choice is possible.</p>
 		<p><ins>Restriction</ins>: it is recommended that you don't use this instruction in a <a href="#sect_defloops">loop</a>, else you will have some concerns to stop the execution of the script.</p>
-		<p class="Code">.SEQUENCE
-    POPUP 'Click OK to spin'
-    SPIN
-    POPUP 'The landed number is' game.landed.number</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">POPUP</span> <span class="SR_String">'Click OK to spin'</span>
+    <span class="SR_Keyword">SPIN</span>
+    <span class="SR_Keyword">POPUP</span> <span class="SR_String">'The landed number is'</span> game.landed.number</p>
 
 	<h2 id="inst_progress">PROGRESS</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI mode only.</li>
 				<li>1 composite argument.</li>
 			</ul>
@@ -2300,7 +2675,7 @@ performances.</p>
 	<h2 id="inst_random">RANDOM</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No or 1 composite argument.</li>
 			</ul>
@@ -2309,18 +2684,18 @@ performances.</p>
 		<p>When you specify one composite argument, the expression is evaluated and a random number is returned in the interval starting from zero and ending by the found result.</p>
 		<p>The random number is stored in the variable &quot;sys.random&quot;.</p>
 		<p><ins>Restriction</ins>: the HTTP generators cannot generate free numbers because the current pool is already put in cache for the game play. Requesting a random number may not fit the terms of service if single connections are triggered.</p>
-			<p class="Code">.SEQUENCE
-    RANDOM
-    WRITE 'A playable number between 0 to 36 by default:' sys.random
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'A playable number between 0 to 36 by default:'</span> sys.random
 
-.SEQUENCE
-    RANDOM 2^16
-    WRITE 'A number between 0 and 65536:' sys.random</p>
+<span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span> <span class="SR_Numeric">2</span>^<span class="SR_Numeric">16</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'A number between 0 and 65536:'</span> sys.random</p>
 
 	<h2 id="inst_randomize">RANDOMIZE</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
@@ -2335,7 +2710,7 @@ performances.</p>
 	<h2 id="inst_refresh">REFRESH</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI only.</li>
 				<li>No argument.</li>
 			</ul>
@@ -2346,7 +2721,7 @@ performances.</p>
 	<h2 id="inst_restart">RESTART</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No or 1 argument.</li>
 			</ul>
@@ -2359,16 +2734,27 @@ performances.</p>
 
 		<h3 id="para_restart_sequence">RESTART SEQUENCE</h3>
 			<p>When you call &quot;RESTART&quot; with the keyword &quot;SEQUENCE&quot; as a parameter, you simply restart the current sequence. The instruction is similar to the following script but is really more efficient:</p>
-			<p class="Code">.SEQUENCE
-    LABEL start
-    &quot;Do something&quot;
-    GOTO start</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">LABEL</span> start
+    <span class="SR_Comment">"Do something"</span>
+    <span class="SR_Keyword">GOTO</span> start</p>
 			<p>This variant also gives you the possibility to stop the execution of the script by clicking on the button entitled &quot;Stop&quot;.</p>
+
+	<h2 id="inst_rollback">ROLLBACK</h2>
+		<p>Characteristics:</p>
+			<ul>
+				<li>Introduction in the version 0.2.</li>
+				<li>Supported in GUI and Console.</li>
+				<li>No argument.</li>
+			</ul>
+		<p>This instruction does the contrary job of the instruction &quot;<a href="#inst_backup">BACKUP</a>&quot;. All the variables will be restored, including the current bet, the cash on hand and the amount of the credit line.</p>
+		<p>You can't restore the data if you have not saved them at least once before with the instruction &quot;<a href="#inst_backup">BACKUP</a>&quot;.</p>
+		<p>The log of the spins and the status of the pseudorandom number generator can't be restored with this instruction.</p>
 
 	<h2 id="inst_save">SAVE</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console if you have enabled the <a href="#sect_compile">extended features</a>.</li>
 				<li>No argument.</li>
 			</ul>
@@ -2454,7 +2840,7 @@ results.</p>
 	<h2 id="inst_set">SET</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument and 1 composite argument.</li>
 			</ul>
@@ -2462,49 +2848,54 @@ results.</p>
 		<p>First, to set a variable, you have to respect the <a href="#sect_defvars">naming convention</a> previously detailed.</p>
 		<p>The first argument is the name of the target variable. From the second argument, you can assign a direct value or an expression to be evaluated. If an error occurs, the variable is neither created nor updated.</p>
 		<p>You can assign only one value at a time:</p>
-		<p class="Code">.SEQUENCE
-    SET user.var1 = user.var2 = 10 &quot;False!&quot;
-    SET user.var1 = 10 &quot;OK&quot;
-    SET user.var2 = 10 &quot;OK&quot;</p>
-		<p>To improve the readability, you are allowed to use the sign &quot;=&quot; but it will be ignored. The two following lines are equivalent:</p>
-		<p class="Code">.SEQUENCE
-    SET user.var1 10
-    SET user.var1 = 10</p>
-		<p>There is no restriction to write spaces in the mathematical expression because all the parameters are interpreter as a whole. The following lines are equivalent:</p>
-		<p class="Code">.SEQUENCE
-    SET user.var1 = 1+2+3+4
-    SET user.var1 = 1 + 2 + 3 + 4</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.var1 = user.var2 = <span class="SR_Numeric">10</span> <span class="SR_Comment">"False!"</span>
+    <span class="SR_Keyword">SET</span> user.var1 = <span class="SR_Numeric">10</span> <span class="SR_Comment">"OK"</span>
+    <span class="SR_Keyword">SET</span> user.var2 = <span class="SR_Numeric">10</span> <span class="SR_Comment">"OK"</span></p>
+		<p>To improve the general readability, you are allowed to use the sign &quot;=&quot; but it will be ignored. The two following lines are equivalent:</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.var1 <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">SET</span> user.var1 = <span class="SR_Numeric">10</span></p>
+		<p>There is no restriction to write spaces in the mathematical expression because all the parameters are interpreter as a whole after the sign &quot;=&quot;. The following lines are equivalent:</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.var1 = <span class="SR_Numeric">1</span>+<span class="SR_Numeric">2</span>+<span class="SR_Numeric">3</span>+<span class="SR_Numeric">4</span>
+    <span class="SR_Keyword">SET</span> user.var1 = <span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span> + <span class="SR_Numeric">3</span> + <span class="SR_Numeric">4</span></p>
+		<p>Starting from the version 0.2, the spaces are allowed in the first argument if you use the sign &quot;=&quot;. This is especially interesting to improve the readability of the arrays defined with imbricated expressions:</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span>] = <span class="SR_Numeric">3</span> <span class="SR_Comment">"OK"</span>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span>] <span class="SR_Numeric">3</span> <span class="SR_Comment">"KO"</span></p>
 		<p>To remove a variable, you can use the instruction &quot;<a href="#inst_unset">UNSET</a>&quot;.</p>
 		<p>To test the existence of a variable, you can use the instruction &quot;<a href="#inst_exist">EXIST</a>&quot;. But from a general point of view, you have several other ways to handle it:</p>
 			<ul><li>Pay attention to the mathematical facts:</li></ul>
-		<p class="Code">.SEQUENCE
-    SET user.value = -1
-    IF user.value &lt;= 0
-        WRITE 'Cannot calculate the logarithm.'
-    ELSE
-        WRITE 'Result =' ln(user.value)
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.value = -<span class="SR_Numeric">1</span>
+    <span class="SR_Keyword">IF</span> user.value &lt;= <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Cannot calculate the logarithm.'</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Result ='</span> ln(user.value)
+    <span class="SR_Keyword">ENDIF</span></p>
 			<ul><li>Use the default values:</li></ul>
-		<p class="Code">.SEQUENCE
-    SET user.value = (user.strictly.positive.variable)
-    IF user.value &lt;= 0
-        WRITE 'There is obviously a problem'
-    ELSE
-        WRITE user.value
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.value = (user.strictly.positive.variable)
+    <span class="SR_Keyword">IF</span> user.value &lt;= <span class="SR_Numeric">0</span>
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'There is obviously a problem'</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">WRITE</span> user.value
+    <span class="SR_Keyword">ENDIF</span></p>
 			<ul><li>Use the return codes:</li></ul>
-		<p class="Code">.SEQUENCE
-    INPUT 'Give me a value:'
-    IF sys.popup != sys.popup.yes
-        WRITE 'I will not define any value.'
-    ELSE
-        SET user.value = sys.input
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">INPUT</span> <span class="SR_String">'Give me a value:'</span>
+    <span class="SR_Keyword">IF</span> sys.popup != sys.popup.yes
+        <span class="SR_Keyword">WRITE</span> <span class="SR_String">'I will not define any value.'</span>
+    <span class="SR_Keyword">ELSE</span>
+        <span class="SR_Keyword">SET</span> user.value = sys.input
+    <span class="SR_Keyword">ENDIF</span></p>
+		<p>Starting from the version 0.2, you can play with the arrays in order to define several values under the name technical game. Please read the <a href="#sect_defarrays">dedicated section</a>.</p>
 
 	<h2 id="inst_show">SHOW</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 argument.</li>
 			</ul>
@@ -2525,8 +2916,8 @@ results.</p>
 		<h3 id="para_show_memory">SHOW MEMORY</h3>
 			<p>This instruction dumps the content of the currently known variables.</p>
 			<p>In GUI mode, it is useless because you already have a tab containing such a view. However, in console mode, the instruction is very useful to check the stored values.</p>
-			<p class="Code">.SEQUENCE
-    SHOW MEMORY</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">MEMORY</span></p>
 			<p>The instruction generates many lines in the log. Consequently, it is advised to not call it too often.</p>
 
 		<h3 id="para_show_money">SHOW MONEY</h3>
@@ -2542,9 +2933,9 @@ results.</p>
 		<h3 id="para_show_script">SHOW SCRIPT</h3>
 			<p>For debugging purposes, you can display the scripted roulette as it is known in the memory. You will see that the script is minimal to be processed as fast as possible.</p>
 			<p>Some instructions like &quot;<a href="#inst_cbet">CBET</a>&quot; are macros: they are preprocessed when the script is loaded. In such case, it is not a problem if the loaded script is different. The results at the end are the same.</p>
-			<p class="Code">.SEQUENCE
-    CBET 12
-    SHOW SCRIPT</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">CBET</span> <span class="SR_Numeric">12</span>
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">SCRIPT</span></p>
 
 		<h3 id="para_show_seed">SHOW SEED</h3>
 			<p>As <a href="#sect_randomness">detailed previously</a>, each pseudo-random number generator is fed with an initial value X<sub>0</sub> determined from another value called &quot;seed&quot;.</p>
@@ -2556,21 +2947,21 @@ results.</p>
 		<h3 id="para_show_table_bets">SHOW TABLE and SHOW BETS</h3>
 			<p>When you bet on some numbers with &quot;<a href="#inst_bet">BET</a>&quot; or &quot;<a href="#inst_cbet">CBET</a>&quot;, you come to the point that you don't know anymore what the active bets are.</p>
 			<p>By calling this new instruction, you are told the stakes on the table.</p>
-			<p class="Code">.SEQUENCE
-    BET 1-2 35-36 red
-    SHOW BETS</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">BET</span> <span class="SR_Numeric">1</span>-<span class="SR_Numeric">2</span> <span class="SR_Numeric">35</span>-<span class="SR_Numeric">36</span> red
+    <span class="SR_Keyword">SHOW</span> <span class="SR_Keyword">BETS</span></p>
 
 	<h2 id="inst_slap">SLAP</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>This command is mostly a joke that you can use when something gets wrong and if the root cause is identified. You have to provide an argument written in full text with no apostrophe.</p>
 		<p>This command:</p>
-		<p class="Code">.SEQUENCE
-    SLAP me</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SLAP</span> me</p>
 		<p>...will display the following text:</p>
 		<p class="Code">Scripted Roulette slaps me around a bit with a large trout.</p>
 		<p>For a more intellectual explanation, please refer to:</p>
@@ -2579,7 +2970,7 @@ results.</p>
 	<h2 id="inst_spin">SPIN</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No or several composite arguments.</li>
 			</ul>
@@ -2589,16 +2980,16 @@ results.</p>
 
 		<h3 id="para_spin_alt">Alternative use</h3>
 			<p>If you generate a random number with instruction &quot;<a href="#inst_random">RANDOM</a>&quot;, you will have no associated information. Therefore, to find the color for example, you can write:</p>
-			<p class="Code">.SEQUENCE
-    RANDOM
-    SPIN sys.random</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">RANDOM</span>
+    <span class="SR_Keyword">SPIN</span> sys.random</p>
 			<p>However, this informative spin will be logged. To cancel this spin from the log, you have to call <a href="#para_clear_last_history">another instruction</a>:</p>
-			<p class="Code">CLEAR LAST HISTORY</p>
+			<p class="Code"><span class="SR_Keyword">CLEAR</span> <span class="SR_Keyword">LAST</span> <span class="SR_Keyword">HISTORY</span></p>
 
 	<h2 id="inst_stat">STAT</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
@@ -2608,7 +2999,7 @@ results.</p>
 	<h2 id="inst_status">STATUS</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI mode only. Equivalent to &quot;<a href="#inst_write">WRITE</a>&quot; in console mode.</li>
 				<li>1 composite argument.</li>
 			</ul>
@@ -2617,77 +3008,106 @@ results.</p>
 		<p>The arguments are used to build the message. The rules are the same than for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;.</p>
 		<p>When you call the instruction, it is possible that you will not see it immediately. Indeed, when a script is running, the refresh of the window is not the priority and if the window doesn't respond, it will become white. To solve this issue, you have to use <a href="#para_noresponse">special commands</a> which will trigger the processing of the pending refreshes.</p>
 		<p>If you also use the instruction &quot;<a href="#inst_progress">PROGRESS</a>&quot; to inform about the status of the script, it is recommended that you write it after &quot;STATUS&quot;.</p>
-		<p class="Code">.SEQUENCE
-    SET user.progress = (your calculation)
-    STATUS 'Progress is ' user.progress '%'
-    PROGRESS user.progress</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.progress = (your calculation)
+    <span class="SR_Keyword">STATUS</span> <span class="SR_String">'Progress is'</span> user.progress <span class="SR_String">'%'</span>
+    <span class="SR_Keyword">PROGRESS</span> user.progress</p>
 		<p>If you use the instruction &quot;STATUS&quot; to display a progression, there is a great chance that it is located in a loop. To avoid the display of too many messages when the script is executed in console mode, it is safer to surround the instruction by the following condition:</p>
-		<p class="Code">.SEQUENCE
-    IF NOT sys.console
-        STATUS 'Progression :' user.progress '%'
-    ENDIF</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">IF</span> <span class="SR_Keyword">NOT</span> sys.console
+        <span class="SR_Keyword">STATUS</span> <span class="SR_String">'Progression :'</span> user.progress <span class="SR_String">'%'</span>
+    <span class="SR_Keyword">ENDIF</span></p>
 
 	<h2 id="inst_stop">STOP</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
 		<p>A script is a succession of sequences. When the instruction &quot;STOP&quot; is called, the execution of the whole script is stopped.</p>
 
+	<h2 id="inst_time">TIME</h2>
+		<p>Characteristics:</p>
+			<ul>
+				<li>Introduction in the version 0.2.</li>
+				<li>Supported in GUI and Console.</li>
+				<li>No argument.</li>
+			</ul>
+		<p>If your scripted roulette takes some time to be executed, you may leave your seat and want to know later how much time it took.</p>
+		<p>You will have to call the instruction twice :</p>
+			<ol>
+				<li>At the beginning to save the time stamp,</li>
+				<li>At the end to save the new time stamp and to calculate the elapsed time.</li>
+			</ol>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">TIME</span>
+    <span class="SR_Comment">"... a long task ..."</span>
+    <span class="SR_Keyword">TIME</span></p>
+		<p>When the instruction is called, the current date and time are displayed, unless you use the symbol &quot;<a href="#sect_hidew">@</a>&quot; in front of the instruction. When the instruction is called a second time (and more), the difference of time is displayed and this cannot be disabled. In other words, the time span is always the one between two calls to the instruction. To reset the time stamp, you must use the instruction &quot;<a href="#para_clear_time">CLEAR TIME</a>&quot;.</p>
+		<p>The format of the time stamp is : (name of the day) (day) (month) (year), (hour):(minute):(second)</p>
+		<p>The format of the elapsed time is : ((days)) (hours):(minutes):(seconds).(milliseconds)</p>
+
 	<h2 id="inst_unset">UNSET</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 or several arguments.</li>
 			</ul>
 		<p>This instruction has the contrary effect than &quot;<a href="#inst_set">SET</a>&quot;: it deletes the existing variables provided that you have the rights for it. Indeed, the variables that you can't change are also protected against the deletion.</p>
 		<p>The arguments are the names of the variables to delete:</p>
-		<p class="Code">.SEQUENCE
-    UNSET user.var1
-    UNSET user.var2 user.var3</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">UNSET</span> user.var1
+    <span class="SR_Keyword">UNSET</span> user.var2 user.var3
+</p>
 		<p>If you use the keyword &quot;ALL&quot;, then you delete all the changeable variables, including &quot;game.cash&quot; and &quot;game.credit&quot;. Some of the important generated variables will then reappear with a default value.</p>
-		<p class="Code">.SEQUENCE
-    UNSET ALL</p>
+		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">UNSET</span> all</p>
 
 	<h2 id="inst_write">WRITE</h2>
 		<p>Characteristics:</p>
 			<ul>
-				<li>Introduction in 0.1.</li>
+				<li>Introduction in the version 0.1.</li>
 				<li>Supported in GUI and Console.</li>
 				<li>1 or several composite arguments.</li>
 			</ul>
 		<p>This instruction aims to write some information in the log. This information can later be exported with &quot;<a href="#para_save_log">SAVE LOG</a>&quot; or from the GUI interface.</p>
 
 		<h3 id="para_write_syntax">Syntax</h3>
-			<p>Quite everything can be converted into a string. For the arguments of the instruction, you can provide strings, numbers, variables and expressions.</p>
-			<p class="Code">.SEQUENCE
-    WRITE 'Hello!'
-    WRITE 5
-    WRITE game.cash
-    WRITE 2*game.cash+4</p>
+			<p>Quite everything can be converted into a string. For the arguments of the instruction, you can provide strings, numbers, variables, expressions and keywords.</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'Hello!'</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_Numeric">5</span>
+    <span class="SR_Keyword">WRITE</span> game.cash
+    <span class="SR_Keyword">WRITE</span> <span class="SR_Numeric">2</span>*game.cash+<span class="SR_Numeric">4</span>
+    <span class="SR_Keyword">WRITE</span> space</p>
 			<p>The instruction accepts several arguments at a time, but each argument is evaluated independently and concatenated at the end. The consequence is that you are <strong>not</strong> allowed to use spaces in the mathematical expressions. Look at the following example:</p>
-			<p class="Code">.SEQUENCE
-    WRITE 2+3
-    WRITE 2 + 3</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_Numeric">2</span>+<span class="SR_Numeric">3</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_Numeric">2</span> + <span class="SR_Numeric">3</span></p>
 			<p>The concatenation automatically adds a space between each argument in the final string.</p>
-			<p class="Code">.SEQUENCE
-    WRITE 'The message'
-    WRITE 'The' 'message'</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The message'</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The'</span> <span class="SR_String">'message'</span></p>
+			<p>The accumulated leading and trailing spaces are removed when the message is displayed. To keep the spaces, you must add it explicitely with the keyword "space".</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> space space space <span class="SR_String">'...'</span></p>
 			<p>When an expression cannot be evaluated, it is returned as if it was never calculated.</p>
-			<p class="Code">.SEQUENCE
-    SET user.var1 = 10
-    WRITE user.var1+user.var2</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.var1 = <span class="SR_Numeric">10</span>
+    <span class="SR_Keyword">WRITE</span> user.var1+user.var2</p>
 			<p>In a string, you may want to use an apostrophe. In order that it doesn't break the logic and the syntax highlighting, you have to repeat the apostrophe. Scripted Roulette will then consider the apostrophe once.</p>
-			<p class="Code">.SEQUENCE
-    WRITE 'I can''t believe it.'</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'I can'</span><span class="SR_String">'t believe it.'</span></p>
 			<p>Because you are playing numbers at the roulette, you don't normally need floating-point calculations. By default, whatever the value of the variable, the display is always truncated. To force the consideration of the decimal part, you have to use a <a href="#sect_numfmt">special modifier</a> at the beginning of the expression:</p>
-			<p class="Code">.SEQUENCE
-    SET user.pi = 3.1415926531
-    WRITE user.pi
-    WRITE f:user.pi</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">SET</span> user.pi = <span class="SR_Numeric">3.1415926531</span>
+    <span class="SR_Keyword">WRITE</span> user.pi
+    <span class="SR_Keyword">WRITE</span> f:user.pi</p>
+			<p><a href="#sect_numfmt">Another modifier</a> can be used to display the character associated to a number:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span> <span class="SR_String">'The 50th character is'</span> c:<span class="SR_Numeric">50</span></p>
 
 		<h3 id="para_write_msg">Message type</h3>
 			<p>When you write to the log, you have to specify the criticality of the message. By default, it is simple information.</p>
@@ -2716,7 +3136,12 @@ results.</p>
 				</tr>
 			</table>
 
-			<p>You can refer to the demos to test the feature.</p>
+			<p>The modifiers can be called as follows:</p>
+			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
+    <span class="SR_Keyword">WRITE</span>         <span class="SR_String">'This is a normal message.'</span>
+    <span class="SR_Keyword">WRITE</span> warning <span class="SR_String">'This is a warning message.'</span>
+    <span class="SR_Keyword">WRITE</span> error   <span class="SR_String">'This is an error message.'</span>
+    <span class="SR_Keyword">WRITE</span> debug   <span class="SR_String">'This is a debug message.'</span></p>
 
 
 <h1 id="chap_bycategory">Appendix - Instructions set by category</h1>
@@ -2732,99 +3157,127 @@ results.</p>
 	<tr>
 		<td class="Center"><a href="#inst_assert">ASSERT</a></td>
 		<td class="Center"><a href="#inst_bet">BET</a></td>
-		<td class="Center"><a href="#inst_clear">CLEAR</a></td>
+		<td class="Center"><a href="#inst_allocate">ALLOCATE</a></td>
 		<td class="Center"><a href="#inst_debug">DEBUG</a></td>
-		<td class="Center"><a href="#inst_beep">BEEP</a></td>
+		<td class="Center"><a href="#inst_append">APPEND</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_break">BREAK</a></td>
 		<td class="Center"><a href="#inst_buy">BUY</a></td>
-		<td class="Center"><a href="#inst_dec">DEC</a></td>
+		<td class="Center"><a href="#inst_backup">BACKUP</a></td>
 		<td class="Center"><a href="#inst_include">INCLUDE</a></td>
-		<td class="Center"><a href="#inst_confirm">CONFIRM</a></td>
+		<td class="Center"><a href="#inst_beep">BEEP</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_check">CHECK</a></td>
 		<td class="Center"><a href="#inst_cbet">CBET</a></td>
-		<td class="Center"><a href="#inst_exist">EXIST</a></td>
+		<td class="Center"><a href="#inst_bits">BITS</a></td>
 		<td class="Center"><a href="#inst_refresh">REFRESH</a></td>
-		<td class="Center"><a href="#inst_input">INPUT</a></td>
+		<td class="Center"><a href="#inst_confirm">CONFIRM</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_if">ELSE</a></td>
 		<td class="Center"><a href="#inst_random">RANDOM</a></td>
-		<td class="Center"><a href="#inst_inc">INC</a></td>
+		<td class="Center"><a href="#inst_clear">CLEAR</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center"><a href="#inst_plot">PLOT</a></td>
+		<td class="Center"><a href="#inst_input">INPUT</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_if">ENDIF</a></td>
 		<td class="Center"><a href="#inst_randomize">RANDOMIZE</a></td>
-		<td class="Center"><a href="#inst_set">SET</a></td>
+		<td class="Center"><a href="#inst_dec">DEC</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center"><a href="#inst_popup">POPUP</a></td>
+		<td class="Center"><a href="#inst_plot">PLOT</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_goto">GOTO</a></td>
 		<td class="Center"><a href="#inst_spin">SPIN</a></td>
-		<td class="Center"><a href="#inst_stat">STAT</a></td>
+		<td class="Center"><a href="#inst_exist">EXIST</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center"><a href="#inst_progress">PROGRESS</a></td>
+		<td class="Center"><a href="#inst_popup">POPUP</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_if">IF</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center"><a href="#inst_unset">UNSET</a></td>
+		<td class="Center"><a href="#inst_inc">INC</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center"><a href="#inst_save">SAVE</a></td>
+		<td class="Center"><a href="#inst_progress">PROGRESS</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_label">LABEL</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center">&nbsp;</td>
+		<td class="Center"><a href="#inst_rollback">ROLLBACK</a></td>
 		<td class="Center">&nbsp;</td>
 		<td class="Center"><a href="#inst_show">SHOW</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_leave">LEAVE</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center">&nbsp;</td>
+		<td class="Center"><a href="#inst_save">SAVE</a></td>
 		<td class="Center">&nbsp;</td>
 		<td class="Center"><a href="#inst_slap">SLAP</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_pause">PAUSE</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center">&nbsp;</td>
+		<td class="Center"><a href="#inst_set">SET</a></td>
 		<td class="Center">&nbsp;</td>
 		<td class="Center"><a href="#inst_status">STATUS</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_restart">RESTART</a></td>
 		<td class="Center">&nbsp;</td>
+		<td class="Center"><a href="#inst_stat">STAT</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center">&nbsp;</td>
-		<td class="Center"><a href="#inst_write">WRITE</a></td>
+		<td class="Center"><a href="#inst_time">TIME</a></td>
 	</tr>
 	<tr>
 		<td class="Center"><a href="#inst_stop">STOP</a></td>
 		<td class="Center">&nbsp;</td>
+		<td class="Center"><a href="#inst_unset">UNSET</a></td>
 		<td class="Center">&nbsp;</td>
-		<td class="Center">&nbsp;</td>
-		<td class="Center">&nbsp;</td>
+		<td class="Center"><a href="#inst_write">WRITE</a></td>
 	</tr>
 </table>
 
 
+<h1 id="chap_changelog">Change log</h1>
+	<ul>
+		<li><strong>Version 0.2</strong> - In development
+			<ul>
+				<li>Support for the arrays (<a href="#sect_defarrays">section</a>)</li>
+				<li>Embedded debugger (<a href="#para_debug">section</a>)</li>
+				<li>Dynamic bets for non-straight numbers (<a href="#para_bet_dyn">section</a>)</li>
+				<li>New instructions: <a href="#inst_allocate">ALLOCATE</a>, <a href="#inst_append">APPEND</a>, <a href="#inst_backup">BACKUP</a>, <a href="#inst_bits">BITS</a>, <a href="#para_clear_backup">CLEAR BACKUP</a>, <a href="#para_clear_time">CLEAR TIME</a>, <a href="#inst_rollback">ROLLBACK</a>, <a href="#inst_time">TIME</a></li>
+				<li>Export the script to HTML</li>
+				<li>Extended syntax for the instruction <a href="#inst_set">SET</a></li>
+				<li>Highlighted scripts in the documentation</li>
+				<li>Preprocessor definitions (<a href="#para_preproc">section</a>)</li>
+				<li>New keyword "space" for the instruction &quot;<a href="#inst_write">WRITE</a>&quot; (<a href="#para_write_syntax">syntax</a>)</li>
+				<li>New icon set with Nuvola</li>
+				<li>Standard icons in the menu bar (Linux)</li>
+				<li>New menu item: New instance</li>
+				<li>Removal of many system messages (<a href="#sect_compile">section</a>)</li>
+				<li>The minimal compatible version for wxEcMath is v0.6.5 (<a href="#sect_dependencies">section</a>)</li>
+			</ul>
+		</li>
+		<li><strong>Version 0.1</strong> - January 24<sup>th</sup> 2016
+			<ul>
+				<li>First public version</li>
+			</ul>
+		</li>
+	</ul>
+
+
 <h1 id="chap_contrib">Contributing</h1>
 	<p>This application is brought to you as free and in the limits defined by the GNU GPL License version 2. The developers have enjoyed their free time to create this nice innovative project in the hope it could be useful for passionate players of casino games.</p>
-	<p>Any future release will be made available on the official homepage and code repository :</p>
-		<ul><li><a href="http://sourceforge.net/projects/scripted-roulette/">http://sourceforge.net/projects/scripted-roulette/</a></li></ul>
+	<p>Any future release will be made available on the official homepage and code repository:</p>
+		<ul><li><a href="http://scripted-roulette.sourceforge.net">http://scripted-roulette.sourceforge.net</a></li></ul>
 		<ul><li>git clone http://git.code.sf.net/p/scripted-roulette/code scripted-roulette-code</li></ul>
 	<p>If you find a bug, need for some help or want to submit a <a href="#sect_poedit">translation</a> (thanks to your mother tongue), feel free to open a ticket:</p>
 		<ul>
 			<li><a href="http://sourceforge.net/p/scripted-roulette/tickets/">http://sourceforge.net/p/scripted-roulette/tickets/</a></li>
-			<li>This link is valid but you have to open it twice if you have the message &quot;<em>Page not found</em>&quot;. This is caused by the handling of the cookies by SourceForge.net.</li>
+			<li><strong>Note:</strong> This link is valid but you have to open it twice if you have the message &quot;<em>Page not found</em>&quot;. This is caused by the handling of the cookies by SourceForge.net.</li>
 		</ul>
 	<p>If you want to donate, please give to the charities which save sweet pets.</p>
 
@@ -3062,6 +3515,205 @@ email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)</p>
 			<ul><li><a href="https://www.random.org/clients/" rel="nofollow">https://www.random.org/clients/</a></li></ul>
 		<p>You are granted total and daily quotas. Please don't abuse when you write a script, else you will be banned by this online service:</p>
 			<ul><li><a href="https://www.random.org/banned-hosts/" rel="nofollow">https://www.random.org/banned-hosts/</a></li></ul>
+
+	<h2 id="sect_nuvola">Nuvola</h2>
+		<p>Nuvola is an icon set for applications.</p>
+		<p>Source:</p>
+			<ul>
+				<li><a href="http://www.icon-king.com/projects/nuvola/" rel="nofollow">http://www.icon-king.com/projects/nuvola/</a></li>
+			</ul>
+		<p class="Code">Copyright (c) 2003-2004 David Vignoni.
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, version 2.1 of the License.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this library (see the the license.txt file); if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA</p>
+		<p>As a special change, please note the following:</p>
+		<p class="Code">The GNU Lesser General Public License or LGPL is written for software libraries in the first place. The LGPL has to be considered valid for this artwork library too.
+
+Nuvola icon theme for KDE 3.x is a special kind of software library, it is an artwork library, it's elements can be used in a Graphical User Interface, or GUI.
+
+Source code, for this library means:
+- raster png image
+
+The LGPL in some sections obliges you to make the files carry notices. With images this is in some cases impossible or hardly usefull. With this library a notice is placed at a prominent place in the directory containing the elements. You may follow this practice. The exception in section 6 of the GNU Lesser General Public License covers the use of elements of this art library in a GUI.</p>
+		<p>Full text of the licence:</p>
+		<p class="Code">          GNU LESSER GENERAL PUBLIC LICENSE
+          Version 2.1, February 1999
+
+Copyright (C) 1991, 1999 Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA. Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+
+[This is the first released version of the Lesser GPL. It also counts as the successor of the GNU Library Public License, version 2, hence the version number 2.1.]
+
+      Preamble
+
+The licenses for most software are designed to take away your freedom to share and change it.  By contrast, the GNU General Public Licenses are intended to guarantee your freedom to share and change free software--to make sure the software is free for all its users.
+
+This license, the Lesser General Public License, applies to some specially designated software packages--typically libraries--of the Free Software Foundation and other authors who decide to use it. You can use it too, but we suggest you first think carefully about whether this license or the ordinary General Public License is the better strategy to use in any particular case, based on the explanations below.
+
+When we speak of free software, we are referring to freedom of use, not price.  Our General Public Licenses are designed to make sure that you have the freedom to distribute copies of free software (and charge for this service if you wish); that you receive source code or can get it if you want it; that you can change the software and use pieces of it in new free programs; and that you are informed that you can do these things.
+
+To protect your rights, we need to make restrictions that forbid distributors to deny you these rights or to ask you to surrender these rights.  These restrictions translate to certain responsibilities for you if you distribute copies of the library or if you modify it.
+
+For example, if you distribute copies of the library, whether gratis or for a fee, you must give the recipients all the rights that we gave you. You must make sure that they, too, receive or can get the source code. If you link other code with the library, you must provide complete object files to the recipients, so that they can relink them with the library after making changes to the library and recompiling it. And you must show them these terms so they know their rights.
+
+We protect your rights with a two-step method: (1) we copyright the library, and (2) we offer you this license, which gives you legal permission to copy, distribute and/or modify the library.
+
+To protect each distributor, we want to make it very clear that there is no warranty for the free library. Also, if the library is modified by someone else and passed on, the recipients should know that what they have is not the original version, so that the original author's reputation will not be affected by problems that might be introduced by others.
+
+Finally, software patents pose a constant threat to the existence of any free program. We wish to make sure that a company cannot effectively restrict the users of a free program by obtaining a restrictive license from a patent holder. Therefore, we insist that any patent license obtained for a version of the library must be consistent with the full freedom of use specified in this license.
+
+Most GNU software, including some libraries, is covered by the ordinary GNU General Public License. This license, the GNU Lesser General Public License, applies to certain designated libraries, and is quite different from the ordinary General Public License. We use this license for certain libraries in order to permit linking those libraries into non-free programs.
+
+When a program is linked with a library, whether statically or using a shared library, the combination of the two is legally speaking a combined work, a derivative of the original library. The ordinary General Public License therefore permits such linking only if the entire combination fits its criteria of freedom. The Lesser General Public License permits more lax criteria for linking other code with the library.
+
+We call this license the "Lesser" General Public License because it does Less to protect the user's freedom than the ordinary General Public License. It also provides other free software developers Less of an advantage over competing non-free programs. These disadvantages are the reason we use the ordinary General Public License for many libraries. However, the Lesser license provides advantages in certain special circumstances.
+
+For example, on rare occasions, there may be a special need to encourage the widest possible use of a certain library, so that it becomes a de-facto standard. To achieve this, non-free programs must be allowed to use the library. A more frequent case is that a free library does the same job as widely used non-free libraries. In this case, there is little to gain by limiting the free library to free software only, so we use the Lesser General Public License.
+
+In other cases, permission to use a particular library in non-free programs enables a greater number of people to use a large body of free software. For example, permission to use the GNU C Library in non-free programs enables many more people to use the whole GNU operating system, as well as its variant, the GNU/Linux operating system.
+
+Although the Lesser General Public License is Less protective of the users' freedom, it does ensure that the user of a program that is linked with the Library has the freedom and the wherewithal to run that program using a modified version of the Library.
+
+The precise terms and conditions for copying, distribution and modification follow.  Pay close attention to the difference between a "work based on the library" and a "work that uses the library". The former contains code derived from the library, whereas the latter must
+be combined with the library in order to run.
+
+      GNU LESSER GENERAL PUBLIC LICENSE
+      TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. This License Agreement applies to any software library or other program which contains a notice placed by the copyright holder or other authorized party saying it may be distributed under the terms of this Lesser General Public License (also called "this License"). Each licensee is addressed as "you".
+
+A "library" means a collection of software functions and/or data prepared so as to be conveniently linked with application programs (which use some of those functions and data) to form executables.
+
+The "Library", below, refers to any such software library or work which has been distributed under these terms. A "work based on the Library" means either the Library or any derivative work under copyright law: that is to say, a work containing the Library or a portion of it, either verbatim or with modifications and/or translated straightforwardly into another language. (Hereinafter, translation is included without limitation in the term "modification".)
+
+"Source code" for a work means the preferred form of the work for making modifications to it.  For a library, complete source code means all the source code for all modules it contains, plus any associated interface definition files, plus the scripts used to control compilation and installation of the library.
+
+Activities other than copying, distribution and modification are not covered by this License; they are outside its scope. The act of running a program using the Library is not restricted, and output from such a program is covered only if its contents constitute a work based on the Library (independent of the use of the Library in a tool for writing it). Whether that is true depends on what the Library does and what the program that uses the Library does.
+
+  1. You may copy and distribute verbatim copies of the Library's complete source code as you receive it, in any medium, provided that you conspicuously and appropriately publish on each copy an appropriate copyright notice and disclaimer of warranty; keep intact all the notices that refer to this License and to the absence of any warranty; and distribute a copy of this License along with the Library.
+
+You may charge a fee for the physical act of transferring a copy, and you may at your option offer warranty protection in exchange for a fee.
+
+  2. You may modify your copy or copies of the Library or any portion of it, thus forming a work based on the Library, and copy and distribute such modifications or work under the terms of Section 1 above, provided that you also meet all of these conditions:
+
+    a) The modified work must itself be a software library.
+
+    b) You must cause the files modified to carry prominent notices stating that you changed the files and the date of any change.
+
+    c) You must cause the whole of the work to be licensed at no charge to all third parties under the terms of this License.
+
+    d) If a facility in the modified Library refers to a function or a table of data to be supplied by an application program that uses the facility, other than as an argument passed when the facility is invoked, then you must make a good faith effort to ensure that, in the event an application does not supply such function or table, the facility still operates, and performs whatever part of its purpose remains meaningful.
+
+    (For example, a function in a library to compute square roots has a purpose that is entirely well-defined independent of the application. Therefore, Subsection 2d requires that any application-supplied function or table used by this function must be optional: if the application does not supply it, the square root function must still compute square roots.)
+
+These requirements apply to the modified work as a whole. If identifiable sections of that work are not derived from the Library, and can be reasonably considered independent and separate works in themselves, then this License, and its terms, do not apply to those sections when you distribute them as separate works. But when you distribute the same sections as part of a whole which is a work based on the Library, the distribution of the whole must be on the terms of this License, whose permissions for other licensees extend to the entire whole, and thus to each and every part regardless of who wrote it.
+
+Thus, it is not the intent of this section to claim rights or contest your rights to work written entirely by you; rather, the intent is to exercise the right to control the distribution of derivative or collective works based on the Library.
+
+In addition, mere aggregation of another work not based on the Library with the Library (or with a work based on the Library) on a volume of a storage or distribution medium does not bring the other work under the scope of this License.
+
+  3. You may opt to apply the terms of the ordinary GNU General Public License instead of this License to a given copy of the Library. To do this, you must alter all the notices that refer to this License, so that they refer to the ordinary GNU General Public License, version 2, instead of to this License.  (If a newer version than version 2 of the ordinary GNU General Public License has appeared, then you can specify that version instead if you wish.)  Do not make any other change in these notices.
+
+Once this change is made in a given copy, it is irreversible for that copy, so the ordinary GNU General Public License applies to all subsequent copies and derivative works made from that copy.
+
+This option is useful when you wish to copy part of the code of the Library into a program that is not a library.
+
+  4. You may copy and distribute the Library (or a portion or derivative of it, under Section 2) in object code or executable form under the terms of Sections 1 and 2 above provided that you accompany it with the complete corresponding machine-readable source code, which must be distributed under the terms of Sections 1 and 2 above on a medium customarily used for software interchange.
+
+If distribution of object code is made by offering access to copy from a designated place, then offering equivalent access to copy the source code from the same place satisfies the requirement to distribute the source code, even though third parties are not compelled to copy the source along with the object code.
+
+  5. A program that contains no derivative of any portion of the Library, but is designed to work with the Library by being compiled or linked with it, is called a "work that uses the Library". Such a work, in isolation, is not a derivative work of the Library, and therefore falls outside the scope of this License.
+
+However, linking a "work that uses the Library" with the Library creates an executable that is a derivative of the Library (because it contains portions of the Library), rather than a "work that uses the library".  The executable is therefore covered by this License. Section 6 states terms for distribution of such executables.
+
+When a "work that uses the Library" uses material from a header file that is part of the Library, the object code for the work may be a derivative work of the Library even though the source code is not. Whether this is true is especially significant if the work can be linked without the Library, or if the work is itself a library. The threshold for this to be true is not precisely defined by law.
+
+If such an object file uses only numerical parameters, data structure layouts and accessors, and small macros and small inline functions (ten lines or less in length), then the use of the object file is unrestricted, regardless of whether it is legally a derivative work. (Executables containing this object code plus portions of the Library will still fall under Section 6.)
+
+Otherwise, if the work is a derivative of the Library, you may distribute the object code for the work under the terms of Section 6. Any executables containing that work also fall under Section 6, whether or not they are linked directly with the Library itself.
+
+  6. As an exception to the Sections above, you may also combine or link a "work that uses the Library" with the Library to produce a work containing portions of the Library, and distribute that work under terms of your choice, provided that the terms permit modification of the work for the customer's own use and reverse engineering for debugging such modifications.
+
+You must give prominent notice with each copy of the work that the Library is used in it and that the Library and its use are covered by this License. You must supply a copy of this License. If the work during execution displays copyright notices, you must include the copyright notice for the Library among them, as well as a reference directing the user to the copy of this License. Also, you must do one of these things:
+
+    a) Accompany the work with the complete corresponding machine-readable source code for the Library including whatever changes were used in the work (which must be distributed under Sections 1 and 2 above); and, if the work is an executable linked with the Library, with the complete machine-readable "work that uses the Library", as object code and/or source code, so that the user can modify the Library and then relink to produce a modified executable containing the modified Library. (It is understood that the user who changes the contents of definitions files in the Library will not necessarily be able to recompile the application to use the modified definitions.)
+
+    b) Use a suitable shared library mechanism for linking with the Library. A suitable mechanism is one that (1) uses at run time a copy of the library already present on the user's computer system, rather than copying library functions into the executable, and (2) will operate properly with a modified version of the library, if the user installs one, as long as the modified version is interface-compatible with the version that the work was made with.
+
+    c) Accompany the work with a written offer, valid for at least three years, to give the same user the materials specified in Subsection 6a, above, for a charge no more than the cost of performing this distribution.
+
+    d) If distribution of the work is made by offering access to copy from a designated place, offer equivalent access to copy the above specified materials from the same place.
+
+    e) Verify that the user has already received a copy of these materials or that you have already sent this user a copy.
+
+For an executable, the required form of the "work that uses the Library" must include any data and utility programs needed for reproducing the executable from it.  However, as a special exception, the materials to be distributed need not include anything that is normally distributed (in either source or binary form) with the major components (compiler, kernel, and so on) of the operating system on which the executable runs, unless that component itself accompanies the executable.
+
+It may happen that this requirement contradicts the license restrictions of other proprietary libraries that do not normally accompany the operating system. Such a contradiction means you cannot use both them and the Library together in an executable that you distribute.
+
+  7. You may place library facilities that are a work based on the Library side-by-side in a single library together with other library facilities not covered by this License, and distribute such a combined library, provided that the separate distribution of the work based on the Library and of the other library facilities is otherwise permitted, and provided that you do these two things:
+
+    a) Accompany the combined library with a copy of the same work based on the Library, uncombined with any other library facilities.  This must be distributed under the terms of the Sections above.
+
+    b) Give prominent notice with the combined library of the fact that part of it is a work based on the Library, and explaining where to find the accompanying uncombined form of the same work.
+
+  8. You may not copy, modify, sublicense, link with, or distribute the Library except as expressly provided under this License. Any attempt otherwise to copy, modify, sublicense, link with, or distribute the Library is void, and will automatically terminate your rights under this License. However, parties who have received copies, or rights, from you under this License will not have their licenses terminated so long as such parties remain in full compliance.
+
+  9. You are not required to accept this License, since you have not signed it. However, nothing else grants you permission to modify or distribute the Library or its derivative works. These actions are prohibited by law if you do not accept this License. Therefore, by modifying or distributing the Library (or any work based on the Library), you indicate your acceptance of this License to do so, and all its terms and conditions for copying, distributing or modifying the Library or works based on it.
+
+  10. Each time you redistribute the Library (or any work based on the Library), the recipient automatically receives a license from the original licensor to copy, distribute, link with or modify the Library subject to these terms and conditions. You may not impose any further restrictions on the recipients' exercise of the rights granted herein. You are not responsible for enforcing compliance by third parties with this License.
+
+  11. If, as a consequence of a court judgment or allegation of patent infringement or for any other reason (not limited to patent issues), conditions are imposed on you (whether by court order, agreement or otherwise) that contradict the conditions of this License, they do not excuse you from the conditions of this License. If you cannot distribute so as to satisfy simultaneously your obligations under this License and any other pertinent obligations, then as a consequence you may not distribute the Library at all. For example, if a patent license would not permit royalty-free redistribution of the Library by all those who receive copies directly or indirectly through you, then the only way you could satisfy both it and this License would be to refrain entirely from distribution of the Library.
+
+If any portion of this section is held invalid or unenforceable under any particular circumstance, the balance of the section is intended to apply, and the section as a whole is intended to apply in other circumstances.
+
+It is not the purpose of this section to induce you to infringe any patents or other property right claims or to contest validity of any such claims; this section has the sole purpose of protecting the integrity of the free software distribution system which is implemented by public license practices.  Many people have made generous contributions to the wide range of software distributed through that system in reliance on consistent application of that system; it is up to the author/donor to decide if he or she is willing to distribute software through any other system and a licensee cannot impose that choice.
+
+This section is intended to make thoroughly clear what is believed to be a consequence of the rest of this License.
+
+  12. If the distribution and/or use of the Library is restricted in certain countries either by patents or by copyrighted interfaces, the original copyright holder who places the Library under this License may add an explicit geographical distribution limitation excluding those countries, so that distribution is permitted only in or among countries not thus excluded. In such case, this License incorporates the limitation as if written in the body of this License.
+
+  13. The Free Software Foundation may publish revised and/or new versions of the Lesser General Public License from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
+
+Each version is given a distinguishing version number. If the Library specifies a version number of this License which applies to it and "any later version", you have the option of following the terms and conditions either of that version or of any later version published by the Free Software Foundation.  If the Library does not specify a license version number, you may choose any version ever published by the Free Software Foundation.
+
+  14. If you wish to incorporate parts of the Library into other free programs whose distribution conditions are incompatible with these, write to the author to ask for permission. For software which is copyrighted by the Free Software Foundation, write to the Free Software Foundation; we sometimes make exceptions for this. Our decision will be guided by the two goals of preserving the free status of all derivatives of our free software and of promoting the sharing and reuse of software generally.
+
+                NO WARRANTY
+
+  15. BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE LIBRARY, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE LIBRARY "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE LIBRARY IS WITH YOU.  SHOULD THE LIBRARY PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+  16. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE LIBRARY AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE LIBRARY (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+      END OF TERMS AND CONDITIONS
+
+      How to Apply These Terms to Your New Libraries
+
+If you develop a new library, and you want it to be of the greatest possible use to the public, we recommend making it free software that everyone can redistribute and change. You can do so by permitting redistribution under these terms (or, alternatively, under the terms of the ordinary General Public License).
+
+To apply these terms, attach the following notices to the library. It is safest to attach them to the start of each source file to most effectively convey the exclusion of warranty; and each file should have at least the "copyright" line and a pointer to where the full notice is found.
+
+    &lt;one line to give the library's name and a brief idea of what it does.&gt;
+    Copyright (C) &lt;year&gt; &lt;name of author&gt;
+
+    This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+
+Also add information on how to contact you by electronic and paper mail.
+
+You should also get your employer (if you work as a programmer) or your school, if any, to sign a "copyright disclaimer" for the library, if necessary. Here is a sample; alter the names:
+
+  Yoyodyne, Inc., hereby disclaims all copyright interest in the
+  library `Frob' (a library for tweaking knobs) written by James Random Hacker.
+
+  &lt;signature of Ty Coon&gt;, 1 April 1990
+  Ty Coon, President of Vice
+
+That's all there is to it!</p>
 
 </div>
 
