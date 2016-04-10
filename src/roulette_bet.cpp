@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_bet)
+case roulette_inst_bet_id:
 {
     //Simplifies the parameters
     parser.RemoveParameter(wxT("straight"));        //1
@@ -55,22 +55,60 @@ if (parser.Instruction == roulette_inst_bet)
         do {
             j--;
             buffer = parser.CommandList.Item(j);
-            if (buffer.Find(wxT('.')) == wxNOT_FOUND)
-                continue;
 
-            /** \todo Enhanced interpretation with '|' */
-
-            //Having a dot is a sign that a variable needs to be converted (example: "BET SINGLE game.landed.number" to play again the last number)
-            b = false;
-            if (m_engine.SetFormula(buffer))
+            //Evaluation of the dynamic bets like "BET user.var1|user.var2" to bet on 2-3 or 6-9 for example
+            position = buffer.Find(wxT('|'));
+            if (position != wxNOT_FOUND)
             {
-                m_engine.Compute();
-                if (m_engine.GetLastError() == wxECE_NOERROR)
+                if_left = buffer.Mid(0, position);                  //Left-hand side
+                if_right = buffer.Mid(position+1, buffer.Len());    //Right-hand side
+
+                //Evaluation of the expressions
+                b = false;
+                if (m_engine.SetFormula(if_left))
                 {
-                    parser.CommandList[j] = wxString::Format(wxT("%d"), (unsigned long)m_engine.GetLastResult());
-                    b = true;
+                    m_engine.Compute();
+                    if (m_engine.GetLastError() == wxECE_NOERROR)
+                    {
+                        buffer = wxString::Format(wxT("%d"), (unsigned long)m_engine.GetLastResult());
+                        b = true;
+                    }
+                }
+                if (b)
+                {
+                    b = false;
+                    if (m_engine.SetFormula(if_right))
+                    {
+                        m_engine.Compute();
+                        if (m_engine.GetLastError() == wxECE_NOERROR)
+                        {
+                            parser.CommandList[j] = wxString::Format(wxT("%s-%d"), buffer.uniCStr(), (unsigned long)m_engine.GetLastResult());
+                            b = true;
+                        }
+                    }
                 }
             }
+
+            //Evaluation of a normal expression
+            else if (buffer.Find(wxT('.')) != wxNOT_FOUND)  //A dot is a sign that a variable needs to be converted
+            {
+                b = false;
+                if (m_engine.SetFormula(buffer))
+                {
+                    m_engine.Compute();
+                    if (m_engine.GetLastError() == wxECE_NOERROR)
+                    {
+                        parser.CommandList[j] = wxString::Format(wxT("%d"), (unsigned long)m_engine.GetLastResult());
+                        b = true;
+                    }
+                }
+            }
+
+            //Nothing to evaluate
+            else
+                b = true;
+
+            //Handles the wrong formats
             if (!b)
                 parser.CommandList.RemoveAt(j);
         } while (j > 0);

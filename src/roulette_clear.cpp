@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_clear)
+case roulette_inst_clear_id:
 {
     //Checks the parameters
     if (!parser.HasParameters())
@@ -31,15 +31,10 @@ if (parser.Instruction == roulette_inst_clear)
 
     //Processes the command
     buffer = parser.Command;
-    if (buffer == wxT("landed number"))
+    if (buffer == wxT("bets"))
     {
-        DoClearLandedNumber();
-        continue;
-    }
-
-    if (buffer == wxT("stat"))
-    {
-        DoClearStats();
+        m_table.ClearBets();
+        DoUpdateDynamicVariables(parser.NoWarning);
         continue;
     }
 
@@ -50,10 +45,22 @@ if (parser.Instruction == roulette_inst_clear)
         continue;
     }
 
+    if (buffer == wxT("landed number"))
+    {
+        DoClearLandedNumber();
+        continue;
+    }
+
     if (buffer == wxT("last history"))
     {
         m_spin_history.DeleteLastEntry();
         DoClearStats();
+        continue;
+    }
+
+    if ((buffer == wxT("log")) || (buffer == wxT("console")))
+    {
+        DoClearLog();
         continue;
     }
 
@@ -64,24 +71,29 @@ if (parser.Instruction == roulette_inst_clear)
         continue;
     }
 
-    if (buffer == wxT("bets"))
-    {
-        m_table.ClearBets();
-        DoUpdateDynamicVariables(parser.NoWarning);
-        continue;
-    }
-
-    if ((buffer == wxT("log")) || (buffer == wxT("console")))
-    {
-        DoClearLog();
-        continue;
-    }
-
     if (buffer == wxT("random"))
     {
         if (!m_table.RestorePRNG())
             if (!parser.NoWarning)
                 LogWarning(_("The algorithm doesn't allow to restore the initial status of the randomization."));
+        continue;
+    }
+
+    if (buffer == wxT("time"))
+    {
+        m_time_last = false;
+        continue;
+    }
+
+    if (buffer == wxT("stat"))
+    {
+        DoClearStats();
+        continue;
+    }
+
+    if (buffer == wxT("backup"))
+    {
+        m_backup.ResetConstants(false);
         continue;
     }
 

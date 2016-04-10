@@ -1,0 +1,47 @@
+"#version-min: 020"
+"====="
+" This scripted roulette makes a use of the arrays"
+"====="
+
+.SEQUENCE
+    "=== Allocates quickly all the array"
+    ALLOCATE user.array 5
+
+    "=== You can define some values manually"
+    SET user.array[1] = 1
+    SET user.array[2] = 2
+    SET user.array[3] = 0
+    SET user.array[4] = 4
+    SET user.array[5] = 5
+
+    "=== The names are flat so this syntax is fine"
+    SET user.array_3 = 3
+
+    "=== You can use the array with complex rules"
+    ASSERT user.array[user.array[5] - user.array[2]] = 3
+
+    "=== Removes a value from the array"
+    UNSET user.array[3]
+    EXIST user.array[3]
+    IF sys.result
+        WRITE 'That is not possible.'
+    ENDIF
+
+    "=== A negative index is support"
+    SET user.array[-1] = -1
+    WRITE 'In the position -1, you have :' user.array[-1]
+
+    "=== Resets the array"
+    UNSET user.array[]
+
+.SEQUENCE
+    "=== You can define multidimensional arrays"
+    SET user.multi[1][1] = 1
+    SET user.multi[1][2] = 0
+    SET user.multi[2][1] = 1
+    SET user.multi[2][2] = 1
+
+    "=== You can delete a dimension of your choice"
+    UNSET user.multi[1][]
+    UNSET user.multi[][2]
+    UNSET user.multi[][]

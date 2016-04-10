@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ void wxRouletteInstruction::Reset()
 {
     NoWarning = false;
     Instruction.Empty();
+    InstructionID = 0;
     Command.Empty();
     CommandList.Clear();
 }
@@ -47,7 +48,7 @@ wxString wxRouletteInstruction::GetAsString()
         return buffer;
 }
 
-bool wxRouletteInstruction::Parse(wxString pInstruction)
+bool wxRouletteInstruction::Parse(wxString pInstruction, bool pChecksum)
 {
     wxStringTokenizer list;
 
@@ -63,7 +64,7 @@ bool wxRouletteInstruction::Parse(wxString pInstruction)
     if (Instruction.Len() == pInstruction.Len())
         goto FinalizeInstruction;
     else
-        pInstruction = pInstruction.SubString(Instruction.Len(), pInstruction.Len()).Trim(false);
+        pInstruction = pInstruction.Mid(Instruction.Len(), pInstruction.Len()).Trim(false);
 
     //-- Command line
     Command = pInstruction;
@@ -77,7 +78,9 @@ bool wxRouletteInstruction::Parse(wxString pInstruction)
 FinalizeInstruction:
     NoWarning = Instruction.StartsWith(wxT("@"));
     if (NoWarning)
-        Instruction = Instruction.SubString(1, Instruction.Len());
+        Instruction = Instruction.Mid(1, Instruction.Len());
+    if (pChecksum)
+        Checksum();
     return !Instruction.IsEmpty();
 }
 
@@ -160,11 +163,13 @@ bool wxRouletteInstruction::ChangeCharacters(wxString pOld, wxString pNew)
     //-- Edits the matching entries
     changed = false;
     for (i=0 ; i<CommandList.GetCount() ; i++)
+    {
         if (CommandList.Item(i).Find(pOld) != wxNOT_FOUND)
         {
             CommandList.Item(i).Replace(pOld, pNew);
             changed = true;
         }
+    }
 
     //-- Rebuilds the command line
     if (changed)
@@ -197,4 +202,28 @@ void wxRouletteInstruction::RebuildCommandLine()
             Command.Append(wxT(" "));
         Command.Append(CommandList.Item(i));
     }
+}
+
+unsigned long wxRouletteInstruction::Checksum()
+{
+    const int maxlen = 9;
+    size_t i;
+
+    //-- Checks
+    if (Instruction.Len() > maxlen)
+        return 0;
+
+    //-- Calculates the internal identifier (see defs.h)
+    InstructionID = 0;
+    for (i=0 ; i<Instruction.Len() ; i++)
+    {
+    #if wxMAJOR_VERSION >= 3
+        InstructionID += Instruction.GetChar(i).GetValue() * (maxlen-i);
+    #else
+        InstructionID += Instruction.GetChar(i) * (maxlen-i);
+    #endif
+    }
+
+    //-- Result
+    return InstructionID;
 }

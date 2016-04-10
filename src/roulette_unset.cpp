@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_unset)
+case roulette_inst_unset_id:
 {
     //Checks the parameters
     if (!parser.HasParameters())
@@ -28,6 +28,9 @@ if (parser.Instruction == roulette_inst_unset)
         script[i].Empty();
         continue;
     }
+
+    //Sets the mask to delete all the entries of an array
+    parser.ChangeCharacters(wxT("[]"), wxT("_*"));
 
     //Lists the variables
     m_engine.ListAllConstants(&list, false);
@@ -46,6 +49,8 @@ if (parser.Instruction == roulette_inst_unset)
         for (k=0 ; k<parser.CommandList.GetCount() ; k++)
         {
             buffer2 = parser.CommandList.Item(k);
+            if (buffer2.IsEmpty())
+                continue;
 
             //Keyword to delete all
             if (buffer2 == wxT("all"))
@@ -55,6 +60,20 @@ if (parser.Instruction == roulette_inst_unset)
                 break;
             }
 
+            //Evaluates the name of the variable to support the arrays
+            if (m_engine.SetFormula(buffer2))
+            {
+                if (!m_engine.GetCompactExpression(&buffer2))
+                    continue;
+            }
+            else
+            {
+                if (!parser.NoWarning)
+                    LogWarning(wxString::Format(_("The name of the variable '%s' is misspelled."), buffer2.uniCStr()));
+                parser.CommandList[k] = wxEmptyString;
+                continue;
+            }
+
             //By name or with a pattern
             if (m_engine.DeleteConstant(buffer2))
             {
@@ -62,11 +81,13 @@ if (parser.Instruction == roulette_inst_unset)
                 break;
             }
             else
+            {
                 if (buffer.Matches(buffer2) && (m_engine.DeleteConstant(buffer)))
                 {
                     b = true;
                     break;
                 }
+            }
         }
     }
 

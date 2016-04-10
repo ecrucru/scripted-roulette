@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_break)
+case roulette_inst_break_id:
 {
     //Checks the parameters
     if (parser.HasParameters())
-		if (!parser.NoWarning)
-			LogWarning(wxString::Format(_("No argument is expected for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
+        if (!parser.NoWarning)
+            LogWarning(wxString::Format(_("No argument is expected for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
 
     //Leaves the sequence
-    break;
+    goto break_sequence;        //C++ BREAK is caught by the SWITCH before the FOR, then it can't be used
 }
 
 #endif

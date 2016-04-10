@@ -1,0 +1,170 @@
+"#version-min: 020"
+"====="
+" Scripted Roulette includes a pseudorandom number generator."
+" With some lines of script, it is possible to create a lottery."
+"====="
+
+.INIT
+    "=== Chooses the algorithm"
+    SET sys.algorithm mt
+    @RANDOMIZE
+    @TIME
+
+    "=== Sets the settings for the Euro Millions"
+    " https://en.wikipedia.org/wiki/EuroMillions"
+    SET user.min_num = 1
+    SET user.max_num = 50
+    SET user.min_star = 1
+    SET user.max_star = 11
+    SET user.numbers = 5
+    SET user.stars = 1
+
+    "=== Sets the profile of the player"
+    SET user.player_numbers = 5
+    SET user.player_stars = 2
+
+.SEQUENCE
+    "=== Verifies the settings"
+    ASSERT user.numbers >= 5 AND user.numbers <= 9 "Euro Millions"
+    ASSERT user.stars >= 1 AND user.stars <= 10 "Euro Millions"
+    ASSERT user.player_numbers >= user.numbers
+    ASSERT user.player_numbers <= user.max_num - user.min_num + 1
+    ASSERT user.player_stars >= user.stars
+    ASSERT user.player_stars <= user.max_star - user.min_star + 1
+    ASSERT user.min_num > 0 AND user.min_num < user.max_num
+    ASSERT user.min_star > 0 AND user.min_star < user.max_star
+
+    "=== Tests if the free generation is possible for the selected PNRG"
+    RANDOM user.max_num
+    EXIST sys.random
+    ASSERT sys.result
+
+.SEQUENCE
+    "=== Prepares the output (the zero is not playable)"
+    ALLOCATE user.result_num user.player_numbers
+    ALLOCATE user.result_star user.player_stars
+
+    "=== Draws the main numbers"
+    SET user.loop = user.player_numbers
+    LABEL numbers
+    RANDOM user.max_num - user.min_num
+    SET user.random = sys.random + user.min_num
+
+    "=== Checks the duplicate numbers"
+    SET user.check = user.player_numbers
+    LABEL check
+    IF user.result_num[user.check] = user.random
+        GOTO numbers
+    ENDIF
+    DEC user.check
+    IF user.check >= user.loop
+        GOTO check
+    ENDIF
+
+    "=== Next number"
+    SET user.result_num[user.loop] = user.random
+    DEC user.loop
+    IF user.loop > 0
+        GOTO numbers
+    ENDIF
+
+.SEQUENCE
+    "=== Draws the stars"
+    SET user.loop = user.player_stars
+    LABEL stars
+    RANDOM user.max_star - user.min_star
+    SET user.random = sys.random + user.min_star
+
+    "=== Checks the duplicate stars"
+    SET user.check = user.player_stars
+    LABEL check
+    IF user.result_star[user.check] = user.random
+        GOTO stars
+    ENDIF
+    DEC user.check
+    IF user.check >= user.loop
+        GOTO check
+    ENDIF
+
+    "=== Next number"
+    SET user.result_star[user.loop] = user.random
+    DEC user.loop
+    IF user.loop > 0
+        GOTO stars
+    ENDIF
+
+.SEQUENCE
+    "=== Sorts the numbers"
+    SET user.i = user.player_numbers - 1
+    LABEL loop_i
+
+    SET user.j = 0
+    LABEL loop_j
+
+    IF user.result_num[user.i+1] < user.result_num[user.j+1]
+        SET user.tmp = user.result_num[user.i+1]
+        SET user.result_num[user.i+1] = user.result_num[user.j+1]
+        SET user.result_num[user.j+1] = user.tmp
+    ENDIF
+
+    INC user.j
+    IF user.j < user.i
+        GOTO loop_j
+    ENDIF
+
+    DEC user.i
+    IF user.i > 0
+        GOTO loop_i
+    ENDIF
+
+.SEQUENCE
+    "=== Sorts the stars"
+    SET user.i = user.player_stars - 1
+    LABEL loop_i
+
+    SET user.j = 0
+    LABEL loop_j
+
+    IF user.result_star[user.i+1] < user.result_star[user.j+1]
+        SET user.tmp = user.result_star[user.i+1]
+        SET user.result_star[user.i+1] = user.result_star[user.j+1]
+        SET user.result_star[user.j+1] = user.tmp
+    ENDIF
+
+    INC user.j
+    IF user.j < user.i
+        GOTO loop_j
+    ENDIF
+
+    DEC user.i
+    IF user.i > 0
+        GOTO loop_i
+    ENDIF
+
+.SEQUENCE
+    WRITE 'Your are suggested to play these numbers :'
+
+.SEQUENCE
+    "=== Writes the generated numbers"
+    WRITE '- Numbers :'
+    SET user.loop = 1
+    LABEL numbers
+    APPEND space user.result_num[user.loop]
+    INC user.loop
+    IF user.loop <= user.player_numbers
+        GOTO numbers
+    ENDIF
+
+.SEQUENCE
+    "=== Writes the generated stars"
+    WRITE '- Stars :'
+    SET user.loop = 1
+    LABEL stars
+    APPEND space user.result_star[user.loop]
+    INC user.loop
+    IF user.loop <= user.player_stars
+        GOTO stars
+    ENDIF
+
+.SEQUENCE
+    @TIME

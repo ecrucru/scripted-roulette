@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_random)
+case roulette_inst_random_id:
 {
     //-- Reads the parameters assigned to the instruction
     b = false;
@@ -39,16 +39,15 @@ if (parser.Instruction == roulette_inst_random)
     {
         if (wxRouletteHelper::IsOnlineGenerator(m_table.GetPRNG()))
         {
-            if (!parser.NoWarning)
-                LogWarning(_("The online services won't generate free numbers. Switching to the normal mode."));
-            goto random_normal_mode;
+            LogError(_("The online services won't generate free numbers."));
+            m_engine.DeleteConstant(roulette_vars_random);
+            continue;
         }
         ulmin = 0;
         ulmax = m_engine.GetLastResult();
     }
     else
     {
-random_normal_mode:
         ulmin = wxRouletteHelper::GetMinNumberFromType(m_table.GetRouletteType());
         ulmax = wxRouletteHelper::GetMaxNumberFromType(m_table.GetRouletteType());
     }

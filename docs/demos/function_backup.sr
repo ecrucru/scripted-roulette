@@ -1,0 +1,17 @@
+"#version-min: 020"
+"====="
+" This script shows how you can memorize all the current"
+" variables and restore them later."
+"====="
+
+.SEQUENCE
+    "=== Let's define a variable"
+    SET user.var = 3.14159
+    BACKUP
+    SET user.var = 2.71828
+    ROLLBACK
+    WRITE f:user.var
+
+    "=== Once the backup is cleared, you can't restore it anymore"
+    CLEAR BACKUP
+    ROLLBACK

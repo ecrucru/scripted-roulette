@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,7 @@
  * \file frame.h
  * \brief User interface
  * \author ecrucru
- * \version 0.1
- * \date October 2015
+ * \since Version 0.1, October 2015
  *
  * This file contains the user interface.
  *
@@ -47,7 +46,6 @@
 #include "wx/statline.h"
 #include "wx/tglbtn.h"
 #include "wx/clipbrd.h"
-//_include "wx/mimetype.h"
 
 #include "wxEcMath/ec_defs.h"
 #include "wxEcMath/ec_plot.h"
@@ -69,54 +67,59 @@
  */
 class wxRouletteFrame : public wxFrame
 {
-	private:
+    private:
         //-- Events
         DECLARE_EVENT_TABLE()
-		enum
+        enum
         {
-            ID_MENU_NEW = wxID_HIGHEST + 1,
-			ID_MENU_OPEN,
-			ID_MENU_SAVE,
-            ID_MENU_SAVEAS,
-            ID_MENU_EXPORT,
+            MARGIN_LINE = 0,
+            MARGIN_BREAK,
+            MARGIN_FOLD
+        };
+        enum
+        {
+            ID_MENU_NEW    = wxID_NEW,
+            ID_MENU_OPEN   = wxID_OPEN,
+            ID_MENU_SAVE   = wxID_SAVE,
+            ID_MENU_SAVEAS = wxID_SAVEAS,
+            ID_MENU_RESET  = wxID_RESET,
+            ID_MENU_STOP   = wxID_STOP,
+            ID_MENU_QUIT   = wxID_EXIT,
+            ID_MENU_HELP   = wxID_HELP,
+            ID_MENU_ABOUT  = wxID_ABOUT,
 
-			ID_MENU_PRETTY,
-			ID_MENU_RESET,
-			ID_MENU_EXECUTE,
-            ID_MENU_STOP,
-
-			ID_MENU_QUIT,
-
-			ID_MENU_HELP,
-			ID_MENU_ABOUT,
+            ID_MENU_EXPORT = wxID_HIGHEST + 1,
+            ID_MENU_PRETTY,
+            ID_MENU_EXECUTE,
+            ID_MENU_INSTANCE,
 
             ID_BUTTON_TOGGLE_ALL,
             ID_BUTTON_TOGGLE,
 
             ID_POPUP_COPY
-		};
+        };
 
         //-- UI
-		wxNotebook      *m_notebook;
-		wxPanel         *m_tab_script, *m_tab_memory, *m_tab_console, *m_tab_money;
+        wxNotebook      *m_notebook;
+        wxPanel         *m_tab_script, *m_tab_memory, *m_tab_console, *m_tab_money;
     #ifdef wxUSE_STC
         wxStyledTextCtrl *m_script_view;
     #else
-		wxTextCtrl      *m_script_view;
+        wxTextCtrl      *m_script_view;
     #endif
         wxListBox       *m_listbox_variables;
         wxGrid          *m_grid;
         wxToggleButton  *m_toggle_all, *m_toggle_info, *m_toggle_warning, *m_toggle_error,
                         *m_toggle_debug, *m_toggle_system;
-		wxEcPlot        *m_plot;
+        wxEcPlot        *m_plot;
         wxGauge         *m_gauge;
 
         //-- Toolbar
         wxToolBar       *m_toolbar;
 
         //-- Menus
-		wxMenuBar       *m_menubar;
-		wxMenu          *m_menu_file, *m_menu_help;
+        wxMenuBar       *m_menubar;
+        wxMenu          *m_menu_file, *m_menu_help;
         wxMenu          *m_popup_grid;
 
         //-- Statusbar
@@ -132,10 +135,13 @@ class wxRouletteFrame : public wxFrame
         bool DoNew();                                       /**< Method associated to "New". */
         bool DoSave();                                      /**< Method associated to "Save". */
         bool DoSaveAs();                                    /**< Method associated to "Save as...". */
-        void DoExport();                                    /**< Method associated to "Export". */
+        bool DoExport();                                    /**< Method associated to "Export". */
+        bool DoExportHTML(wxString& pFileName);             /**< Method to export to HTML. */
+        wxString DoGetPrettyScript();                       /**< Method to format the script with the right layout. */
         void DoPrettyScript();                              /**< Method associated to "Pretty script". */
         void DoReset();                                     /**< Method associated to "Reset". */
         bool DoFitAxis(wxEcAxis* pAxis);                    /**< Method to fit the layout of an axis. */
+        void DoNewInstance();                               /**< Method associated to "New instance". */
         void DoQuit();                                      /**< Method associated to "Quit". */
         bool DoOpenPDFFile(wxString pFullName);             /**< Method to open a found PDF file. */
         bool DoFindPdfHelp(wxString pFileName);             /**< Method to search for the help file. */
@@ -147,15 +153,17 @@ class wxRouletteFrame : public wxFrame
         bool m_editor_status;                               /**< Status of the editor. */
         bool DoEditorIsModified();                          /**< Method to check is the editor is modified. */
         void DoEditorSetModified(bool pStatus);             /**< Method to define the status of the editor. */
-        wxString DoEditorGetText();                         /**< Method to get the content of the script. */
+        wxString DoEditorGetText(bool pWithDebug);          /**< Method to get the content of the script. */
         void DoEditorSetText(wxString pText);               /**< Method to set the content of the script. */
         void DoEditorClear();                               /**< Method to clear the content of the script. */
+        bool DoEditorHasLoop();                             /**< Method to detect the presence of loops in the script */
+        bool DoEditorHasBreakPoint();                       /**< Method to detect the presence of online break-points */
 
-	public:
+    public:
         /** Constructor */
-		wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaultSample);
+        wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaultSample);
         /** Destructor */
-		~wxRouletteFrame();
+        ~wxRouletteFrame();
 
         /**
          * Updates the title of the main frame.
@@ -205,17 +213,14 @@ class wxRouletteFrame : public wxFrame
          */
         void Execute();
         /**
-         * Tells if the current script contains instructions able to cause infinite loops.
-         * \return \a true if the script contains possible loops, else \a false.
-         */
-        bool HasLoop();
-        /**
          * Shows the informations about the software.
          */
         static void About();
 
         /** Event handling for a menu item. */
         void OnMenuClick(wxCommandEvent& event);
+        /** Event handling of the text of a menu item. */
+        void OnMenuHighlight(wxMenuEvent& event);
         /** Event handling in a wxGrid. */
         void OnGridCellRightClick(wxGridEvent& event);
         /** Event handling for the activation (focus) of the main window. */

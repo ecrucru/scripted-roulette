@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -26,23 +26,24 @@
 // Icons
 
 #ifndef __WXMSW__
-#include "res/mainicon.xpm"
+    #include "res/mainicon.xpm"
 #endif
 
-#include "res/new.xpm"
-#include "res/open.xpm"
-#include "res/save.xpm"
-#include "res/export.xpm"
-#include "res/pretty.xpm"
-#include "res/reset.xpm"
-#include "res/execute.xpm"
-#include "res/stop.xpm"
+#include "res/v02/new.xpm"
+#include "res/v02/open.xpm"
+#include "res/v02/save.xpm"
+#include "res/v02/export.xpm"
+#include "res/v02/pretty.xpm"
+#include "res/v02/reset.xpm"
+#include "res/v02/execute.xpm"
+#include "res/v02/stop.xpm"
 
 
 //------------------------------------------
 
     BEGIN_EVENT_TABLE(wxRouletteFrame, wxFrame)
         EVT_MENU                 (wxID_ANY, wxRouletteFrame::OnMenuClick)
+        EVT_MENU_HIGHLIGHT       (wxID_ANY, wxRouletteFrame::OnMenuHighlight)
         EVT_GRID_CELL_RIGHT_CLICK(          wxRouletteFrame::OnGridCellRightClick)
         EVT_ACTIVATE             (          wxRouletteFrame::OnActivate)
         EVT_CLOSE                (          wxRouletteFrame::OnClose)
@@ -73,8 +74,13 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
                     m_script_view = new wxStyledTextCtrl(m_tab_script, wxID_ANY);
 
                     //- Display of line numbers
-                    m_script_view->SetMarginMask(0, wxSTC_STYLE_LINENUMBER);
-                    m_script_view->SetMarginWidth(0, 32);
+                    m_script_view->SetMarginMask(MARGIN_LINE, wxSTC_STYLE_LINENUMBER);
+                    m_script_view->SetMarginWidth(MARGIN_LINE, 32);
+
+                    //- Display of break points
+                    m_script_view->SetMarginType(MARGIN_BREAK, wxSTC_MARGIN_SYMBOL);
+                    m_script_view->SetMarginWidth(MARGIN_BREAK, 16);
+                    m_script_view->SetMarginSensitive(MARGIN_BREAK, true);
 
                     //- Activates folding
                     //Options
@@ -90,10 +96,10 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
                     m_script_view->SetFoldFlags(16);                    //To have a line at the bottom of a folder
                 #endif
                     //Margin
-                    m_script_view->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
-                    m_script_view->SetMarginMask(1, wxSTC_MASK_FOLDERS);
-                    m_script_view->SetMarginWidth(1, 20);
-                    m_script_view->SetMarginSensitive(1, true); //see also wxRouletteFrame::OnMarginClick
+                    m_script_view->SetMarginType(MARGIN_FOLD, wxSTC_MARGIN_SYMBOL);
+                    m_script_view->SetMarginMask(MARGIN_FOLD, wxSTC_MASK_FOLDERS);
+                    m_script_view->SetMarginWidth(MARGIN_FOLD, 20);
+                    m_script_view->SetMarginSensitive(MARGIN_FOLD, true); //see also wxRouletteFrame::OnMarginClick
                     //Icons
                     m_script_view->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_PLUS);
                     m_script_view->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_EMPTY);
@@ -222,13 +228,14 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
 
     //-- Toolbar
     m_toolbar = this->CreateToolBar(wxTB_HORIZONTAL, wxID_ANY);
+    m_toolbar->SetToolBitmapSize(wxSize(26, 26));   //Icon set V02
 #ifdef __WXMSW__
     m_toolbar->AddSeparator();
 #endif
     m_toolbar->AddTool(ID_MENU_NEW, wxEmptyString, wxBitmap(icon_new_xpm), _("New"));
     m_toolbar->AddTool(ID_MENU_OPEN, wxEmptyString, wxBitmap(icon_open_xpm), _("Open"));
     m_toolbar->AddTool(ID_MENU_SAVE, wxEmptyString, wxBitmap(icon_save_xpm), _("Save"));
-    m_toolbar->AddTool(ID_MENU_EXPORT, wxEmptyString, wxBitmap(icon_export_xpm), _("Export the log"));
+    m_toolbar->AddTool(ID_MENU_EXPORT, wxEmptyString, wxBitmap(icon_export_xpm), _("Export"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(ID_MENU_PRETTY, wxEmptyString, wxBitmap(icon_pretty_xpm), _("Pretty script"));
     m_toolbar->AddTool(ID_MENU_RESET, wxEmptyString, wxBitmap(icon_reset_xpm), _("Reset"));
@@ -244,13 +251,14 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_OPEN, _("&Open\tCtrl+O")));
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_SAVE, _("&Save\tCtrl+S")));
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_SAVEAS, _("S&ave as...")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXPORT, _("E&xport the log")));
+		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXPORT, _("E&xport")));
 		m_menu_file->AppendSeparator();
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_PRETTY, _("&Pretty script")));
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_RESET, _("&Reset")));
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXECUTE, _("&Execute\tF5")));
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_STOP, _("S&top\tF6")));
 		m_menu_file->AppendSeparator();
+		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_INSTANCE, _("Ne&w instance")));
 		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_QUIT, _("&Quit")));
 	m_menubar->Append(m_menu_file, _("&File"));
 
@@ -351,17 +359,17 @@ bool wxRouletteFrame::UpdateFolding()
     for (i=0 ; i<m_script_view->GetLineCount() ; i++)
     {
         //- Reads the line
-        if (!parser.Parse(m_script_view->GetLine(i)))
+        if (!parser.Parse(m_script_view->GetLine(i), true))
             parser.Reset();
 
         //- Resets the level for new sections
-        if ((parser.Instruction == roulette_sect_init) || (parser.Instruction == roulette_sect_sequence))
+        if ((parser.InstructionID == roulette_sect_init_id) || (parser.InstructionID == roulette_sect_sequence_id))
             level = wxSTC_FOLDLEVELBASE;
 
         //- Sets the fold mask
-        if ((parser.Instruction == roulette_sect_init) ||
-            (parser.Instruction == roulette_sect_sequence) ||
-            (parser.Instruction == roulette_inst_if)
+        if ((parser.InstructionID == roulette_sect_init_id) ||
+            (parser.InstructionID == roulette_sect_sequence_id) ||
+            (parser.InstructionID == roulette_inst_if_id)
         )
             level_mask = wxSTC_FOLDLEVELHEADERFLAG;
         else
@@ -371,13 +379,13 @@ bool wxRouletteFrame::UpdateFolding()
         m_script_view->SetFoldLevel(i, level|level_mask);
 
         //- Changes the fold level for the next instructions
-        if ((parser.Instruction == roulette_sect_init) || (parser.Instruction == roulette_sect_sequence))
+        if ((parser.InstructionID == roulette_sect_init_id) || (parser.InstructionID == roulette_sect_sequence_id))
             level++;
         else
-            if (parser.Instruction == roulette_inst_if)
+            if (parser.InstructionID == roulette_inst_if_id)
                 level = (level < wxSTC_FOLDLEVELNUMBERMASK ? level+1 : level);
             else
-                if (parser.Instruction == roulette_inst_endif)
+                if (parser.InstructionID == roulette_inst_endif_id)
                     level = (level > wxSTC_FOLDLEVELBASE ? level-1 : level);
     }
     return true;
@@ -469,7 +477,7 @@ void wxRouletteFrame::UpdateLog()
             m_grid->SetCellBackgroundColour(i-skipped, 0, *col);
             if (msg_type == wxRouletteMessageType::SYSTEM_T)
                 m_grid->SetCellBackgroundColour(i-skipped, 1, *col);
-            m_grid->SetCellValue(i-skipped, 1, buffer.SubString(1, buffer.Len()));
+            m_grid->SetCellValue(i-skipped, 1, buffer.Mid(1, buffer.Len()));
         }
 
         //- Remove the skipped lines
@@ -663,7 +671,8 @@ bool wxRouletteFrame::OpenFile(wxString pFileName)
         DoReset();
         DoEditorSetModified(false);
         m_current_file_mod_time = wxFileModificationTime(m_current_file);
-        wxRouletteHelper::SetWorkingDirectory(wxFileName(m_current_file).GetPathWithSep());
+        buffer = wxFileName(m_current_file).GetPathWithSep();
+        wxRouletteHelper::SetWorkingDirectory(buffer);
         m_script_view->SetFocus();
     }
     UpdateTitle();
@@ -690,7 +699,7 @@ void wxRouletteFrame::Execute()
     }
 
     //-- Checks if saved (in case of infinite loops, the work is lost)
-    if (DoEditorIsModified() && HasLoop())
+    if (DoEditorIsModified() && DoEditorHasLoop())
     {
         switch (wxMessageDialog(NULL, _("Your scripted roulette uses loops.\n\nIn order to not lose your script, do you want to save it before it is executed ?"), _("Confirmation"), wxYES|wxNO|wxCANCEL|wxICON_QUESTION).ShowModal())
         {
@@ -706,7 +715,7 @@ void wxRouletteFrame::Execute()
     //-- Executes
     DoReset();
     UpdateTitle(true);
-    m_roulette.StartFromInput(DoEditorGetText(), true);
+    m_roulette.StartFromInput(DoEditorGetText(true), true);
     UpdateTitle();
 
     //-- Leaves the application if requested
@@ -764,31 +773,6 @@ void wxRouletteFrame::Execute()
     m_plot->Refresh();
 }
 
-bool wxRouletteFrame::HasLoop()
-{
-    wxRoulette script_container;
-    wxArrayString *script;
-    size_t i;
-    wxString buffer;
-
-    //-- Loads the script
-    if (!script_container.LoadFromInput(DoEditorGetText()))
-        return false;
-
-    //-- Gets the loaded script
-    script = script_container.GetScript();
-    wxASSERT(script != NULL);
-
-    //-- Looks for the instructions able to cause loops
-    for (i=0 ; i<script->GetCount() ; i++)
-    {
-        buffer = wxRouletteHelper::GetInstructionName(script->Item(i));
-        if ((buffer == roulette_inst_goto) || (buffer == roulette_inst_restart))
-            return true;
-    }
-    return false;
-}
-
 void wxRouletteFrame::About()
 {
     wxAboutDialogInfo info;
@@ -798,7 +782,11 @@ void wxRouletteFrame::About()
     info.SetIcon(wxIcon(icon_mainicon_xpm));
 #endif
     info.SetName(roulette_about_name);
+#if roulette_compile_beta == 1
+    info.SetVersion(wxString::Format(wxT("%s-beta"), roulette_about_version));
+#else
     info.SetVersion(roulette_about_version);
+#endif
     info.SetWebSite(roulette_about_website);
     info.SetCopyright(roulette_about_copyright);
     info.SetDescription(roulette_about_desc);
@@ -814,6 +802,7 @@ void wxRouletteFrame::About()
 #endif
     info.AddDeveloper(wxT("Parts of 'mt19937ar.c' (specific license, refer to the documentation) at http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/CODES/mt19937ar.c"));
     info.AddDeveloper(wxT("Parts of 'tt800.c' (specific license, refer to the documentation) at http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/VERSIONS/C-LANG/tt800.c"));
+    info.AddDeveloper(wxT("Nuvola icon set by David Vignoni (LGPL v2.1) at http://www.icon-king.com/projects/nuvola/"));
     info.SetLicense(/* GPL v2 */ wxT("This program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but\nWITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nSee the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston,\nMA 02110-1301 USA."));
     wxAboutBox(info);
 }
@@ -823,6 +812,8 @@ void wxRouletteFrame::About()
 
 void wxRouletteFrame::OnMenuClick(wxCommandEvent& event)
 {
+    bool update_memory;
+
     //-- Checks
     if (m_roulette.IsRunning())
     {
@@ -841,14 +832,17 @@ void wxRouletteFrame::OnMenuClick(wxCommandEvent& event)
     }
 
     //-- Normal processing
+    update_memory = false;
     switch (event.GetId())
     {
         //- Menu File
         case ID_MENU_NEW:
             DoNew();
+            update_memory = true;
             break;
         case ID_MENU_OPEN:
             OpenFile();
+            update_memory = true;
             break;
         case ID_MENU_SAVE:
             DoSave();
@@ -864,9 +858,14 @@ void wxRouletteFrame::OnMenuClick(wxCommandEvent& event)
             break;
         case ID_MENU_RESET:
             DoReset();
+            update_memory = true;
             break;
         case ID_MENU_EXECUTE:
             Execute();
+            update_memory = true;
+            break;
+        case ID_MENU_INSTANCE:
+            DoNewInstance();
             break;
         case ID_MENU_QUIT:
             DoQuit();
@@ -895,7 +894,13 @@ void wxRouletteFrame::OnMenuClick(wxCommandEvent& event)
             event.Skip();
             break;
     }
-    UpdateMemory();
+    if (update_memory)
+        UpdateMemory();         //This refresh is called when really needed
+}
+
+void wxRouletteFrame::OnMenuHighlight(wxMenuEvent& event)
+{
+    //Nothing to cancel the untranslated messages in the status bar
 }
 
 void wxRouletteFrame::OnGridCellRightClick(wxGridEvent& event)
@@ -960,6 +965,8 @@ void wxRouletteFrame::OnActivate(wxActivateEvent& event)
                     if (!OpenFile(m_current_file))
                         wxLogError(_("The current file cannot be reloaded."));
                 }
+                else
+                    DoEditorSetModified(true);
                 UpdateTitle();
             }
         }
@@ -1017,21 +1024,42 @@ veto:
 
     void wxRouletteFrame::OnMarginClick(wxStyledTextEvent& event)
     {
-        //-- Verifies the value of the folding levels (now visual)
-        /*  wxString buffer;
-            for (int i=0 ; i<m_script_view->GetLineCount() ; i++)
-                buffer.Append(wxString::Format(wxT("%d, "), m_script_view->GetFoldLevel(i)&wxSTC_FOLDLEVELNUMBERMASK));
-            wxLogMessage(buffer);
-        */
+        int line;
+        wxString statement;
+        wxRouletteInstruction parser;
 
-        //-- Processes the event
-        if (event.GetMargin() == 1)
+        //-- Processes the margin
+        line = m_script_view->LineFromPosition(event.GetPosition());
+        switch (event.GetMargin())
         {
-            m_script_view->ToggleFold(m_script_view->LineFromPosition(event.GetPosition()));
-            /** \todo The folding is strange sometimes */
+            case MARGIN_BREAK:
+                if ((m_script_view->MarkerGet(line) & (1 << MARGIN_BREAK)) > 0)
+                    m_script_view->MarkerDelete(line, MARGIN_BREAK);
+                else
+                {
+                    statement = m_script_view->GetLine(line);
+                    if (parser.Parse(statement, false))
+                        if (!parser.Instruction.IsEmpty() && !parser.Instruction.StartsWith(wxT(".")))  //Irrelevant to break on some lines
+                            m_script_view->MarkerAdd(line, MARGIN_BREAK);
+                }
+                break;
+
+            case MARGIN_FOLD:
+                //- Verifies the value of the folding levels (now visual)
+                /*  wxString buffer;
+                    for (int i=0 ; i<m_script_view->GetLineCount() ; i++)
+                        buffer.Append(wxString::Format(wxT("%d, "), m_script_view->GetFoldLevel(i)&wxSTC_FOLDLEVELNUMBERMASK));
+                    wxLogMessage(buffer);
+                */
+
+                //- Toggle the level
+                m_script_view->ToggleFold(line);        /** \todo The folding is strange sometimes */
+                break;
+
+            default:
+                event.Skip();
+                break;
         }
-        else
-            event.Skip();
     }
 #else
     void wxRouletteFrame::OnText(wxCommandEvent& event)
@@ -1084,18 +1112,25 @@ bool wxRouletteFrame::DoNew()
 
 bool wxRouletteFrame::DoSave()
 {
-    bool result = false;
+    bool result;
     wxString buffer;
 
     //-- Saves a file
+    result = false;
     if (m_current_file.IsEmpty())
     {
         wxFileDialog *m_filedlg = new wxFileDialog(this, _("Save a scripted roulette"), wxEmptyString, wxEmptyString, roulette_file_formats, wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
         if (m_filedlg->ShowModal() == wxID_OK)
         {
-            if (m_script_view->SaveFile(m_filedlg->GetPath()))
+            //- Correction of the extension of the file
+            buffer = m_filedlg->GetPath();
+            if (wxRouletteHelper::GetFileExtension(m_current_file).IsEmpty())   //Fix wxGTK
+                m_current_file.Append(roulette_file_ext_dot);
+
+            //- Save the file
+            if (m_script_view->SaveFile(buffer))
             {
-                m_current_file = m_filedlg->GetPath();
+                m_current_file = buffer;
                 wxRouletteHelper::SetWorkingDirectory(m_current_file);
                 result = true;
             }
@@ -1129,33 +1164,245 @@ bool wxRouletteFrame::DoSaveAs()
         return true;
 }
 
-void wxRouletteFrame::DoExport()
+bool wxRouletteFrame::DoExport()
 {
-    wxArrayString *log;
+    wxFileDialog *dialog;
+    wxArrayString *log, script;
+    wxString filename, ext, item, buffer;
     bool result;
 
-    //-- Checks
-    log = m_roulette.GetLog();
-    if ((log != NULL) && (log->GetCount() == 0))
+    //-- Picks a file
+    dialog = new wxFileDialog(this, _("Export the content"), wxEmptyString, wxEmptyString, _("Log file to CSV (*.csv)|*.csv|Script to HTML (*.html)|*.html"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+    if (dialog->ShowModal() == wxID_OK)
+        filename = dialog->GetPath();
+    else
+        filename.Clear();
+    delete dialog;
+
+    //-- Process the exports depending on the selected file format
+    result = true;
+    if (!filename.IsEmpty())
     {
-        wxLogError(_("There is nothing to export."));
-        return;
+        //- Gets the extension
+        ext = wxRouletteHelper::GetFileExtension(filename);
+
+        //- Log file
+        if (ext == wxT("csv"))
+        {
+            log = m_roulette.GetLog();
+            if ((log != NULL) && (log->GetCount() > 0))
+                result = m_roulette.SaveLogHistory(filename);
+            else
+                result = false;
+        }
+
+        //- HTML code
+        else if ((ext == wxT("htm")) || (ext == wxT("html")))
+            result = DoExportHTML(filename);
+
+        //- Incorrect format
+        else
+            result = false;
     }
 
-    //-- Saves a file
-    wxFileDialog *m_filedlg = new wxFileDialog(this, _("Save the log"), wxEmptyString, wxEmptyString, _("CSV file (*.csv)|*.csv"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
-    if (m_filedlg->ShowModal() == wxID_OK)
-        result = m_roulette.SaveLogHistory(m_filedlg->GetPath());
-    else
-        result = true;
-    delete m_filedlg;
-
-    //-- Final
+    //-- Final result
     if (!result)
-        wxLogError(_("The log has not been saved."));
+        wxLogError(_("Nothing has been exported."));
+    return result;
 }
 
-void wxRouletteFrame::DoPrettyScript()
+bool wxRouletteFrame::DoExportHTML(wxString& pFileName)
+{
+    wxArrayString script, html;
+    wxString item, buffer;
+    wxChar car;
+    enum { normal, numeric, string, comment, keyword } style_cur, style_new;
+    size_t i, j, counter;
+    bool forcenormal, opened;
+
+    //-- Exports
+    html.Clear();
+    buffer = DoGetPrettyScript();
+    if (wxRouletteHelper::StringToScript(buffer, &script, false))
+    {
+        //- Header
+        html.Add(wxT("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">"));
+        html.Add(wxT("<!--"));
+        html.Add(wxString::Format(wxT("Exported with %s %s"), roulette_about_name, roulette_about_version));
+        html.Add(roulette_about_website);
+        html.Add(wxT("-->"));
+        html.Add(wxT("<html xmlns=\"http://www.w3.org/1999/xhtml\">"));
+        html.Add(wxT("<head>"));
+    #ifdef wxUSE_UNICODE
+        html.Add(wxT("    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"));
+    #else
+        html.Add(wxT("    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-15\" />"));
+    #endif
+        if (!m_current_file.IsEmpty())
+            html.Add(wxString::Format(wxT("    <title>%s</title>"), wxRouletteHelper::HtmlSpecialChars(wxFileName(m_current_file).GetFullName()).uniCStr()));
+        else
+            html.Add(wxString::Format(wxT("    <title>Exported by %s %s</title>"), roulette_about_name, roulette_about_version));
+        html.Add(wxT("    <style type=\"text/css\">"));
+        html.Add(wxT("        BODY        { font-family:\"Courier New\", Monospace, Fixed; font-size:10pt; }"));
+        html.Add(wxT("        P           { white-space:pre-wrap; }"));
+        html.Add(wxT("        .SR_Numeric { color:blue; }"));
+        html.Add(wxT("        .SR_String  { color:red; }"));
+        html.Add(wxT("        .SR_Comment { color:#008000; font-style:italic; }"));
+        html.Add(wxT("        .SR_Keyword { font-weight:bold; color:#800080; }"));
+        html.Add(wxT("    </style>"));
+        html.Add(wxT("</head>"));
+        html.Add(wxT("<body>"));
+
+        //- Body
+        counter = 0;
+        for (i=0 ; i<script.Count() ; i++)
+        {
+            item = script.Item(i);
+            buffer.Empty();
+            style_cur = normal;
+            opened = false;
+            forcenormal = false;
+
+            for (j=0 ; j<item.Len() ; j++)
+            {
+                car = item.GetChar(j);
+                style_new = style_cur;
+
+                //Keyword
+                if (    (style_cur != string) &&
+                        (style_cur != comment) &&
+                        (car != roulette_char_space) &&
+                        (car != roulette_char_nbspace) &&
+                        (   ((car >= wxChar('A')) && (car <= wxChar('Z')))
+                         || ((j == 0) && (car == wxChar('.')))
+                        )
+                  )
+                {
+                    style_new = keyword;
+                    forcenormal = true;
+                }
+
+                //String
+                else if ((style_cur != comment) && (car == wxChar('\'')))
+                {
+                    if (style_cur == string)
+                        style_new = normal;
+                    else
+                        style_new = string;
+                }
+
+                //Comment
+                else if ((style_cur != string) && (car == wxChar('"')))
+                {
+                    if (style_cur == comment)
+                        style_new = normal;
+                    else
+                        style_new = comment;
+                }
+
+                //Numeric
+                else if (   (style_cur != keyword) &&
+                            (style_cur != string ) &&
+                            (style_cur != comment) &&
+                            !forcenormal &&
+                            (
+                                (   (car >= wxChar('0'))
+                                 && (car <= wxChar('9'))
+                                )
+                                || (car == wxChar('.'))
+                            )
+                    )
+                {
+                    style_new = numeric;
+                }
+
+                //Normal
+                else if ((style_cur != string) && (style_cur != comment))
+                {
+                    style_new = normal;
+                    if ((car == roulette_char_space) ||
+                        (car == roulette_char_nbspace) ||
+                        (wxString(wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_")).Find(car) == wxNOT_FOUND)
+                       )
+                        forcenormal = false;
+                    else
+                        forcenormal = true;
+                }
+
+                //Closes the current style
+                if ( (style_new != style_cur) &&
+                     (style_cur != string)    &&
+                     (style_cur != comment)   &&
+                     opened
+                   )
+                {
+                    buffer.Append(wxT("</span>"));
+                    opened = false;
+                }
+
+                //Opens the new style
+                if ((style_new != style_cur) && !opened)
+                {
+                    switch (style_new)
+                    {
+                        case numeric: buffer.Append(wxT("<span class=\"SR_Numeric\">")); opened = true; break;
+                        case string : buffer.Append(wxT("<span class=\"SR_String\">" )); opened = true; break;
+                        case comment: buffer.Append(wxT("<span class=\"SR_Comment\">")); opened = true; break;
+                        case keyword: buffer.Append(wxT("<span class=\"SR_Keyword\">")); opened = true; break;
+                        default     : /* Nothing */ ;                                                   break;
+                    }
+                }
+
+                //All
+                if (car != roulette_char_zero)
+                {
+                    if (car == wxT('&'))
+                        buffer.Append(wxT("&amp;"));
+                    else if (car == wxT('<'))
+                        buffer.Append(wxT("&lt;"));
+                    else if (car == wxT('>'))
+                        buffer.Append(wxT("&gt;"));
+                    else
+                        buffer.Append(car);
+                }
+
+                //Closes the current style
+                if (     opened                  &&
+                        (style_new != style_cur) &&
+                     (  (style_cur == string)
+                     || (style_cur == comment)
+                     )
+                   )
+                {
+                    buffer.Append(wxT("</span>"));
+                    opened = false;
+                }
+
+                //Stores the new style
+                style_cur = style_new;
+            }
+
+            //Closes the last opened tag
+            if (opened)
+                buffer.Append(wxT("</span>"));
+
+            //Stores the converted line
+            if (counter == 0)
+                buffer = buffer.Prepend(wxT("<p>"));
+            html.Add(buffer);
+            counter++;
+        }
+
+        //- Footer
+        html.Add(wxT("</p></body>"));
+        html.Add(wxT("</html>"));
+    }
+
+    //-- Saves
+    return (html.Count() == 0 ? false : wxRouletteHelper::SaveArrayStringToFile(pFileName, &html));
+}
+
+wxString wxRouletteFrame::DoGetPrettyScript()
 {
     wxArrayString current_script, new_script;
     wxString buffer, str, instruction, line, comment;
@@ -1165,12 +1412,9 @@ void wxRouletteFrame::DoPrettyScript()
     bool inc_depth, last_line_blank;
 
     //-- Loads the script in an array
-    buffer = DoEditorGetText();
-    buffer.Replace(wxT("\r\n"), wxT("\n"), true);
-    buffer.Replace(wxT("\r"), wxEmptyString, true);
-    while (buffer.Replace(wxT("\n\n\n"), wxT("\n\n"), true) > 0);       //To clear some extra lines in advance
-    if (!wxRouletteHelper::StringToScript(buffer, &current_script))
-        return;
+    buffer = DoEditorGetText(false);
+    if (!wxRouletteHelper::StringToScript(buffer, &current_script, false))
+        return wxEmptyString;
     new_script.Clear();
 
     //-- Processes the pretty printing
@@ -1201,11 +1445,11 @@ void wxRouletteFrame::DoPrettyScript()
             depth = 0;
             inc_depth = true;
         }
-        if ((instruction == roulette_inst_if) || (instruction == roulette_inst_assert))
+        if ((instruction == roulette_inst_if) || (instruction == roulette_inst_assert) || (instruction == roulette_inst_check))
         {
             if (instruction == roulette_inst_if)
                 inc_depth = true;
-            if (parser.Parse(line))     //To put the logical operators in upper case
+            if (parser.Parse(line, false))      //To put the logical operators in upper case
             {
                 parser.ChangeParameter(wxT("not"),  wxT("NOT"));
                 parser.ChangeParameter(wxT("and"),  wxT("AND"));
@@ -1229,7 +1473,7 @@ void wxRouletteFrame::DoPrettyScript()
         }
         if (instruction == roulette_inst_plot)
         {
-            if (parser.Parse(line))     //To put the arbitrary arguments in upper case
+            if (parser.Parse(line, false))      //To put the arbitrary arguments in upper case
             {
                 parser.ChangeParameter(wxT("on"),   wxT("ON"));
                 parser.ChangeParameter(wxT("off"),  wxT("OFF"));
@@ -1238,7 +1482,7 @@ void wxRouletteFrame::DoPrettyScript()
         }
         if (instruction == roulette_inst_restart)
         {
-            if (parser.Parse(line))     //To put the arbitrary arguments in upper case
+            if (parser.Parse(line, false))      //To put the arbitrary arguments in upper case
             {
                 parser.ChangeParameter(wxT("sequence"), wxT("SEQUENCE"));
                 line = wxString::Format(wxT("%s %s"), instruction.uniCStr(), parser.Command.uniCStr());
@@ -1259,11 +1503,13 @@ void wxRouletteFrame::DoPrettyScript()
             buffer.Append(instruction.Upper());
 
             //Parameters
-            if ((instruction == roulette_inst_show) || (instruction == roulette_inst_save) || (instruction == roulette_inst_clear))
-                buffer.Append(line.SubString(instruction.Len(), line.Len()).Upper());
+            if ((instruction == roulette_inst_show ) || (instruction == roulette_inst_save ) ||
+                (instruction == roulette_inst_clear) || (instruction == roulette_inst_debug)
+               )
+                buffer.Append(line.Mid(instruction.Len(), line.Len()).Upper());
             else
             {
-                str = line.SubString(instruction.Len(), line.Len());
+                str = line.Mid(instruction.Len(), line.Len());
                 if (!str.IsEmpty())
                 {
                     if (!str.StartsWith(wxT(" ")))          //To manage: WRITE'Missing space'
@@ -1305,10 +1551,26 @@ void wxRouletteFrame::DoPrettyScript()
     #endif
     }
 
-    //-- Updates the view
-    DoEditorSetText(buffer);
-    UpdateTitle();
-    buffer.Clear();
+    //-- Result
+    return buffer;
+}
+
+void wxRouletteFrame::DoPrettyScript()
+{
+    wxString buffer;
+
+    //-- Warns that the user will lose the ohline break-point after the operation
+    if (DoEditorHasBreakPoint())
+        if (wxMessageDialog(this, _("You will lose the current online break-points during the operation. Continue ?"), _("Confirmation"), wxICON_QUESTION|wxYES|wxNO).ShowModal() == wxID_NO)
+            return;
+
+    //-- Retrieves the formatted text
+    buffer = DoGetPrettyScript();
+    if (!buffer.IsEmpty())
+    {
+        DoEditorSetText(buffer);
+        UpdateTitle();
+    }
 }
 
 void wxRouletteFrame::DoReset()
@@ -1347,6 +1609,11 @@ bool wxRouletteFrame::DoFitAxis(wxEcAxis* pAxis)
     pAxis->MinValue = -(double)base;
     pAxis->StepValue = base;
     return true;
+}
+
+void wxRouletteFrame::DoNewInstance()
+{
+    wxExecute(wxRouletteHelper::GetApplicationFile()); //No command-line
 }
 
 void wxRouletteFrame::DoQuit()
@@ -1495,34 +1762,6 @@ bool wxRouletteFrame::DoCopyGrid()
         return false;
 }
 
-wxString wxRouletteFrame::DoEditorGetText()
-{
-#ifdef wxUSE_STC
-    return m_script_view->GetText();
-#else
-    return m_script_view->GetValue();
-#endif
-}
-
-void wxRouletteFrame::DoEditorSetText(wxString pText)
-{
-#ifdef wxUSE_STC
-    m_script_view->SetText(pText);
-#else
-    m_script_view->SetValue(pText);
-#endif
-    DoEditorSetModified(true);
-}
-
-void wxRouletteFrame::DoEditorClear()
-{
-#ifdef wxUSE_STC
-    m_script_view->ClearAll();
-#else
-    m_script_view->Clear();
-#endif
-}
-
 bool wxRouletteFrame::DoEditorIsModified()
 {
 #ifndef wxUSE_STC
@@ -1548,6 +1787,101 @@ void wxRouletteFrame::DoEditorSetModified(bool pStatus)
     #else
         m_editor_status = pStatus;
     #endif
+#endif
+}
+
+wxString wxRouletteFrame::DoEditorGetText(bool pWithDebug)
+{
+#ifdef wxUSE_STC
+    wxString buffer;
+    wxArrayString code;
+    size_t i;
+
+    //-- Reads the script and put it into an array
+    if (!pWithDebug)
+        return m_script_view->GetText();
+    else
+    {
+        buffer = m_script_view->GetText();
+        if (!wxRouletteHelper::StringToScript(buffer, &code, true))
+            return wxEmptyString;
+        else
+        {
+            //- Adds the break points for the debugger
+            i = code.Count();
+            do {
+                i--;
+                if ((m_script_view->MarkerGet(i) & (1 << MARGIN_BREAK)) > 0)
+                    code.Insert(wxT("@debug"), i);
+            } while (i > 0);
+
+            //- Result
+            return wxRouletteHelper::ScriptToString(code);
+        }
+    }
+#else
+    return m_script_view->GetValue();
+#endif
+}
+
+void wxRouletteFrame::DoEditorSetText(wxString pText)
+{
+#ifdef wxUSE_STC
+    m_script_view->SetText(pText);
+#else
+    m_script_view->SetValue(pText);
+#endif
+    DoEditorSetModified(true);
+}
+
+void wxRouletteFrame::DoEditorClear()
+{
+#ifdef wxUSE_STC
+    m_script_view->ClearAll();
+#else
+    m_script_view->Clear();
+#endif
+}
+
+bool wxRouletteFrame::DoEditorHasLoop()
+{
+    wxRoulette script_container;
+    wxArrayString *script;
+    size_t i;
+    wxString buffer;
+
+    //-- Loads the script
+    if (!script_container.LoadFromInput(DoEditorGetText(false)))
+        return false;
+
+    //-- Gets the loaded script
+    script = script_container.GetScript();
+    wxASSERT(script != NULL);
+
+    //-- Looks for the instructions able to cause loops
+    for (i=0 ; i<script->GetCount() ; i++)
+    {
+        buffer = wxRouletteHelper::GetInstructionName(script->Item(i));
+        if ((buffer == roulette_inst_goto) || (buffer == roulette_inst_restart))
+            return true;
+    }
+    return false;
+}
+
+bool wxRouletteFrame::DoEditorHasBreakPoint()
+{
+#ifndef wxUSE_STC
+    //-- No online break-point with the standard component
+    return false;
+#else
+    int i, total;
+
+    //-- Finds the break points
+    total = m_script_view->GetLineCount();
+    for (i=0 ; i<total ; i++)
+        if ((m_script_view->MarkerGet(i) & (1 << MARGIN_BREAK)) > 0)
+            return true;
+    return false;
 #endif
 }
 

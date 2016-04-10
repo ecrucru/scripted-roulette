@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,7 @@
  * \file helper.h
  * \brief Helper for simple tasks.
  * \author ecrucru
- * \version 0.1
- * \date October 2015
+ * \since Version 0.1, October 2015
  *
  * This file collects simple and static functions to perform simple actions.
  */
@@ -45,9 +44,9 @@ class wxRouletteHelper
         /**
          * Extracts the extension of the provided file name.
          * \param pFileName File name.
-         * \return Extension of the file name.
+         * \return Extension of the file name in lowercase.
          */
-        static wxString GetFileExtension(wxString pFileName)
+        static wxString GetFileExtension(wxString& pFileName)
         {
             return wxFileName(pFileName).GetExt().Lower().Trim(false).Trim(true);
         }
@@ -62,24 +61,37 @@ class wxRouletteHelper
         }
 
         /**
+         * Returns the full name of the application.
+         * \return The full name with the extension.
+         */
+        static inline wxString GetApplicationFile()
+        {
+            return wxStandardPaths::Get().GetExecutablePath();
+        }
+
+        /**
          * Sets the working directory with no error message.
          * \param pInput A string to process
          * \return \a true if successful, else \a false
          */
-        static bool SetWorkingDirectory(wxString pInput)
+        static bool SetWorkingDirectory(wxString& pInput)
         {
+            wxString buffer;
+
             //-- Checks
             if (pInput.IsEmpty())
                 return false;
 
             //-- Gets the path of the file
             if (::wxFileExists(pInput))
-                pInput = wxFileName(pInput).GetPathWithSep();
+                buffer = wxFileName(pInput).GetPathWithSep();
+            else
+                buffer = pInput;
 
             //-- Sets the path
-            if (::wxIsAbsolutePath(pInput))
+            if (::wxIsAbsolutePath(buffer))
             {
-                wxSetWorkingDirectory(pInput);
+                wxSetWorkingDirectory(buffer);
                 return true;
             }
             else
@@ -92,7 +104,7 @@ class wxRouletteHelper
          * \param pArray Pointer to the receiving object.
          * \return \a true if successful, else \a false.
          */
-        static bool LoadFileToArrayString(wxString pFileName, wxArrayString* pArray)
+        static bool LoadFileToArrayString(wxString& pFileName, wxArrayString* pArray)
         {
             wxTextFile finput;
             wxString buffer;
@@ -121,7 +133,7 @@ class wxRouletteHelper
          * \param pData Pointer to the content.
          * \return \a true if successful, else \a false.
          */
-        static bool SaveArrayStringToFile(wxString pFileName, wxArrayString* pData)
+        static bool SaveArrayStringToFile(wxString& pFileName, wxArrayString* pData)
         {
             wxTextFile file;
             size_t i;
@@ -132,10 +144,8 @@ class wxRouletteHelper
 
             //-- Deletes the target file
             if (::wxFileExists(pFileName))
-            {
                 if (!::wxRemoveFile(pFileName))
                     return false;
-            }
 
             //-- Creates the new file
             if (file.Create(pFileName))
@@ -161,7 +171,7 @@ class wxRouletteHelper
          * \param pInstruction Line of script.
          * \return The modified version of the instruction.
          */
-        static wxString FormatInstruction(wxString pInstruction)
+        static wxString FormatInstruction(wxString& pInstruction)
         {
             wxString from, to;
             wxChar car;
@@ -173,6 +183,7 @@ class wxRouletteHelper
 
             //-- Simplifies the spaces
             from.Replace(wxT("\t"), wxT(" "), true);
+            from.Replace(wxString(roulette_char_nbspace), wxT(" "), true);
             while (from.Replace(wxT("  "), wxT(" "), true) > 0);
 
             //-- Transforms the input
@@ -204,26 +215,28 @@ class wxRouletteHelper
          * \param pInput Processed line of script.
          * \return The instruction.
          */
-        static wxString GetInstructionName(wxString pInput)
+        static wxString GetInstructionName(wxString& pInput)
         {
+            wxString buffer;
             int position, pos_temp;
 
-            pInput = pInput.Trim(false).Trim(true).Lower();
+            //-- Aligns
+            buffer = pInput.Trim(false).Trim(true).Lower();
 
             //-- Finds the position of the breaking character
-            position = pInput.Len();
-            pos_temp = pInput.Find(wxT(" "));                           //WRITE 'Demo'
+            position = buffer.Len();
+            pos_temp = buffer.Find(wxT(" "));                           //WRITE 'Demo'
             if ((pos_temp != wxNOT_FOUND) && (pos_temp < position))
                 position = pos_temp;
-            pos_temp = pInput.Find(wxT("\""));                          //WRITE"No space before the comment
+            pos_temp = buffer.Find(wxT("\""));                          //WRITE"No space before the comment
             if ((pos_temp != wxNOT_FOUND) && (pos_temp < position))
                 position = pos_temp;
-            pos_temp = pInput.Find(wxT("'"));                           //WRITE'Misspelled instruction' "Comment
+            pos_temp = buffer.Find(wxT("'"));                           //WRITE'Misspelled instruction' "Comment
             if ((pos_temp != wxNOT_FOUND) && (pos_temp < position))
                 position = pos_temp;
 
             //-- Result
-            return pInput.SubString(0, position-1).Trim(false).Trim(true);
+            return buffer.Mid(0, position).Trim(false).Trim(true);
         }
 
         /**
@@ -231,7 +244,7 @@ class wxRouletteHelper
          * \param pInstruction Line of script.
          * \return A comment in an original format.
          */
-        static wxString GetComment(wxString pInstruction)
+        static wxString GetComment(wxString& pInstruction)
         {
             wxString from;
             wxChar car;
@@ -243,6 +256,7 @@ class wxRouletteHelper
 
             //-- Simplifies the spaces
             from.Replace(wxT("\t"), wxT(" "), true);
+            from.Replace(wxString(roulette_char_nbspace), wxT(" "), true);
             while (from.Replace(wxT("  "), wxT(" "), true) > 0);
 
             //-- Transforms the input
@@ -266,7 +280,7 @@ class wxRouletteHelper
 
             //-- Result
             if (found)
-                return from.SubString(i+1, from.Len());
+                return from.Mid(i+1, from.Len());
             else
                 return wxEmptyString;
         }
@@ -276,24 +290,54 @@ class wxRouletteHelper
         /**
          * Loads a string into a script.
          * \param pInput Input string.
-         * \param pArray Target array of string.
+         * \param pArray Target array of strings.
+         * \param pKeepLineID Don't remove the blank lines in excess.
          * \return \a true if successful, else \a false.
          * \remark It is just a technical conversion from wxString to wxArrayString.
+         * \see ScriptToString
          */
-        static bool StringToScript(wxString pInput, wxArrayString* pArray)
+        static bool StringToScript(wxString& pInput, wxArrayString* pArray, bool pKeepLineID)
         {
+            wxString buffer;
+
             //-- Checks
             if (pArray == NULL)
                 return false;
+            buffer = pInput;
 
             //-- Processes
             pArray->Clear();
-            pInput.Replace(wxT("\r\n"), wxT("\n"), true);       //Normally not needed but safer
-            pInput.Replace(wxT("\r"), wxEmptyString, true);
-            wxStringTokenizer tokenizer(pInput, wxT("\n"), wxTOKEN_RET_EMPTY);
+            buffer.Replace(wxString(roulette_char_nbspace), wxString(roulette_char_space), true);   //The special spaces can be generated with the keyword 'space' only
+            buffer.Replace(wxT("\r\n"), wxT("\n"), true);                           //Normally not needed but safer
+            buffer.Replace(wxT("\r"), wxEmptyString, true);
+            if (!pKeepLineID)
+                while (buffer.Replace(wxT("\n\n\n"), wxT("\n\n"), true) > 0);       //To clear some extra lines in advance
+            wxStringTokenizer tokenizer(buffer, wxT("\n"), wxTOKEN_RET_EMPTY);
             while (tokenizer.HasMoreTokens())
                 pArray->Add(tokenizer.GetNextToken());
             return true;
+        }
+        /**
+         * Converts an array of strings into a string delimited with '\n'.
+         * \param pArray Source array of strings.
+         * \return The concatened result.
+         * \remark It is just a technical conversion from wxArrayString to wxString.
+         * \see StringToScript
+         */
+        static wxString ScriptToString(wxArrayString& pArray)
+        {
+            wxString buffer;
+            size_t i;
+
+            //-- Converts the table
+            buffer.Empty();
+            for (i=0 ; i<pArray.Count() ; i++)
+            {
+                if (!buffer.IsEmpty())
+                    buffer.Append(wxT("\n"));
+                buffer.Append(pArray.Item(i));
+            }
+            return buffer;
         }
         /**
          * A variable is expected to be named like "domain.name(.subname(.(...)))".
@@ -306,7 +350,7 @@ class wxRouletteHelper
             if (position == wxNOT_FOUND)
                 return wxEmptyString;
             else
-                return pString.SubString(0, position-1);
+                return pString.Mid(0, position);
         }
 
         /**
@@ -320,7 +364,7 @@ class wxRouletteHelper
             if (position == wxNOT_FOUND)
                 return wxEmptyString;
             else
-                return pString.SubString(position+1, pString.Len());
+                return pString.Mid(position+1, pString.Len());
         }
 
 
@@ -329,7 +373,7 @@ class wxRouletteHelper
          * Tells if a string is fully numeric.
          * \param pInput Input string.
          * \return \a true if the string is numeric, else \a false.
-         * \remark Negative numbers are not supported.
+         * \remark The negative numbers are not supported.
          */
         static bool IsNumber(wxString& pInput)
         {
@@ -376,7 +420,7 @@ class wxRouletteHelper
          * \param pCar Character to look for.
          * \return Number of occurences.
          */
-        static unsigned long CountCharInString(wxString pString, wxChar pCar)
+        static unsigned long CountCharInString(wxString& pString, wxChar pCar)
         {
             unsigned long count, i;
 
@@ -386,6 +430,30 @@ class wxRouletteHelper
                 if (pString.GetChar(i) == pCar)
                     count++;
             return count;
+        }
+
+        /**
+         * Converts some special HTML chars to render correctely in a file.
+         * \param pInput Input string.
+         * \return The converted string.
+         */
+        static wxString HtmlSpecialChars(wxString pInput)
+        {
+            pInput.Replace(wxT("&"), wxT("&amp;"));
+            pInput.Replace(wxT("<"), wxT("&lt;"));
+            pInput.Replace(wxT(">"), wxT("&gt;"));
+            return pInput;
+        }
+
+        /**
+         * Converts a quote into a double quote.
+         * \param pInput Input string.
+         * \return The converted string.
+         */
+        static wxString EscapeQuote(wxString pInput)
+        {
+            pInput.Replace(wxT("'"), wxT("''"), true);
+            return pInput;
         }
 
 

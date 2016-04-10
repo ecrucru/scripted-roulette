@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,12 +24,10 @@
  * \file roulette.h
  * \brief Processor for the roulette
  * \author ecrucru
- * \version 0.1
- * \date October 2015
+ * \since Version 0.1, October 2015
  *
  * This file contains all the algorithms to execute a simulation for the roulette.
  *
- * \todo Arrays of values for the Labouchère's system
  * \todo Mini-roulette
  * \todo Instruction POINT
  */
@@ -46,8 +44,10 @@
 #include "wx/filename.h"
 
 #include "defs.h"
-#include "wxEcMath/ec_defs.h"
-#include "wxEcMath/ec_engine.h"
+#ifndef _CONSOLE
+    #include "debugger.h"
+#endif
+#include "engine.h"
 #include "instruction.h"
 #include "sequence.h"
 #include "table.h"
@@ -72,7 +72,8 @@
 class wxRoulette
 {
     private:
-        wxEcEngine                      m_engine;               /**< Interpreter for any formula. */
+        wxRouletteEngine                m_engine,               /**< Interpreter for any formula. */
+                                        m_backup;               /**< Backup of the variables */
         wxArrayString                   m_script;               /**< Content of the script to execute. */
         bool                            m_script_running;       /**< Status telling if a script is running. */
         bool                            m_stop_requested;       /**< Flag to request a stop of the script. */
@@ -85,7 +86,12 @@ class wxRoulette
         wxRouletteStorage<wxRealPoint>  m_credit;               /**< Evolution of the credit when you have no more cash. */
         wxRouletteStorage<wxRouletteHistory> m_spin_history;    /**< History of the spins. */
         wxArrayString                   m_log;                  /**< History of the messages. */
+        wxDateTime                      m_time_last;            /**< Last value of the time stamp. */
+        bool                            m_time_set;             /**< Flag to tell if the last time stamp is set. */
+        bool                            m_debugger_skip;        /**< Flag to ignore the debugger until the end of the execution of the script. */
     #ifndef _CONSOLE
+        wxRouletteDebugger              *m_debugger;            /**< Debugger. */
+        bool                            m_debugger_enabled;     /**< Flag for the use of the debugger. */
         wxRouletteFrame                 *m_frame;               /**< Parent frame. */
     #endif
 
@@ -96,7 +102,9 @@ class wxRoulette
          */
         void DoFreeSequences(bool pDestroy);
         void DoResetConstants();                        /**< Resets the memory to the initial constants. */
-        bool DoLoad();                                  /**< Format the script in the right format. */
+                                                        /**  Performs a copy of the variables from one engine to another one. */
+        bool DoCopyVariables(wxRouletteEngine *pFrom, wxRouletteEngine *pTo);
+        bool DoLoad(bool *pVersionMatch);               /**< Format the script in the right format. */
         void DoDumpScript();                            /**< Displays the processed script. */
         bool DoInitSequences();                         /**< Splits the script into processable parts. */
         /**
@@ -230,7 +238,7 @@ class wxRoulette
          * Returns a pointer of the mathematical parser embedded in the roulette.
          * \remark This function is mostly used to access the internal variables of the game.
          */
-        inline wxEcEngine* GetMathematicalParser() { return &m_engine; }
+        inline wxRouletteEngine* GetMathematicalParser() { return &m_engine; }
         /**
          * Returns a pointer of the table of game.
          * \remark This function is mostly used to access the internal variables of the game.
@@ -290,6 +298,12 @@ class wxRoulette
          * \param pMsg Message
          */
         inline void LogSystem(wxString pMsg) { DoLogMessage(wxRouletteMessageType::SYSTEM_T, pMsg); }
+        /**
+         * Appends a text to the last generated message.
+         * \param pText Text to append.
+         * \return \a true if successful, else \a false.
+         */
+        bool AppendLogMessage(wxString& pText);
 };
 
 

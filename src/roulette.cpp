@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -73,25 +73,60 @@ void wxRoulette::DoResetConstants()
     m_engine.SetConstant(roulette_vars_popup_cancel,    wxID_CANCEL);
 }
 
-bool wxRoulette::DoLoad()
+bool wxRoulette::DoCopyVariables(wxRouletteEngine *pFrom, wxRouletteEngine *pTo)
+{
+    wxArrayString list;
+    size_t i;
+    double value;
+    bool b;
+
+    //-- Checks
+    if ((pFrom == NULL) || (pTo == NULL))
+        return false;
+    if (pFrom->GetConstantCount() == 0)
+        return false;
+
+    //-- Copies the variables
+    pTo->ResetConstants(false);
+    pFrom->ListAllConstants(&list, false);
+    for (i=0 ; i<list.Count() ; i++)
+    {
+        b = pFrom->GetConstant(list.Item(i), &value);
+        if (b)
+            pTo->SetConstant(list.Item(i), value);
+        else
+        {
+            wxASSERT(false);
+        }
+    }
+    return true;
+}
+
+bool wxRoulette::DoLoad(bool *pVersionMatch)
 {
     wxRouletteInstruction parser;
     wxArrayString content;
-    wxString buffer, subfile;
-    size_t i, j;
+    wxString buffer, comment, name, subfile;
+    size_t i, j, pos;
     int nb_includes = 0;                    //Prevents infinite inclusions
+    bool skip_bits = false;
+    unsigned long ulvalue;
 
-    //-- Simplifies the file to make it readable by the software
+    //-- By default the version is compatible
+    if (pVersionMatch != NULL)
+        *pVersionMatch = true;
+
+    //-- Simplifies the file to make it readable by the application
     for (i=0 ; i<m_script.GetCount() ; i++)
     {
 reprocess_code:
         buffer = wxRouletteHelper::FormatInstruction(m_script.Item(i));
 
         //- Processing of special commands
-        if (parser.Parse(buffer))
+        if (parser.Parse(buffer, true))
         {
             //Includes
-            if (parser.Instruction == roulette_inst_include)
+            if (parser.InstructionID == roulette_inst_include_id)
             {
                 if (nb_includes >= roulette_max_includes)
                     LogError(wxString::Format(_("Having more than %d includes is not accepted."), roulette_max_includes));
@@ -114,18 +149,19 @@ reprocess_code:
             }
 
             //Macros - Assertion
-            if (parser.Instruction == roulette_inst_assert)
+            if (parser.InstructionID == roulette_inst_assert_id)
             {
                 m_script[i] = wxString::Format(wxT("IF %s"), parser.Command.uniCStr());
                 m_script.Insert(wxT("ENDIF"), i+1);
                 m_script.Insert(wxT("STOP"), i+1);
+                m_script.Insert(wxString::Format(wxT("WRITE error '%s: %s'"), wxRouletteHelper::EscapeQuote(wxString(_("Assertion failed"))).uniCStr(), wxRouletteHelper::EscapeQuote(buffer).uniCStr()), i+1);
                 m_script.Insert(wxString::Format(wxT("IF NOT %s"), wxString(roulette_vars_last_if).uniCStr()), i+1);
                 m_script.Insert(wxT("ENDIF"), i+1);
                 goto reprocess_code;
             }
 
             //Macros - Check
-            if (parser.Instruction == roulette_inst_check)
+            if (parser.InstructionID == roulette_inst_check_id)
             {
                 m_script[i] = wxString::Format(wxT("IF %s"), parser.Command.uniCStr());
                 m_script.Insert(wxT("ENDIF"), i+1);
@@ -136,7 +172,7 @@ reprocess_code:
             }
 
             //Macros - Decrementation
-            if (parser.Instruction == roulette_inst_dec)
+            if (parser.InstructionID == roulette_inst_dec_id)
             {
                 if (parser.CountParameters() != 1)
                 {
@@ -151,7 +187,7 @@ reprocess_code:
             }
 
             //Macros - Incrementation
-            if (parser.Instruction == roulette_inst_inc)
+            if (parser.InstructionID == roulette_inst_inc_id)
             {
                 if (parser.CountParameters() != 1)
                 {
@@ -166,13 +202,64 @@ reprocess_code:
             }
 
             //Macros - Conditional bet
-            if (parser.Instruction == roulette_inst_cbet)
+            if (parser.InstructionID == roulette_inst_cbet_id)
             {
                 m_script[i] = wxString::Format(wxT("BET %s"), parser.Command.uniCStr());
                 m_script.Insert(wxT("ENDIF"), i+1);
                 m_script.Insert(wxString::Format(wxT("IF %s"), roulette_vars_can_bet), i);
                 goto reprocess_code;
             }
+
+            //Extended code - Translation to an array of bits
+            if (parser.InstructionID == roulette_inst_bits_id)
+            {
+                if (skip_bits)
+                    skip_bits = false;
+                else
+                {
+                    if (parser.CommandList.GetCount() >= 2)
+                    {
+                        name = parser.CommandList.Item(0);
+                        if (   ( wxRouletteHelper::GetVariableDomain(name) == roulette_dom_user)
+                            && (!wxRouletteHelper::GetVariableName(name).IsEmpty())
+                            && ( wxRouletteHelper::CountCharInString(name, wxT('[')) == 0)
+                            && ( wxRouletteHelper::CountCharInString(name, wxT(']')) == 0)
+                          )
+                        {
+                            m_script.Insert(wxString::Format(wxT("@UNSET %s[]"), name.uniCStr()), i);
+                            skip_bits = true;
+                            goto reprocess_code;
+                        }
+                    }
+                }
+            }
+
+            //Simplified syntax - The spaces are allowed for the first argument of the instruction SET if the symbol "=" is used
+            if (parser.InstructionID == roulette_inst_set_id)
+            {
+                pos = parser.Command.Find(wxT('='));
+                if (pos != wxNOT_FOUND)
+                {
+                    buffer = parser.Command.Mid(0, pos-1);
+                    buffer.Replace(wxT(" "), wxEmptyString);
+                    buffer.Append(wxT(" "));
+                    buffer.Append(parser.Command.Mid(pos, parser.Command.Len()));
+                    buffer = wxString::Format(wxT("%s %s"), parser.Instruction.uniCStr(), buffer.uniCStr());
+                }
+            }
+        }
+
+        //- Preprocessing definitions
+        comment = wxRouletteHelper::GetComment(m_script.Item(i));
+        if ((pVersionMatch != NULL) && parser.Instruction.IsEmpty() && comment.StartsWith(wxT("#version-min:")))
+        {
+            comment = comment.Mid(13, comment.Len()).Trim(true).Trim(false);
+            comment.Replace(wxT("\""), wxEmptyString, true);
+            comment = comment.Trim(true).Trim(false);
+            if (comment.ToULong(&ulvalue))
+                *pVersionMatch = (roulette_about_version_num >= ulvalue);
+            else
+                *pVersionMatch = false;
         }
 
         //- Return the result
@@ -231,7 +318,7 @@ bool wxRoulette::DoInitSequences()
     {
         //- Reads the instruction
         buffer = m_script.Item(i);
-        b = parser.Parse(buffer);
+        b = parser.Parse(buffer, true);
         if (!b)
         {
             wxASSERT(false);
@@ -240,7 +327,7 @@ bool wxRoulette::DoInitSequences()
         }
 
         //- Stores the initialization block
-        if (parser.Instruction == roulette_sect_init)
+        if (parser.InstructionID == roulette_sect_init_id)
         {
             if (hasinit)
             {
@@ -260,7 +347,7 @@ bool wxRoulette::DoInitSequences()
         }
 
         //- Stores a new sequence
-        if (parser.Instruction == roulette_sect_sequence)
+        if (parser.InstructionID == roulette_sect_sequence_id)
         {
             if (parser.HasParameters())
                 LogWarning(wxString::Format(_("No argument is expected after the section '%s'."), parser.Instruction.uniCStr()));
@@ -353,6 +440,7 @@ bool wxRoulette::DoExecuteSequence(wxRouletteSequence *pSequence, bool pInit)
 {
     //-- Generic variables
     wxArrayString script, list;
+    wxStringTokenizer tokenizer;
     wxRouletteInstruction parser;
     wxString buffer, buffer2, domain, name, formula, message;
 #ifdef _CONSOLE
@@ -360,12 +448,15 @@ bool wxRoulette::DoExecuteSequence(wxRouletteSequence *pSequence, bool pInit)
 #endif
     wxChar car;
     unsigned long i, j, k, line_max;
-    bool b, win, floating, textmode;
+    bool b, win, textmode, stringmode;
+    enum { NORMAL, FLOAT, CHAR } format;
     int position, initial_depth, forced_spin;
     long lvalue;
-    unsigned long ulvalue, ulmin, ulmax;
+    unsigned long ulvalue, ulmin, ulmax, *ul_alloc_size, *ul_alloc_loop;
     int landed;
     double fvalue, fa, fb, cash, gain, relative_gain, credit, stake;
+    wxDateTime stamp;
+    wxTimeSpan timespan;
     wxRouletteAlgorithm::wxRouletteAlgorithm algo;
     wxRouletteHistory history;
     wxRouletteMessageType::wxRouletteMessageType msg_type;
@@ -397,9 +488,9 @@ bool wxRoulette::DoExecuteSequence(wxRouletteSequence *pSequence, bool pInit)
     for (i=0 ; i<=line_max ; i++)
     {
         //- Reads the item
-        if (!parser.Parse(script.Item(i)))
+        if (!parser.Parse(script.Item(i), true))
             continue;
-        if (parser.Instruction != roulette_inst_label)
+        if (parser.InstructionID != roulette_inst_label_id)
             continue;
 
         //- Detects duplicate labels
@@ -409,7 +500,7 @@ bool wxRoulette::DoExecuteSequence(wxRouletteSequence *pSequence, bool pInit)
                 continue;
             if (script.Item(i) == script.Item(j))
             {
-                LogError(wxString::Format(_("Duplicate 'LABEL' are not authorized (%s)."), parser.Command.uniCStr()));
+                LogError(wxString::Format(_("Duplicate instructions 'LABEL' are not authorized (%s)."), parser.Command.uniCStr()));
                 script[j].Empty();
             }
         }
@@ -428,18 +519,17 @@ current_statement:
         }
         if (i > line_max)                   //Some IF ends a script
             break;
-        if (!parser.Parse(script.Item(i)))
+        if (!parser.Parse(script.Item(i), true))
             continue;
 
         //- Controls the instruction set when we are in init
-        if (pInit && (     (parser.Instruction == roulette_inst_bet)
-                        || (parser.Instruction == roulette_inst_clear)
-                        || (parser.Instruction == roulette_inst_debug)
-                        || (parser.Instruction == roulette_inst_restart)
-                        || (parser.Instruction == roulette_inst_save)
-                        || (parser.Instruction == roulette_inst_spin)
-                        || (parser.Instruction == roulette_inst_stat)
-                        || (parser.Instruction == roulette_inst_stop)
+        if (pInit && (     (parser.InstructionID == roulette_inst_bet_id)
+                        || (parser.InstructionID == roulette_inst_clear_id)
+                        || (parser.InstructionID == roulette_inst_debug_id)
+                        || (parser.InstructionID == roulette_inst_restart_id)
+                        || (parser.InstructionID == roulette_inst_save_id)
+                        || (parser.InstructionID == roulette_inst_spin_id)
+                        || (parser.InstructionID == roulette_inst_stat_id)
                     )
             )
         {
@@ -447,51 +537,90 @@ current_statement:
             script[i].Empty();
             continue;
         }
-        if (!pInit && (parser.Instruction == roulette_inst_randomize) && !parser.NoWarning)
+        if (!pInit && (parser.InstructionID == roulette_inst_randomize_id) && !parser.NoWarning)
         {
             LogWarning(_("The use of the instruction 'RANDOMIZE' in a sequence is not recommended."));
             continue;
         }
 
+        //- Calls the debugger
+    #ifndef _CONSOLE
+        if (m_debugger_enabled && !m_debugger_skip)
+        {
+            wxASSERT(m_debugger!= NULL);
+            m_debugger->SetState(&m_engine, &script, i);
+            switch (m_debugger->ShowModal())
+            {
+                case ID_DEBUG_CONTINUE:
+                    m_debugger_enabled = false;
+                    break;
+                case ID_DEBUG_JUMP:
+                    //Nothing
+                    break;
+                case ID_DEBUG_VALIDATE:
+                    m_debugger_enabled = false;
+                    m_debugger_skip = true;
+                    break;
+                case ID_DEBUG_STOP:
+                    m_debugger_enabled = false;
+                    RequestStop();
+                    goto current_statement;
+                default:
+                    wxASSERT(false);
+                    break;
+            }
+        }
+    #endif
+
         //- Processes the instructions in a predefined order
-        #include "roulette_label.cpp"           //Control flow
-        #include "roulette_goto.cpp"
-        #include "roulette_break.cpp"
-        #include "roulette_restart.cpp"
-        #include "roulette_stop.cpp"
-        #include "roulette_leave.cpp"
-        #include "roulette_if.cpp"
-        #include "roulette_else.cpp"
-        #include "roulette_endif.cpp"
-        #include "roulette_pause.cpp"
+        parser.Checksum();
+        switch (parser.InstructionID)
+        {
+            #include "roulette_label.cpp"           //Control flow
+            #include "roulette_goto.cpp"
+            #include "roulette_break.cpp"
+            #include "roulette_restart.cpp"
+            #include "roulette_stop.cpp"
+            #include "roulette_leave.cpp"
+            #include "roulette_if.cpp"
+            #include "roulette_else.cpp"
+            #include "roulette_endif.cpp"
+            #include "roulette_pause.cpp"
 
-        #include "roulette_debug.cpp"           //Technical
-        #include "roulette_refresh.cpp"
+            #include "roulette_debug.cpp"           //Technical
+            #include "roulette_refresh.cpp"
 
-        #include "roulette_set.cpp"             //Memory management
-        #include "roulette_unset.cpp"
-        #include "roulette_exist.cpp"
-        #include "roulette_clear.cpp"
-        #include "roulette_stat.cpp"
+            #include "roulette_set.cpp"             //Memory management
+            #include "roulette_unset.cpp"
+            #include "roulette_exist.cpp"
+            #include "roulette_allocate.cpp"
+            #include "roulette_clear.cpp"
+            #include "roulette_stat.cpp"
+            #include "roulette_bits.cpp"
+            #include "roulette_backup.cpp"
+            #include "roulette_rollback.cpp"
 
-        #include "roulette_spin.cpp"            //Game play
-        #include "roulette_bet.cpp"
-        #include "roulette_buy.cpp"
-        #include "roulette_random.cpp"
-        #include "roulette_randomize.cpp"
+            #include "roulette_spin.cpp"            //Game play
+            #include "roulette_bet.cpp"
+            #include "roulette_buy.cpp"
+            #include "roulette_random.cpp"
+            #include "roulette_randomize.cpp"
 
-        #include "roulette_plot.cpp"            //Verbosity
-        #include "roulette_show.cpp"
-        #include "roulette_write.cpp"           //Includes: status, popup, confirm, input
-        #include "roulette_progress.cpp"
-        #include "roulette_save.cpp"
-        #include "roulette_beep.cpp"
-        #include "roulette_slap.cpp"
+            #include "roulette_plot.cpp"            //Verbosity
+            #include "roulette_show.cpp"
+            #include "roulette_write.cpp"           //Includes: status, popup, confirm, input
+            #include "roulette_progress.cpp"
+            #include "roulette_save.cpp"
+            #include "roulette_time.cpp"
+            #include "roulette_beep.cpp"
+            #include "roulette_slap.cpp"
+        }
 
         //- Other unknown commands
         LogError(wxString::Format(_("Unknown instruction '%s'."), parser.Instruction.Upper().uniCStr()));
         script[i].Empty();
     }
+break_sequence:
     return true;
 }
 
@@ -599,7 +728,7 @@ bool wxRoulette::DoSaveLogHistory(wxString pFileName)
     {
         //- Splits into a readable CSV
         type = m_log.Item(i).GetChar(0);
-        buffer = m_log.Item(i).SubString(1, m_log.Item(i).Len());
+        buffer = m_log.Item(i).Mid(1, m_log.Item(i).Len());
         if ((buffer.Find(wxT(';')) != wxNOT_FOUND) || (buffer.Find(wxT('"')) != wxNOT_FOUND))
         {
             buffer.Replace(wxT("\""), wxT("\"\""));
@@ -858,22 +987,28 @@ bool wxRoulette::DoLogMessage(wxRouletteMessageType::wxRouletteMessageType pType
 
     //-- Shows the message in the console
 #ifdef _CONSOLE
+    static bool write_done = false;
     switch (pType)
     {
-        case wxRouletteMessageType::WARNING_T:  buffer = _("Warning : ");   break;
-        case wxRouletteMessageType::ERROR_T:    buffer = _("Error : ");     break;
-        case wxRouletteMessageType::DEBUG_T:    buffer = _("Debug : ");     break;
-        case wxRouletteMessageType::SYSTEM_T:   buffer = _("System : ");    break;
-        default:                                buffer.Empty();             break;
+        case wxRouletteMessageType::WARNING_T:  buffer = _("Warning :");   break;
+        case wxRouletteMessageType::ERROR_T:    buffer = _("Error :");     break;
+        case wxRouletteMessageType::DEBUG_T:    buffer = _("Debug :");     break;
+        case wxRouletteMessageType::SYSTEM_T:   buffer = _("System :");    break;
+        default:                                buffer.Empty();            break;
     }
+    if (!buffer.IsEmpty())
+        buffer.Append(wxT(" "));        //It will facilitate the translations of the messages above
     buffer.Append(pMsg);
-#if wxUSE_UNICODE
-    wprintf(buffer.uniCStr());
-    wprintf(wxT("\n"));
-#else
-    printf(buffer.uniCStr());
-    printf(wxT("\n"));
-#endif
+    #if wxUSE_UNICODE
+        if (write_done)
+            wprintf(wxT("\n"));
+        wprintf(buffer.uniCStr());
+    #else
+        if (write_done)
+            printf(wxT("\n"));
+        printf(buffer.uniCStr());
+    #endif
+    write_done = true;
 #endif
 
     //-- Adds the message
@@ -894,6 +1029,7 @@ wxRoulette::wxRoulette()
     m_leave_requested = false;
     m_restart_requested = false;
 #ifndef _CONSOLE
+    m_debugger = NULL;
     m_frame = NULL;
 #endif
     m_table.SetParentClass(this);
@@ -902,6 +1038,9 @@ wxRoulette::wxRoulette()
 
 wxRoulette::~wxRoulette()
 {
+#ifndef _CONSOLE
+    wxDELETE(m_debugger);
+#endif
     DoFreeSequences(true);
 }
 
@@ -915,11 +1054,13 @@ void wxRoulette::Reset()
     m_restart_requested = false;
     m_spin_history.EmptyData();
     m_log.Clear();
+    m_time_set = false;
 }
 
 bool wxRoulette::StartFromFile(wxString pFileName, bool pStart)
 {
     wxString buffer;
+    bool compatible;
 
     //-- Checks
     if (pFileName.IsEmpty())
@@ -938,8 +1079,13 @@ bool wxRoulette::StartFromFile(wxString pFileName, bool pStart)
     }
 
     //-- Loads the script
-    if (!DoLoad())
+    if (!DoLoad(&compatible))
         return false;
+    if (!compatible)
+    {
+        LogSystem(_("The current script requires a newer version of the interpreter."));
+        return false;
+    }
     DoInitSequences();
 
     //-- Executes
@@ -951,18 +1097,24 @@ bool wxRoulette::StartFromFile(wxString pFileName, bool pStart)
 bool wxRoulette::StartFromInput(wxString pInput, bool pStart)
 {
     wxString buffer;
+    bool compatible;
 
     //-- Checks the format
     if (pInput.IsEmpty())
         return false;
 
     //-- Splits the input string
-    if (!wxRouletteHelper::StringToScript(pInput, &m_script))
+    if (!wxRouletteHelper::StringToScript(pInput, &m_script, false))
         return false;
 
     //-- Loads the script
-    if (!DoLoad())
+    if (!DoLoad(&compatible))
         return false;
+    if (!compatible)
+    {
+        LogSystem(_("The current script requires a newer version of the interpreter."));
+        return false;
+    }
     DoInitSequences();
 
     //-- Executes
@@ -984,15 +1136,21 @@ void wxRoulette::Execute()
     SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
 #endif
 
-    //-- Initialization
+    //-- Initializes
     DoResetConstants();
     DoUpdateDynamicVariables(true);
     m_cash.EmptyData();
     m_credit.EmptyData();
     m_spin_history.EmptyData();
+    m_backup.ResetConstants(false);
     m_log.Clear();
+    m_time_set = false;
     m_script_running = true;
     m_leave_requested = false;
+#ifndef _CONSOLE
+    m_debugger_enabled = false;
+#endif
+    m_debugger_skip = false;
 
     //-- Processes each sequence
     for (seq_id=0 ; seq_id<m_sequence_count || m_restart_requested ; seq_id++)
@@ -1001,7 +1159,7 @@ void wxRoulette::Execute()
         if (m_stop_requested)
             break;
 
-        //- Restart
+        //- Restarts
         if (m_restart_requested)
         {
             seq_id = 1;                         //RESTART never reprocesses section .INIT
@@ -1016,23 +1174,35 @@ void wxRoulette::Execute()
             continue;
 
         //- Executes the sequence
+#if roulette_compile_msg_sequence == 1          //Too many messages are generated and it is worse for the performances
         LogSystem(wxString::Format(_("Starting sequence %d"), seq_id));
     #ifndef _CONSOLE
         if (m_frame != NULL)
             m_frame->SetStatusBarText(wxString::Format(_("Sequence %d"), seq_id), 1);
     #endif
+#endif
         DoExecuteSequence(sequence, seq_id==0);
     }
 
-    //-- Reset some flags
+    //-- Closes the debugger
+#ifndef _CONSOLE
+    if (m_debugger != NULL)
+    {
+        m_debugger->Destroy();
+        wxDELETE(m_debugger);
+        m_debugger = NULL;
+    }
+#endif
+
+    //-- Resets some flags
     m_script_running = false;
     m_stop_requested = false;
     m_restart_requested = false;
 
-    //-- Free some data
+    //-- Frees some data
     m_spin_history.EmptyData();
 
-    //-- Control of the quota
+    //-- Controls the quota
     quota = GetTable()->GetRemainingQuota();
     if (quota == 0)
         LogError(_("You ran out of quota. Please change your pseudo-random number generator, or retry later."));
@@ -1105,4 +1275,32 @@ double wxRoulette::GetMaxBet()
     if (fvalue < 0)
         fvalue = 0;
     return fvalue;
+}
+
+bool wxRoulette::AppendLogMessage(wxString& pText)
+{
+    size_t maxid;
+
+    //-- Checks
+    if (pText.IsEmpty())
+        return false;
+
+    //-- Appends the text
+    maxid = m_log.GetCount();
+    if (maxid == 0)
+        return DoLogMessage(wxRouletteMessageType::INFO_T, pText);
+    else
+    {
+        //- Writes in the console
+#ifdef _CONSOLE
+    #if wxUSE_UNICODE
+        wprintf(pText.uniCStr());
+    #else
+        printf(pText.uniCStr());
+    #endif
+#endif
+        //- Stores the message
+        m_log[maxid-1] += pText;
+        return true;
+    }
 }

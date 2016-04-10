@@ -1,0 +1,20 @@
+"#version-min: 020"
+"====="
+" To calculate the processing times, Scripted Roulette can use"
+" the date and the time through a dedicated instruction."
+"====="
+
+.SEQUENCE
+    "=== Memorizes the current time"
+    TIME
+
+    "=== Performs a calculation which takes some time (~5 secondes)"
+    SET user.loop = 50000
+    LABEL loop
+    DEC user.loop
+    IF user.loop > 0
+        GOTO loop
+    ENDIF
+
+    "=== Determines the processing time"
+    @TIME

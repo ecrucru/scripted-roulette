@@ -10,18 +10,18 @@
     SET user.loop.games = 500
     SET user.maxwin = 15
 
-    "-- Initialization"
+    "=== Initialization"
     PLOT OFF
     SET user.flag.reset_cash = sys.true
     SET user.stat.wins = 0
     SET user.stat.losses = 0
 
-    "-- Determines the required initial amount of cash"
+    "=== Determines the required initial amount of cash"
     SET game.cash.init = 2 * sys.game.numbers * game.bet
     WRITE 'You need to enter the casino with' game.cash.init 'units of money.'
 
 .SEQUENCE
-    "-- Sets the initial cash"
+    "=== Sets the initial cash"
     IF user.flag.reset_cash
         @RANDOMIZE
         SET game.cash = game.cash.init
@@ -30,12 +30,12 @@
     ENDIF
     SET user.flag.reset_cash = sys.false
 
-    "-- Picks a new number"
+    "=== Picks a new number"
     RANDOM
     SET user.pick = sys.random
 
 .SEQUENCE
-    "-- Bets on the number"
+    "=== Bets on the number"
     IF sys.game.can_bet
         BET user.pick
         SPIN
@@ -54,14 +54,14 @@
     ENDIF
 
 .SEQUENCE
-    "-- Counts the wins and losses"
+    "=== Counts the wins and losses"
     IF game.cash > game.cash.init
         INC user.stat.wins
     ELSE
         INC user.stat.losses
     ENDIF
 
-    "-- Restarts the script if there are still things to do"
+    "=== Restarts the script if there are still things to do"
     DEC user.loop.games
     IF user.loop.games > 0
         SET user.flag.reset_cash = sys.true
@@ -72,7 +72,7 @@
     ENDIF
 
 .SEQUENCE
-    "-- Displays the final results"
+    "=== Displays the final results"
     CHECK user.stat.wins + user.stat.losses > 0
     WRITE 'Results:'
     WRITE '- Wins:' user.stat.wins '(' f:100*user.stat.wins/(user.stat.wins+user.stat.losses) '%)'

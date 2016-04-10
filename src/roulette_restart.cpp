@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_restart)
+case roulette_inst_restart_id:
 {
     //Checks the parameters
     if (parser.HasParameters())
@@ -34,7 +34,7 @@ if (parser.Instruction == roulette_inst_restart)
             goto current_statement;
         }
         else
-    		if (!parser.NoWarning)
+            if (!parser.NoWarning)
                 LogWarning(wxString::Format(_("Incorrect parameters for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
     }
 

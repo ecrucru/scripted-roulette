@@ -1,0 +1,95 @@
+"#version-min: 020"
+"====="
+" This scripted roulette is a variant of the previous version and it uses the arrays."
+" The script is heavier in size and it will be slower to execute. An array is maybe"
+" not relevant in loops or when its size is too small. The depth can be freely defined"
+" but you can't set a too high value, because the growth is exponential."
+"====="
+
+.INIT
+    INCLUDE include_init
+    SET sys.algorithm mt "Mersenne-Twister is the most diversified algorithm. Don't use an HTTP generator"
+    SET user.depth = 3 "Number of reference numbers needed to deduct the next one."
+    PLOT OFF
+    SET user.tries = 0
+
+.SEQUENCE
+    "=== Asks for the initial numbers"
+    SET user.loop = 1
+    LABEL ask
+
+    INPUT 'Number' user.loop ':'
+    "Remark: if you type something false, the script will be infinite"
+    EXIST sys.input
+    IF sys.popup = sys.popup.yes AND sys.result
+        SET user.n[user.loop] = sys.input
+    ELSE
+        STOP
+    ENDIF
+
+    INC user.loop
+    IF user.loop <= user.depth
+        GOTO ask
+    ENDIF
+
+.SEQUENCE
+    "=== Initializes the buffered sequence of random numbers"
+    SET user.loop = 1
+    LABEL buffer
+
+    RANDOM
+    SET user.b[user.loop] = sys.random
+
+    INC user.loop
+    IF user.loop <= user.depth+1
+        GOTO buffer
+    ENDIF
+
+.SEQUENCE
+    "=== Statistics"
+    INC user.tries
+
+    "=== Verifies the matching values"
+    SET user.match = sys.true
+    SET user.loop = user.depth
+    LABEL match
+
+    IF user.b[user.loop] != user.n[user.loop]
+        SET user.match = sys.false
+    ELSE
+        DEC user.loop
+        IF user.loop > 0
+            GOTO match
+        ENDIF
+    ENDIF
+
+    "=== Are there matching values ?"
+    IF user.match
+        SPIN user.b[user.depth+1] "To get some information about this number"
+        WRITE 'Please bet on' user.b[user.depth+1] '.'
+        IF game.landed.black
+            WRITE 'Its color is BLACK.'
+        ELSE
+            WRITE 'Its color is RED.'
+        ENDIF
+        WRITE 'Found after' user.tries 'tries.'
+
+    ELSE
+        "Shifts the buffer and gets a new number"
+        SET user.loop = 1
+        LABEL shift
+        SET user.b[user.loop] = user.b[user.loop+1]
+
+        INC user.loop
+        IF user.loop <= user.depth
+            GOTO shift
+        ENDIF
+
+        "Generate a new number"
+        RANDOM
+        SET user.b[user.depth+1] = sys.random
+
+        RESTART SEQUENCE "It can be an infinite loop"
+    ENDIF
+
+    INCLUDE include_final

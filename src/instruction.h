@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,7 @@
  * \file instruction.h
  * \brief Parser for 1 line of script
  * \author ecrucru
- * \version 0.1
- * \date October 2015
+ * \since Version 0.1, October 2015
  *
  * This file parses the script to help its execution.
  */
@@ -56,6 +55,7 @@ class wxRouletteInstruction
     public:
         bool          NoWarning;                    /**< An instruction can prevent some warnings to be generated. */
         wxString      Instruction;                  /**< Instruction. */
+        unsigned long InstructionID;                /**< Integer representation of the instruction. */
         wxString      Command;                      /**< Parameters for the instruction on a single line. */
         wxArrayString CommandList;                  /**< All the individual parameters separated in a list. */
 
@@ -72,9 +72,10 @@ class wxRouletteInstruction
 
         /** Parses and cuts the instruction. The result are accessible in the public variables.
          * \param pInstruction Instruction to parse and cut into individual elements.
+         * \param pChecksum Indicates if the internal representation of the instruction should be calculated.
          * \return \a true if successful, else \a false.
          */
-        bool Parse(wxString pInstruction);
+        bool Parse(wxString pInstruction, bool pChecksum);
 
         /** Tells if there are existing parameters for the instruction.
          * \return \a true if there are parameters in line or in the list, else \a false.
@@ -125,6 +126,13 @@ class wxRouletteInstruction
          * \see CommandList
          */
         void RebuildCommandLine();
+        /**
+         * Converts the instruction into an integer. The formula is simple because
+         * there is not a lot of instructions. Each position is multiplied by the
+         * character code and finally summed.
+         * \return Identifier of the instruction.
+         */
+        unsigned long Checksum();
 
 };
 

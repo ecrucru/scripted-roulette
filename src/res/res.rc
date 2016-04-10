@@ -1,8 +1,8 @@
 MAINICON		ICON	DISCARDABLE	"mainicon.ico"
 
 1	VERSIONINFO
-		FILEVERSION 0,1,0,0
-		PRODUCTVERSION 0,1,0,0
+		FILEVERSION 0,2,0,0
+		PRODUCTVERSION 0,2,0,0
 		FILEFLAGSMASK 0x3fL
 		FILEFLAGS 0x0L
 		FILEOS 0x4L
@@ -14,9 +14,9 @@ MAINICON		ICON	DISCARDABLE	"mainicon.ico"
 			BLOCK "000004e2"
 			BEGIN
 				VALUE "FileDescription", "Scripted Roulette\0"
-				VALUE "FileVersion", "0.1\0"
+				VALUE "FileVersion", "0.2\0"
 				VALUE "LegalCopyright", "http://scripted-roulette.sourceforge.net\0"
-				VALUE "OriginalFilename", "scripted_roulette_v01.exe\0"
+				VALUE "OriginalFilename", "scripted_roulette_v02.exe\0"
 				VALUE "ProductName", "Scripted Roulette\0"
 				VALUE "License", "GPL v2"
 			END

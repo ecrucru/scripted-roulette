@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,14 +19,27 @@
 
 #ifdef roulette_h
 
-if (    (parser.Instruction == roulette_inst_write)
-      //Similar code
-    ||  (parser.Instruction == roulette_inst_input)
-    ||  (parser.Instruction == roulette_inst_popup)
-    ||  (parser.Instruction == roulette_inst_confirm)
-	||  (parser.Instruction == roulette_inst_status)
-  )
+case roulette_inst_write_id:
+//Similar code
+case roulette_inst_input_id:
+case roulette_inst_popup_id:
+case roulette_inst_confirm_id:
+case roulette_inst_status_id:
+case roulette_inst_append_id:
 {
+    //Detects an input string
+    if ((parser.InstructionID == roulette_inst_input_id) && parser.HasParameters())
+    {
+        stringmode = (parser.CommandList.Item(0) == wxT("string"));
+        if (stringmode)
+        {
+            parser.CommandList[0] = wxEmptyString;
+            parser.RebuildCommandLine();
+        }
+    }
+    else
+        stringmode = false;
+
     //Manages the type of message
     msg_type = wxRouletteMessageType::INFO_T;
     if (parser.HasParameters())
@@ -88,34 +101,77 @@ if (    (parser.Instruction == roulette_inst_write)
         if ((car == wxT(' ')) && !b)
         {
             //Detects the floating output
-            floating = formula.StartsWith(wxT("f:"));
-            if (floating)
-                formula = formula.SubString(2, formula.Len());
+            if (formula.StartsWith(wxT("f:")))
+            {
+                format = FLOAT;
+                formula = formula.Mid(2, formula.Len());
+            }
+            else
+                if (formula.StartsWith(wxT("c:")))
+                {
+                    format = CHAR;
+                    formula = formula.Mid(2, formula.Len());
+                }
+                else
+                    format = NORMAL;
 
             //Converts the text
             if (!textmode)
             {
-                if (!m_engine.SetFormula(formula))
+                if (formula == wxT("space"))
+                    message.Append(roulette_char_nbspace);
+                else if (!m_engine.SetFormula(formula))
                     textmode = true;
                 else
                 {
-                    if (floating)
-                        fvalue = m_engine.Compute();
-                    else
-                        lvalue = m_engine.Compute();
+                    switch (format)
+                    {
+                        case FLOAT:
+                            fvalue = m_engine.Compute();
+                            break;
+                        default:
+                            lvalue = m_engine.Compute();
+                            break;
+                    }
                     if (m_engine.GetLastError() == wxECE_NOERROR)           //If no error, we got a calculated formula
                     {
-                        if (floating)
-                            message = wxString::Format(wxT("%s %f"), message.uniCStr(), fvalue);
+                        //Adds the relevant space
+                        if (message.IsEmpty())
+                            car = roulette_char_zero;
                         else
-                            message = wxString::Format(wxT("%s %d"), message.uniCStr(), lvalue);
+                            car = message.Right(1).GetChar(0);
+                        if ((car != roulette_char_space) && (car != roulette_char_nbspace))
+                            message.Append(wxT(" "));
+
+                        //Formats the data
+                        switch (format)
+                        {
+                            case FLOAT:
+                                message.Append(wxString::Format(wxT("%f"), fvalue));
+                                break;
+                            case CHAR:
+                                message.Append(wxString::Format(wxT("%c"), (wxChar)lvalue));
+                                break;
+                            default:
+                                message.Append(wxString::Format(wxT("%d"), lvalue));
+                                break;
+                        }
                     }
                     else
                         textmode = true;
                 }
             }
             if (textmode)
-                message = wxString::Format(wxT("%s %s"), message.uniCStr(), formula.uniCStr());
+            {
+                if (message.IsEmpty())
+                    car = roulette_char_zero;
+                else
+                    car = message.Right(1).GetChar(0);
+                if ((car == roulette_char_space) || (car == roulette_char_nbspace)) //Respectively space and non-breaking space
+                    message = wxString::Format(wxT("%s%s"), message.uniCStr(), formula.uniCStr());
+                else
+                    message = wxString::Format(wxT("%s %s"), message.uniCStr(), formula.uniCStr());
+            }
 
             //Resets the buffers
             formula.Empty();
@@ -128,6 +184,8 @@ if (    (parser.Instruction == roulette_inst_write)
     }
     message = message.Trim(true).Trim(false);
 
+
+    //------------------------------------------
     //Rules for POPUP
     if (parser.Instruction == roulette_inst_popup)
     {
@@ -159,6 +217,8 @@ if (    (parser.Instruction == roulette_inst_write)
     #endif
     }
 
+
+    //------------------------------------------
     //Rules for CONFIRM
     if (parser.Instruction == roulette_inst_confirm)
     {
@@ -197,6 +257,8 @@ if (    (parser.Instruction == roulette_inst_write)
         continue;
     }
 
+
+    //------------------------------------------
     //Rules for STATUS
     if (parser.Instruction == roulette_inst_status)        //Blank text is allowed
     {
@@ -212,6 +274,8 @@ if (    (parser.Instruction == roulette_inst_write)
     #endif
     }
 
+
+    //------------------------------------------
     //Rules for WRITE
     if (parser.Instruction == roulette_inst_write)
     {
@@ -242,9 +306,27 @@ if (    (parser.Instruction == roulette_inst_write)
         continue;
     }
 
+
+    //------------------------------------------
+    //Rules for APPEND
+    if (parser.Instruction == roulette_inst_append)
+    {
+        if (!message.IsEmpty())
+            AppendLogMessage(message);
+        else
+            if (!parser.NoWarning)
+                LogError(wxString::Format(_("No text has been generated for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
+        continue;
+    }
+
+
+    //------------------------------------------
     //Rules for INPUT
     if (parser.Instruction == roulette_inst_input) 
     {
+        //Removes the length of the input
+        m_engine.DeleteConstant(roulette_vars_input_length);
+
     #ifdef _CONSOLE
         //Shows the text
         LogMessage(message);
@@ -252,7 +334,7 @@ if (    (parser.Instruction == roulette_inst_write)
 
         //Gets an input from the user
         fflush(stdin);
-        scanf("%511s", &console_input_s);
+        scanf("%511s", (char*)(&console_input_s));
         buffer = wxString(console_input_s, wxConvISO8859_1);
     #else
         buffer = wxGetTextFromUser(message, _("Input"), wxEmptyString);    //If you fall in an infinite loop because of the way the script is written, kill the process
@@ -267,29 +349,52 @@ if (    (parser.Instruction == roulette_inst_write)
         else
             m_engine.SetConstant(roulette_vars_popup, wxID_YES);
 
-        //Calculates the value
-        b = false;
-        if (!buffer.IsEmpty() && m_engine.SetFormula(buffer))
+        //Stores the string value
+        if (stringmode)
         {
-            m_engine.Compute();
-            if (m_engine.GetLastError() == wxECE_NOERROR)
+            buffer2 = wxString::Format(wxT("%s_*"), roulette_vars_input);
+            m_engine.DeleteConstantMask(buffer2);
+            for (j=0 ; j<buffer.Len() ; j++)
+                m_engine.SetConstant(   wxString::Format(wxT("%s_%d"), roulette_vars_input, j+1),
+                                    #if wxMAJOR_VERSION >= 3
+                                        buffer.GetChar(j).GetValue()
+                                    #else
+                                        buffer.GetChar(j)
+                                    #endif
+                                    );
+            m_engine.SetConstant(roulette_vars_input_length, buffer.Len());
+        }
+
+        //Stores the numerical value
+        else
+        {
+            //Calculates the value
+            b = false;
+            if (m_engine.SetFormula(buffer))
             {
-                fvalue = m_engine.GetLastResult();
-                b = true;
+                m_engine.Compute();
+                if (m_engine.GetLastError() == wxECE_NOERROR)
+                {
+                    fvalue = m_engine.GetLastResult();
+                    b = true;
+                }
+            }
+
+            //Stores the value
+            if (b)
+                m_engine.SetConstant(roulette_vars_input, fvalue);
+            else
+            {
+                m_engine.DeleteConstant(roulette_vars_input);
+                LogError(wxString::Format(_("'%s' cannot be interpreted as a value."), buffer.uniCStr()));
             }
         }
 
-        //Stores the value
-        if (b)
-            m_engine.SetConstant(roulette_vars_input, fvalue);
-        else
-        {
-            m_engine.DeleteConstant(roulette_vars_input);
-            LogError(wxString::Format(_("'%s' cannot be interpreted as a value."), buffer.uniCStr()));
-        }
         continue;
     }
 
+
+    //------------------------------------------
     wxASSERT(false);
 }
 

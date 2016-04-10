@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_exist)
+case roulette_inst_exist_id:
 {
     //Checks the parameters
     if (!parser.HasParameters())
@@ -31,12 +31,28 @@ if (parser.Instruction == roulette_inst_exist)
 
     //Checks if all the provided variables exist
     b = true;
+    buffer.Empty();
     for (j=0 ; j<parser.CommandList.Count() ; j++)
-        if (!m_engine.HasConstant(parser.CommandList.Item(j)))
+    {
+        //Expand the arrays
+        if (m_engine.SetFormula(parser.CommandList.Item(j)))
+        {
+            if (!m_engine.GetCompactExpression(&buffer))
+            {
+                b = false;
+                break;
+            }
+        }
+        else
+            buffer = parser.CommandList.Item(j);
+
+        //Checks the variable
+        if (!m_engine.HasConstant(buffer))
         {
             b = false;
             break;
         }
+    }
 
     //Saves the result
     m_engine.SetConstant(roulette_vars_result, (b ? 1 : 0));

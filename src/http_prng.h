@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,7 @@
  * \file http_prng.h
  * \brief HTTP client to access some online services
  * \author ecrucru
- * \version 0.1
- * \date December 2015
+ * \since Version 0.1, December 2015
  *
  * This file provides classes to access remote services which generate
  * random numbers.

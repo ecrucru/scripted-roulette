@@ -1,0 +1,146 @@
+"====="
+" In the previous versions of the script, we noticed that you can be ruined if a colour"
+" occurs several times successively. With this modified scripted roulette, you can check if"
+" not playing after a certain amount of losses is a benefit or not. As you will see, giving"
+" up cannot get your money back but the evolution of your cash is smoother. "
+"====="
+
+.INIT
+    "=== Technical options of the roulette"
+    SET sys.type french "As shown in the video, it is NOT an American roulette"
+    SET sys.algorithm mt "This is strictly unknown... surprise !"
+    @RANDOMIZE
+
+    "=== Settings of the game as shown in the video"
+    SET game.cash = 200
+    SET game.bet.max = 50 "Set zero for unlimited bets"
+    SET user.default_bet = 1
+    SET game.bet = user.default_bet
+    SET game.maxserie = 3 "Number of successive losses for which we stop playing until the colour changes"
+
+    "=== Internal memory"
+    SET user.in_debt = 0
+    SET user.rounds.initial = int(3 * game.cash)
+    SET user.rounds = user.rounds.initial
+    SET user.initial_cash = game.cash
+    SET user.serie = 0
+
+    "=== Reminders"
+    WRITE 'Initial cash :' game.cash
+    WRITE 'Initial bet :' user.default_bet
+
+.SEQUENCE
+    "=== Discovers the first color"
+    LABEL first_spin
+    SPIN
+    IF game.landed.zero > 0 "Generic formula to test if we got a zero"
+        GOTO first_spin
+    ENDIF
+
+.SEQUENCE
+    "=== Plays the first round based on the known color"
+    IF game.landed.red
+        BET black
+        SET user.black = sys.true
+    ELSE
+        BET red
+        SET user.black = sys.false
+    ENDIF
+    SPIN
+
+.SEQUENCE
+    "=== Plays many times to see the effect of the technique in the long term"
+    LABEL play_again
+    DEC user.rounds
+
+    "If we won..."
+    IF game.landed.win
+        LABEL force_bet
+        SET game.bet = user.default_bet "Returns to the normal bet"
+
+        IF game.landed.red "The previous value cannot be green"
+            BET black
+            SET user.black = sys.true
+        ELSE
+            BET red
+            SET user.black = sys.false
+        ENDIF
+
+    ELSE "If we have lost..."
+        INC user.serie
+
+        "The bet is doubled to cover the previous loss"
+        SET game.bet = 2 * game.bet
+
+        "Most casinos forbid unlimited bets"
+        IF game.bet.max != 0 AND game.bet > game.bet.max
+            SET game.bet = game.bet.max
+        ENDIF
+
+        "We refer to the last bet, not the last result which can be green"
+        IF user.serie < game.maxserie
+            IF user.black
+                BET black
+            ELSE
+                BET red
+            ENDIF
+        ELSE
+            "If the colour has not changed after a certain succession, then we don't bet, else we bet"
+            IF game.landed.black != user.black
+                SET user.serie = 0
+                GOTO force_bet
+            ENDIF
+        ENDIF
+    ENDIF
+
+    "=== Let's play"
+    SPIN
+    IF game.landed.red
+        WRITE 'Result:' game.net '/ Red:' game.landed.number
+    ELSE
+        WRITE 'Result:' game.net '/ Black:' game.landed.number
+    ENDIF
+
+    "=== Progress bar"
+    SET user.progress = 100*(user.rounds.initial-user.rounds)/user.rounds.initial
+    IF NOT sys.console
+        STATUS 'Progression :' user.progress '%'
+    ENDIF
+    PROGRESS user.progress
+
+    "=== Informs the player of the risks"
+    IF game.credit > 0 AND NOT user.in_debt AND user.rounds > 0
+        SET user.in_debt = 1
+        WRITE 'After' game.rounds 'rounds, you face bankruptcy because playing Red or Black pays 1 to 1.'
+        WRITE 'Since the roulette is not balanced, you will pay a credit to try to win less than the credit.'
+        IF sys.console
+            WRITE 'The simulation will continue to run for the next' user.rounds 'rounds.'
+            PAUSE
+        ELSE
+            CONFIRM 'You are now in debt. Do you accept to lose again for the next' user.rounds 'rounds ?'
+            IF sys.popup = sys.popup.yes
+                POPUP 'That''s an incredible way of thinking...'
+            ELSE
+                BREAK
+            ENDIF
+        ENDIF
+    ENDIF
+
+    "=== Play again ?"
+    IF user.rounds > 0
+        GOTO play_again
+    ENDIF
+
+.SEQUENCE
+    "=== Conclusion for the user"
+    IF game.cash > user.initial_cash
+        POPUP 'It seems that you have won' game.cash-user.initial_cash 'of money. Congratulations.'
+    ELSE
+        IF game.cash <= 0
+            POPUP 'You are wrecked for that game. Read the morals and be careful the next time you play.'
+        ELSE
+            POPUP 'You lost' user.initial_cash-game.cash 'of money, but you can still pay me a beer. Thanks !'
+        ENDIF
+    ENDIF
+
+    INCLUDE include_final

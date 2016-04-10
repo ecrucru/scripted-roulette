@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,11 @@ int main(int argc, char* argv[])
         return 0;
     }
 
+    //-- Warning about the instability
+#if roulette_compile_beta == 1
+    roulette.LogMessage(wxT("Warning : this version is unstable. Please report any bug you may face."));
+#endif
+
     //-- Processing the files
     for (i=0 ; i<cmdline.GetParamCount() ; i++)
     {
@@ -95,6 +100,7 @@ int main(int argc, char* argv[])
         roulette.LogMessage(wxString::Format(_(">> Start of processing for '%s'..."), filename.uniCStr()));
         roulette.StartFromFile(filename, true);
         roulette.LogMessage(wxString::Format(_("<< End of processing for '%s'"), filename.uniCStr()));
+        roulette.LogMessage(wxT("\n"));
     }
     return 0;
 }

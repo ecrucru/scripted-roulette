@@ -25,12 +25,14 @@ rm -f bin/$link_exe
 #=== Compilation of the sources
 $compiler src/wxEcMath/ec_engine.cpp -o bin/ec_engine.obj   $cpp_cmdline -c $cpp_options
 $compiler src/wxEcMath/ec_plot.cpp   -o bin/ec_plot.obj     $cpp_cmdline -c $cpp_options
+$compiler src/engine.cpp             -o bin/engine.obj      $cpp_cmdline -c $cpp_options
 $compiler src/http_prng.cpp          -o bin/http_prng.obj   $cpp_cmdline -c $cpp_options
 $compiler src/random.cpp             -o bin/random.obj      $cpp_cmdline -c $cpp_options
-$compiler src/table.cpp              -o bin/table.obj       $cpp_cmdline -c $cpp_options
-$compiler src/roulette.cpp           -o bin/roulette.obj    $cpp_cmdline -c $cpp_options
 $compiler src/instruction.cpp        -o bin/instruction.obj $cpp_cmdline -c $cpp_options
 $compiler src/sequence.cpp           -o bin/sequence.obj    $cpp_cmdline -c $cpp_options
+$compiler src/debugger.cpp           -o bin/debugger.obj    $cpp_cmdline -c $cpp_options
+$compiler src/roulette.cpp           -o bin/roulette.obj    $cpp_cmdline -c $cpp_options
+$compiler src/table.cpp              -o bin/table.obj       $cpp_cmdline -c $cpp_options
 $compiler src/frame.cpp              -o bin/frame.obj       $cpp_cmdline -c $cpp_options
 $compiler src/main.cpp               -o bin/main.obj        $cpp_cmdline -c $cpp_options
 

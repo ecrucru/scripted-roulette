@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,10 +24,9 @@
  * \file defs.h
  * \brief Global definitions
  * \author ecrucru
- * \version 0.1
- * \date October 2015
+ * \since Version 0.1, October 2015
  *
- * This file contains some definitions global to the entire software.
+ * This file contains some definitions global to the entire application.
  */
 
 #include "wx/wxprec.h"
@@ -49,6 +48,8 @@
 #define roulette_compile_extended       1                       /**< Option for the compilation : 0=minimal, 1=extended. */
 #define roulette_compile_pick_stc       1                       /**< Option for the compilation : 0=don't use STC, 1=use STC. This is the rich text editor with the highlight of the syntax. */
 #define roulette_compile_locale         1                       /**< Option for the compilation : 0=don't translate the application, 1=translate the application. */
+#define roulette_compile_beta           0                       /**< Option for the compilation : 0=release, 1=cutting-edge version with unstable features. */
+#define roulette_compile_msg_sequence   0                       /**< Option for the compilation : 0=disabled, 1=enabled. It helps to reduce the generated system messages when a new sequence is processed. */
 
 
 //------------------------------------------
@@ -64,6 +65,9 @@
 #define roulette_sect_init              wxT(".init")
 #define roulette_sect_sequence          wxT(".sequence")
 
+#define roulette_sect_init_id           3234
+#define roulette_sect_sequence_id       4337
+
 #define roulette_dom_game               wxT("game")
 #define roulette_dom_sys                wxT("sys")
 #define roulette_dom_user               wxT("user")
@@ -76,9 +80,17 @@
 #define roulette_file_ext_inc_dot       wxT(".sri")
 #define roulette_file_default           wxT("script.sr")
 
+#define roulette_char_zero              wxChar(0)
+#define roulette_char_space             wxChar(0x20)
+#define roulette_char_nbspace           wxChar(0xA0)
+
+#define roulette_inst_allocate          wxT("allocate")
+#define roulette_inst_append            wxT("append")
 #define roulette_inst_assert            wxT("assert")
+#define roulette_inst_backup            wxT("backup")
 #define roulette_inst_beep              wxT("beep")
 #define roulette_inst_bet               wxT("bet")
+#define roulette_inst_bits              wxT("bits")
 #define roulette_inst_break             wxT("break")
 #define roulette_inst_buy               wxT("buy")
 #define roulette_inst_cbet              wxT("cbet")
@@ -105,6 +117,7 @@
 #define roulette_inst_randomize         wxT("randomize")
 #define roulette_inst_refresh           wxT("refresh")
 #define roulette_inst_restart           wxT("restart")
+#define roulette_inst_rollback          wxT("rollback")
 #define roulette_inst_save              wxT("save")
 #define roulette_inst_set               wxT("set")
 #define roulette_inst_show              wxT("show")
@@ -113,8 +126,55 @@
 #define roulette_inst_stat              wxT("stat")
 #define roulette_inst_status            wxT("status")
 #define roulette_inst_stop              wxT("stop")
+#define roulette_inst_time              wxT("time")
 #define roulette_inst_unset             wxT("unset")
 #define roulette_inst_write             wxT("write")
+
+#define roulette_inst_allocate_id       4592
+#define roulette_inst_append_id         4109
+#define roulette_inst_assert_id         4238
+#define roulette_inst_backup_id         4026
+#define roulette_inst_beep_id           3069
+#define roulette_inst_bet_id            2502
+#define roulette_inst_bits_id           3224
+#define roulette_inst_break_id          3618
+#define roulette_inst_buy_id            2665
+#define roulette_inst_cbet_id           3078
+#define roulette_inst_check_id          3559
+#define roulette_inst_clear_id          3614
+#define roulette_inst_confirm_id        4469
+#define roulette_inst_debug_id          3611
+#define roulette_inst_dec_id            2401
+#define roulette_inst_else_id           3184
+#define roulette_inst_endif_id          3629
+#define roulette_inst_exist_id          3874
+#define roulette_inst_goto_id           3293
+#define roulette_inst_if_id             1761
+#define roulette_inst_inc_id            2518
+#define roulette_inst_include_id        4454
+#define roulette_inst_input_id          3891
+#define roulette_inst_label_id          3580
+#define roulette_inst_leave_id          3672
+#define roulette_inst_pause_id          3798
+#define roulette_inst_plot_id           3345
+#define roulette_inst_popup_id          3942
+#define roulette_inst_progress_id       4864
+#define roulette_inst_random_id         4163
+#define roulette_inst_randomize_id      4823
+#define roulette_inst_refresh_id        4509
+#define roulette_inst_restart_id        4624
+#define roulette_inst_rollback_id       4707
+#define roulette_inst_save_id           3243
+#define roulette_inst_set_id            2655
+#define roulette_inst_show_id           3358
+#define roulette_inst_slap_id           3250
+#define roulette_inst_spin_id           3326
+#define roulette_inst_stat_id           3338
+#define roulette_inst_status_id         4383
+#define roulette_inst_stop_id           3412
+#define roulette_inst_time_id           3253
+#define roulette_inst_unset_id          3924
+#define roulette_inst_write_id          3919
 
 #define roulette_vars_bet               wxT("game.bet")
 #define roulette_vars_betmax            wxT("game.bet.max")
@@ -154,6 +214,7 @@
 #define roulette_vars_number_min        wxT("sys.game.number.min")
 #define roulette_vars_number_max        wxT("sys.game.number.max")
 #define roulette_vars_input             wxT("sys.input")
+#define roulette_vars_input_length      wxT("sys.input.length")
 #define roulette_vars_last_if           wxT("sys.last_if")
 #define roulette_vars_plot              wxT("sys.plot")
 #define roulette_vars_popup             wxT("sys.popup")
@@ -178,8 +239,8 @@
 #define roulette_http_delay             5
 
 #define roulette_about_name             wxT("Scripted Roulette")
-#define roulette_about_version          wxT("v0.1")
-#define roulette_about_version_num      10
+#define roulette_about_version          wxT("v0.2")
+#define roulette_about_version_num      20
 #define roulette_about_website          wxT("http://scripted-roulette.sourceforge.net")
 #define roulette_about_copyright        wxT("Copyright (c) 2015-2016, ecrucru")
 #define roulette_about_desc             wxT("Scripting tool to develop your own betting\nstrategy for the Roulette, a casino game.")

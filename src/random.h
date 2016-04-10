@@ -91,8 +91,7 @@
  * \file random.h
  * \brief Random number generator
  * \author Various authors
- * \version 0.1
- * \date October 2015
+ * \since Version 0.1, October 2015
  *
  * This file defines some random number generators picked from various sources.
  */

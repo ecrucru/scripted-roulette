@@ -1,0 +1,175 @@
+"#version-min: 020"
+"====="
+" This scripted roulette illustrates the new advanced scripting capabilities"
+" to support the string characters introduced in the version 0.2. This demo"
+" also served to develop the new debugger."
+"====="
+
+.SEQUENCE
+    "=== Requests the input string which will be stored as an array of numbers"
+    INPUT string 'Write the chain to convert to Base64 :'
+    TIME
+    EXIST sys.input[1]
+    IF sys.popup = sys.popup.yes AND sys.result
+        "OK"
+    ELSE
+        WRITE error 'You don''t have typed any input string.'
+        STOP
+    ENDIF
+
+.SEQUENCE
+    "=== Detects the length of the string and pushes the data to a writable namespace"
+    SET user.len = 0
+    LABEL loop_len
+    EXIST sys.input[user.len+1]
+    IF sys.result
+        SET user.input[user.len+1] = sys.input[user.len+1]
+        INC user.len
+        GOTO loop_len
+    ENDIF
+    WRITE 'The length of the string is' user.len
+    SET user.len_base = user.len
+    "Remark: the length is also given by the variable sys.input.length"
+    ASSERT sys.input.length = user.len
+
+    "=== Number of bits"
+    SET user.total_bits = 8 * user.len_base
+
+    "=== The length of the input must be aligned"
+    LABEL loop_multiple
+    IF user.len % 3 != 0
+        INC user.len
+        SET user.input[user.len] = 0
+        GOTO loop_multiple
+    ENDIF
+
+.SEQUENCE
+    "=== Initializes the table used for the mapping"
+    SET user.b64enc[ 0] = 65
+    SET user.b64enc[ 1] = 66
+    SET user.b64enc[ 2] = 67
+    SET user.b64enc[ 3] = 68
+    SET user.b64enc[ 4] = 69
+    SET user.b64enc[ 5] = 70
+    SET user.b64enc[ 6] = 71
+    SET user.b64enc[ 7] = 72
+    SET user.b64enc[ 8] = 73
+    SET user.b64enc[ 9] = 74
+    SET user.b64enc[10] = 75
+    SET user.b64enc[11] = 76
+    SET user.b64enc[12] = 77
+    SET user.b64enc[13] = 78
+    SET user.b64enc[14] = 79
+    SET user.b64enc[15] = 80
+    SET user.b64enc[16] = 81
+    SET user.b64enc[17] = 82
+    SET user.b64enc[18] = 83
+    SET user.b64enc[19] = 84
+    SET user.b64enc[20] = 85
+    SET user.b64enc[21] = 86
+    SET user.b64enc[22] = 87
+    SET user.b64enc[23] = 88
+    SET user.b64enc[24] = 89
+    SET user.b64enc[25] = 90
+    SET user.b64enc[26] = 97
+    SET user.b64enc[27] = 98
+    SET user.b64enc[28] = 99
+    SET user.b64enc[29] = 100
+    SET user.b64enc[30] = 101
+    SET user.b64enc[31] = 102
+    SET user.b64enc[32] = 103
+    SET user.b64enc[33] = 104
+    SET user.b64enc[34] = 105
+    SET user.b64enc[35] = 106
+    SET user.b64enc[36] = 107
+    SET user.b64enc[37] = 108
+    SET user.b64enc[38] = 109
+    SET user.b64enc[39] = 110
+    SET user.b64enc[40] = 111
+    SET user.b64enc[41] = 112
+    SET user.b64enc[42] = 113
+    SET user.b64enc[43] = 114
+    SET user.b64enc[44] = 115
+    SET user.b64enc[45] = 116
+    SET user.b64enc[46] = 117
+    SET user.b64enc[47] = 118
+    SET user.b64enc[48] = 119
+    SET user.b64enc[49] = 120
+    SET user.b64enc[50] = 121
+    SET user.b64enc[51] = 122
+    SET user.b64enc[52] = 48
+    SET user.b64enc[53] = 49
+    SET user.b64enc[54] = 50
+    SET user.b64enc[55] = 51
+    SET user.b64enc[56] = 52
+    SET user.b64enc[57] = 53
+    SET user.b64enc[58] = 54
+    SET user.b64enc[59] = 55
+    SET user.b64enc[60] = 56
+    SET user.b64enc[61] = 57
+    SET user.b64enc[62] = 43
+    SET user.b64enc[63] = 47
+
+.SEQUENCE
+    WRITE 'Base64:' space
+    SET user.remaining_bits = 0
+    SET user.position = 1 "Cursor"
+
+.SEQUENCE
+    "=== Build of the first 8 bits"
+    BITS user.tmp user.input[user.position]
+
+    "=== Moves the output to an array owned by the user and reorders the bits"
+    SET user.loop = 8
+    LABEL loop_bit
+
+    EXIST user.tmp[user.loop-1]
+    IF sys.result
+        SET user.bits[9-user.loop+user.remaining_bits] = user.tmp[user.loop-1]
+    ELSE
+        SET user.bits[9-user.loop+user.remaining_bits] = 0
+    ENDIF
+
+    DEC user.loop
+    IF user.loop > 0
+        GOTO loop_bit
+    ENDIF
+
+    UNSET user.tmp[]
+
+    "=== Determines the code for the first 6 bits"
+    LABEL label_bits
+    SET user.code = 32*user.bits[1] + 16*user.bits[2] + 8*user.bits[3] + 4*user.bits[4] + 2*user.bits[5] + user.bits[6]
+    IF user.total_bits <= 0
+        APPEND c:61 "="
+    ELSE
+        APPEND c:user.b64enc[user.code]
+    ENDIF
+    SET user.remaining_bits = user.remaining_bits + 2
+    SET user.total_bits = user.total_bits - 6
+
+    "=== Shifts the 6 first bits"
+    SET user.loop = 1
+    LABEL loop_shift
+    EXIST user.bits[user.loop+6]
+    IF sys.result
+        SET user.bits[user.loop] = user.bits[user.loop+6]
+        INC user.loop
+        GOTO loop_shift
+    ENDIF
+
+    "=== Processes the remaining bits"
+    IF user.remaining_bits = 6
+        SET user.remaining_bits = -2
+        GOTO label_bits
+    ENDIF
+
+    "=== Next position"
+    INC user.position
+    IF user.position <= user.len
+        RESTART SEQUENCE
+    ENDIF
+
+.SEQUENCE
+    @TIME
+    INCLUDE include_final

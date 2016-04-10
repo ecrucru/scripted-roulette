@@ -1,0 +1,16 @@
+"#version-min: 150"
+"====="
+" This scripted roulette requires a certain version of the interpreter."
+" Else its execution will fail."
+"====="
+
+.INIT
+    "=== Verify the version with the method available since the version 0.1"
+    IF sys.version < 150
+        WRITE 'You don''t own the minimum required version of Scripted Roulette'
+        STOP
+    ENDIF
+
+.SEQUENCE
+    "=== Confirmation"
+    WRITE 'You will see this text if you run the right version of Scripted Roulette'

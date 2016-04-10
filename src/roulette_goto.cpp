@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_goto)
+case roulette_inst_goto_id:
 {
     //Checks the parameters
     if (parser.CountParameters() < 1)
@@ -47,8 +47,8 @@ if (parser.Instruction == roulette_inst_goto)
             }
             //Warns if we jump to a deeper instruction
             if (if_look_depth > if_depth)
-				if (!parser.NoWarning)
-					LogWarning(_("Jumping to a deeper instruction may be unsafe."));
+                if (!parser.NoWarning)
+                    LogWarning(_("Jumping to a deeper instruction may be unsafe."));
             //Adapts the IF before jumping to another instruction
             i = j;
             if_depth = if_look_depth;

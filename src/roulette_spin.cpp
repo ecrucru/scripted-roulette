@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_spin)
+case roulette_inst_spin_id:
 {
     //Checks if a forced spin is requested
     forced_spin = roulette_invalid_spin;
@@ -68,7 +68,7 @@ if (parser.Instruction == roulette_inst_spin)
     if (cash < 0)
     {
         credit += stake;
-        cash += stake;		    	//An increase of the credit generates some new money for the player
+        cash += stake;                //An increase of the credit generates some new money for the player
     }
     else
         if (stake > cash)
@@ -142,14 +142,14 @@ if (parser.Instruction == roulette_inst_spin)
 
     //Store the history of the spins
     history.Reset();
-    m_engine.GetConstant(roulette_vars_bet,           &history.Bet, -1);
-    m_engine.GetConstant(roulette_vars_stake,         &history.Stake, -1);
+    m_engine.GetConstant(roulette_vars_bet,           &history.Bet,          -1);
+    m_engine.GetConstant(roulette_vars_stake,         &history.Stake,        -1);
     m_engine.GetConstant(roulette_vars_landed_number, &history.LandedNumber, -1);
-    m_engine.GetConstant(roulette_vars_landed_win,    &history.Win, -1);
-    m_engine.GetConstant(roulette_vars_gain,          &history.Gain, -1);
-    m_engine.GetConstant(roulette_vars_cash,          &history.Cash, -1);
-    m_engine.GetConstant(roulette_vars_credit,        &history.Credit, -1);
-    m_engine.GetConstant(roulette_vars_net,           &history.Net, -1);
+    m_engine.GetConstant(roulette_vars_landed_win,    &history.Win,          -1);
+    m_engine.GetConstant(roulette_vars_gain,          &history.Gain,         -1);
+    m_engine.GetConstant(roulette_vars_cash,          &history.Cash,         -1);
+    m_engine.GetConstant(roulette_vars_credit,        &history.Credit,       -1);
+    m_engine.GetConstant(roulette_vars_net,           &history.Net,          -1);
     m_spin_history.AddData(history);
 
     //Finalization

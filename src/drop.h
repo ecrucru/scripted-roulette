@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,7 @@
  * \file drop.h
  * \brief Drag'n'drop
  * \author ecrucru
- * \version 0.1
- * \date November 2015
+ * \since Version 0.1, November 2015
  *
  * This file contains the drag'n'drop functionality.
  */

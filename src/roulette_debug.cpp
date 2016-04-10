@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,19 +19,92 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_debug)
+case roulette_inst_debug_id:
 {
-    //Checks the parameters
+    //Fetches the parameter
     if (parser.HasParameters())
-		if (!parser.NoWarning)
-			LogWarning(wxString::Format(_("No argument is expected for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
+        buffer = parser.Command;
+    else
+        buffer.Empty();
 
-    //Calls the debugger
-#ifdef __WXDEBUG__
-    wxTrap();
-#else
-    LogError(_("The software is not compiled correctly to support the instruction 'DEBUG'."));
+    //Calls the debugging features
+    if (buffer.IsEmpty())
+    {
+    #ifdef _CONSOLE
+        /** \todo Debugger in console mode */
+    #else
+        if (!m_debugger_skip)
+        {
+            if (m_debugger == NULL)
+            {
+                m_debugger = new wxRouletteDebugger(NULL);
+                if (m_debugger == NULL)
+                {
+                    LogSystem(_("Unable to load the debugger."));
+                    goto external_debug;
+                }
+            }
+            if (parser.NoWarning)
+                goto debug_answer_step;
+            else
+                m_debugger->SetState(&m_engine, &script, i);
+            switch (m_debugger->ShowModal())
+            {
+                case ID_DEBUG_CONTINUE:
+                    m_debugger_enabled = false;
+                    break;
+                case ID_DEBUG_JUMP:
+debug_answer_step:
+                    m_debugger_enabled = true;
+                    break;
+                case ID_DEBUG_VALIDATE:
+                    m_debugger_enabled = false;
+                    m_debugger_skip = true;
+                    break;
+                case ID_DEBUG_STOP:
+                    m_debugger_enabled = false;
+                    RequestStop();
+                    break;
+                default:
+                    wxASSERT(false);
+                    break;
+            }
+        }
+    #endif
+        continue;
+    }
+
+    if (buffer == wxT("external"))
+    {
+#ifndef _CONSOLE
+external_debug:
 #endif
+        if (!m_debugger_skip)
+        {
+        #ifdef __WXDEBUG__
+            wxTrap();
+        #else
+            LogError(wxString::Format(_("The application is not compiled correctly to support the instruction '%s'."), buffer.Upper().uniCStr()));
+        #endif
+        }
+        continue;
+    }
+
+    if (buffer == wxT("off"))
+    {
+        m_debugger_skip = true;
+        continue;
+    }
+
+    if (buffer == wxT("on"))
+    {
+        m_debugger_skip = false;
+        continue;
+    }
+
+    //Unsupported cases
+    LogError(wxString::Format(_("Unsupported command '%s' for the instruction '%s'."), buffer.Upper().uniCStr(), parser.Instruction.Upper().uniCStr()));
+    script[i].Empty();
     continue;
 }
 

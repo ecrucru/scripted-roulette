@@ -1,0 +1,98 @@
+"====="
+" This scripted roulette is an illustration of what you can do with an array. The"
+" objective is to see how good the Labouchère system is (or not). This algorithm"
+" has an adaptive bet which reacts depending on your winning history."
+"====="
+
+.INIT
+    INCLUDE include_init "Set game.bet.max to 0 for unlimited bets"
+    SET game.cash = 500
+
+    "=== Settings of the game"
+    SET user.seqlen = 100 "The game requires an initial sequence to know how much we can bet"
+    SET user.seqampl = 10 "The higher, the riskier and the more expensive (in the limit of the casino)"
+    SET user.rounds = 100 "Maximum number of spins"
+    SET user.labouchere.reverse = sys.false "Variant of the algorithm if you see any interest..."
+
+    "=== Automatic definitions"
+    SET user.min = 1
+    SET user.max = user.seqlen
+    SET user.cash.init = game.cash
+
+.SEQUENCE
+    ASSERT user.min < user.max
+
+    "=== Initializes the sequence with random numbers"
+    LABEL initialize_sequence
+
+    RANDOM user.seqampl - 1
+    SET user.sequence[user.seqlen] = sys.random + 1
+
+    DEC user.seqlen
+    IF user.seqlen > 0
+        GOTO initialize_sequence
+    ENDIF
+
+    "=== Pick a color"
+    RANDOM
+    SET user.black = even(sys.random)
+
+.SEQUENCE
+    "=== The bet is equal to the sum of the left and right terms"
+    SET game.bet = user.sequence[user.min] + user.sequence[user.max]
+
+    "=== A bet can have a maximum limit defined by the casino"
+    IF game.bet.max > 0 AND game.bet > game.bet.max
+        SET game.bet = game.bet.max
+    ENDIF
+
+    "=== You can't bet more than you have"
+    IF game.bet > game.cash
+        SET game.bet = game.cash
+    ENDIF
+
+    "=== Let's bet on the right color, but it also works for Even/Odd"
+    IF user.black
+        BET black
+    ELSE
+        BET red
+    ENDIF
+
+    "=== Spins the ball"
+    SPIN
+
+    "=== Switches the color for the next bet"
+    IF game.landed.win
+        SET user.black = 1 - user.black
+    ENDIF
+
+    "=== Labouchère system:"
+    "- Normal mode : win=remove the left and right numbers, loss=append the amount"
+    "- Reverse mode : the opposite rule :-)"
+    IF game.landed.win = not(user.labouchere.reverse)
+        INC user.min
+        DEC user.max
+    ELSE
+        INC user.max
+        SET user.sequence[user.max] = game.bet
+    ENDIF
+
+    "=== Plays again if allowed"
+    DEC user.rounds
+    IF user.rounds > 0 AND user.min < user.max AND game.cash > 0
+        RESTART SEQUENCE
+    ENDIF
+
+.SEQUENCE
+    "=== Displays some information for the player"
+    IF game.cash = 0
+        POPUP 'You are wrecked...'
+    ELSE
+        IF game.cash > user.cash.init
+            POPUP 'You have won' game.cash-user.cash.init 'of money. Congratulations !'
+        ELSE
+            POPUP 'You have lost several coins during the battle but you have no debt.'
+        ENDIF
+    ENDIF
+
+    INCLUDE include_final

@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -98,6 +98,12 @@ class wxRouletteApp: public wxApp
             if (m_mainframe->OpenFile(filename))
                 if (autostart)
                     m_mainframe->Execute();
+
+        //-- Information about the instability
+    #if roulette_compile_beta == 1
+        if (!autostart)
+            wxMessageDialog(NULL, wxT("This version is unstable. Please report any bug you\nmay encountered during the use of this application."), wxT("Warning"), wxICON_WARNING|wxOK).ShowModal();
+    #endif
 
         //-- Final
         return true;

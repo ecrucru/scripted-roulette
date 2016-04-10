@@ -1,5 +1,5 @@
 
-/*  Scripted Roulette - version 0.1
+/*  Scripted Roulette - version 0.2
  *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,31 @@
 
 #ifdef roulette_h
 
-if (parser.Instruction == roulette_inst_set)
+case roulette_inst_set_id:
 {
     //Checks the parameters
     parser.RemoveParameter(wxT("="));
     if (parser.CountParameters() < 2)
     {
-        LogError(wxString::Format(_("At least 1 argument is expected for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
+        LogError(wxString::Format(_("At least 2 arguments are expected for the instruction '%s'."), parser.Instruction.Upper().uniCStr()));
+        script[i].Empty();
+        continue;
+    }
+
+    //Evaluates the name of the variable to support the arrays
+    b = false;
+    if (m_engine.SetFormula(parser.CommandList.Item(0)))
+    {
+        if (m_engine.GetCompactExpression(&buffer))
+        {
+            parser.CommandList[0] = buffer;
+            parser.RebuildCommandLine();
+            b = true;
+        }
+    }
+    if (!b)
+    {
+        LogError(wxString::Format(_("The name of the variable '%s' is misspelled."), parser.CommandList.Item(0).uniCStr()));
         script[i].Empty();
         continue;
     }
@@ -96,7 +114,7 @@ if (parser.Instruction == roulette_inst_set)
                         script[i].Empty();
                     }
             //Updates the variable telling how many numbers are on the table
-            m_engine.SetConstant(roulette_vars_numbers, m_table.GetCellCount());
+            m_engine.SetConstant(roulette_vars_numbers,    m_table.GetCellCount());
             m_engine.SetConstant(roulette_vars_number_min, wxRouletteHelper::GetMinNumberFromType(m_table.GetRouletteType()));
             m_engine.SetConstant(roulette_vars_number_max, wxRouletteHelper::GetMaxNumberFromType(m_table.GetRouletteType()));
             continue;
@@ -135,8 +153,8 @@ if (parser.Instruction == roulette_inst_set)
     //Sets the value of all other authorized names
     position = parser.Command.Find(wxT(" "));
     wxASSERT(position != wxNOT_FOUND);
-    name = parser.Command.SubString(0, position-1);
-    formula = parser.Command.SubString(position+1, parser.Command.Len());
+    name = parser.Command.Mid(0, position);
+    formula = parser.Command.Mid(position+1, parser.Command.Len());
     if (!m_engine.SetFormula(formula))
     {
         LogError(wxString::Format(_("Wrong syntax encountered when processing the definition of '%s'."), name.uniCStr()));
