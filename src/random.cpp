@@ -1,6 +1,6 @@
 
-/*  Scripted Roulette - version 0.2
- *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+/*  Scripted Roulette - version 0.2.1
+ *  Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -87,6 +87,9 @@ void wxRouletteRandom::Randomize()
     else
         ln_seed = log(m_initial_seed_time/M_PI + 2);
     wxASSERT(ln_seed != 1);
+
+    //-- Custom
+    custom_seed = seed;
 }
 
 unsigned long wxRouletteRandom::GetComputerClock()

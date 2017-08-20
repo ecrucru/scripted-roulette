@@ -1,0 +1,376 @@
+"#version-min: 021"
+
+"====="
+" This script spins the ball to control automatically the generated results."
+" If the output is not the expected one, then Scripted Roulette has an internal issue."
+"====="
+
+.INIT
+    INCLUDE include_init
+    SET game.bet 1
+
+.SEQUENCE "=== Straight"
+    WRITE debug 'Straight - Pays 35 to 1'
+    SET user.gain = 35
+    " Top left corner"
+    BET 1
+    SPIN 1
+    ASSERT game.gain = user.gain
+    " Top right corner"
+    BET 3
+    SPIN 3
+    ASSERT game.gain = user.gain
+    " Bottom left corner"
+    BET 34
+    SPIN 34
+    ASSERT game.gain = user.gain
+    " Bottom right corner"
+    BET 36
+    SPIN 36
+    ASSERT game.gain = user.gain
+    " Center"
+    BET 14
+    SPIN 14
+    ASSERT game.gain = user.gain
+    " Random spin"
+    BET 13
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+    " Several spins with a good one"
+    BET 12 25
+    SPIN 12
+    ASSERT game.gain = user.gain - game.bet
+    " Missed several spins"
+    BET 0 30
+    SPIN 28
+    ASSERT game.gain = -2*game.bet
+    " Missed several spins"
+    BET 11
+    SPIN 0
+    ASSERT game.gain = -game.bet
+
+.SEQUENCE "=== Horizontal split"
+    WRITE debug 'Horizontal split - Pays 17 to 1'
+    SET user.gain = 17
+    " Single column 1"
+    BET 1-2
+    SPIN 1
+    ASSERT game.gain = user.gain
+    " Single column 2"
+    BET 22-23
+    SPIN 23
+    ASSERT game.gain = user.gain
+    BET 23-24
+    SPIN 23
+    ASSERT game.gain = user.gain
+    " Single column 3"
+    BET 35-36
+    SPIN 36
+    ASSERT game.gain = user.gain
+    " Multiple column 1"
+    BET 10-11 23-24
+    SPIN 10
+    ASSERT game.gain = user.gain - game.bet
+    BET 10-11 11-12
+    SPIN 10
+    ASSERT game.gain = user.gain - game.bet
+    " Multiple column 2"
+    BET 4-5 5-6 32-33
+    SPIN 5
+    ASSERT game.gain = 2*user.gain - game.bet
+    " Multiple column 3"
+    BET 20-21 29-30
+    SPIN 30
+    ASSERT game.gain = user.gain - game.bet
+    " Random spin"
+    BET 17-18
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Vertical split"
+    WRITE debug 'Vertical split - Pays 17 to 1'
+    SET user.gain = 17
+    " Single Top"
+    BET 2-5
+    SPIN 2
+    ASSERT game.gain = user.gain
+    " Single Middle"
+    BET 18-21
+    SPIN 21
+    ASSERT game.gain = user.gain
+    " Single Bottom"
+    BET 31-34
+    SPIN 34
+    ASSERT game.gain = user.gain
+    " Multiple Top"
+    BET 1-4 2-5 3-6 25-28
+    SPIN 1
+    ASSERT game.gain = user.gain - 3*game.bet
+    " Multiple Middle"
+    BET 21-24 24-27 31-34
+    SPIN 24
+    ASSERT game.gain = 2*user.gain - game.bet
+    " Multiple Bottom"
+    BET 16-19 33-36
+    SPIN 36
+    ASSERT game.gain = user.gain - game.bet
+    " Random spin"
+    BET 8-11
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Corner"
+    WRITE debug 'Corner - Pays 8 to 1'
+    SET user.gain = 8
+    " Single Top Left"
+    BET 1-5
+    SPIN 4
+    ASSERT game.gain = user.gain
+    " Single Top Right"
+    BET 2-6
+    SPIN 3
+    ASSERT game.gain = user.gain
+    " Single Bottom Left"
+    BET 31-35
+    SPIN 35
+    ASSERT game.gain = user.gain
+    " Single Bottom Right"
+    BET 32-36
+    SPIN 32
+    ASSERT game.gain = user.gain
+    " Star"
+    BET 16-20 17-21 19-23 20-24 31-35
+    SPIN 20
+    ASSERT game.gain = 4*user.gain - game.bet
+    " Random spin"
+    BET 14-18
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Street"
+    WRITE debug 'Street - Pays 11 to 1'
+    SET user.gain = 11
+    " Single Top"
+    BET 1-3
+    SPIN 2
+    ASSERT game.gain = user.gain
+    " Single Middle"
+    BET 19-21
+    SPIN 19
+    ASSERT game.gain = user.gain
+    " Single Bottom"
+    BET 34-36
+    SPIN 36
+    ASSERT game.gain = user.gain
+    " Multiple"
+    BET 7-9 16-18
+    SPIN 17
+    ASSERT game.gain = user.gain - game.bet
+    " Random spin"
+    BET 4-6
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Line"
+    WRITE debug 'Line - Pays 5 to 1'
+    SET user.gain = 5
+    " Single Top"
+    BET 1-6
+    SPIN 4
+    ASSERT game.gain = user.gain
+    " Single Middle"
+    BET 22-27
+    SPIN 24
+    ASSERT game.gain = user.gain
+    " Single Bottom"
+    BET 31-36
+    SPIN 35
+    ASSERT game.gain = user.gain
+    " Multiple"
+    BET 10-15 13-18 25-30
+    SPIN 13
+    ASSERT game.gain = 2*user.gain - game.bet
+    " Random spin"
+    BET 28-33
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Dozen"
+    WRITE debug 'Dozen - Pays 2 to 1'
+    SET user.gain = 2
+    " Single First"
+    BET 1-12
+    SPIN 4
+    ASSERT game.gain = user.gain
+    BET dozen_1
+    SPIN 11
+    ASSERT game.gain = user.gain
+    " Single Second"
+    BET 13-24
+    SPIN 13
+    ASSERT game.gain = user.gain
+    BET dozen_2
+    SPIN 24
+    ASSERT game.gain = user.gain
+    " Single Third"
+    BET 25-36
+    SPIN 26
+    ASSERT game.gain = user.gain
+    BET dozen_3
+    SPIN 29
+    ASSERT game.gain = user.gain
+    " Random spin"
+    BET 13-24
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Column"
+    WRITE debug 'Column - Pays 2 to 1'
+    SET user.gain = 2
+    " Single First"
+    BET 1-34
+    SPIN 19
+    ASSERT game.gain = user.gain
+    BET column_1
+    SPIN 31
+    ASSERT game.gain = user.gain
+    " Single Second"
+    BET 2-35
+    SPIN 5
+    ASSERT game.gain = user.gain
+    BET column_2
+    SPIN 32
+    ASSERT game.gain = user.gain
+    " Single Third"
+    BET 3-36
+    SPIN 15
+    ASSERT game.gain = user.gain
+    BET column_3
+    SPIN 33
+    ASSERT game.gain = user.gain
+    " Random spin"
+    BET 2-35
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Bi-Dozen"
+    WRITE debug 'Bi-Dozen - Pays 1 to 2'
+    SET user.gain = 0.5
+    " Single First"
+    BET 1-24
+    SPIN 13
+    ASSERT game.gain = user.gain
+    BET dozen_12
+    SPIN 19
+    ASSERT game.gain = user.gain
+    " Single Second"
+    BET 13-36
+    SPIN 16
+    ASSERT game.gain = user.gain
+    BET dozen_23
+    SPIN 29
+    ASSERT game.gain = user.gain
+    " Random spin"
+    BET 1-24
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Bi-Column"
+    WRITE debug 'Bi-Column - Pays 1 to 2'
+    SET user.gain = 0.5
+    " Single First"
+    BET 1-35
+    SPIN 14
+    ASSERT game.gain = user.gain
+    BET column_12
+    SPIN 22
+    ASSERT game.gain = user.gain
+    " Single Second"
+    BET 2-36
+    SPIN 30
+    ASSERT game.gain = user.gain
+    BET column_23
+    SPIN 32
+    ASSERT game.gain = user.gain
+    " Random spin"
+    BET 2-36
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Half"
+    WRITE debug 'Half - Pays 1 to 1'
+    SET user.gain = 1
+    " Low"
+    BET 1-18
+    SPIN 17
+    ASSERT game.gain = user.gain
+    BET low
+    SPIN 9
+    ASSERT game.gain = user.gain
+    " High"
+    BET 19-36
+    SPIN 28
+    ASSERT game.gain = user.gain
+    BET high
+    SPIN 24
+    ASSERT game.gain = user.gain
+    " Zero"
+    BET low
+    SPIN 0
+    ASSERT game.gain = -user.gain
+    BET high
+    SPIN 0
+    ASSERT game.gain = -user.gain
+    " Random spin"
+    BET low
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Color"
+    WRITE debug 'Color - Pays 1 to 1'
+    SET user.gain = 1
+    " Red"
+    BET red
+    SPIN 7
+    ASSERT game.gain = user.gain
+    " Black"
+    BET black
+    SPIN 2
+    ASSERT game.gain = user.gain
+    " Zero"
+    BET red
+    SPIN 0
+    ASSERT game.gain = -user.gain
+    BET black
+    SPIN 0
+    ASSERT game.gain = -user.gain
+    " Random spin"
+    BET red
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "=== Parity"
+    WRITE debug 'Parity - Pays 1 to 1'
+    SET user.gain = 1
+    " Odd"
+    BET odd
+    SPIN 21
+    ASSERT game.gain = user.gain
+    " Even"
+    BET even
+    SPIN 28
+    ASSERT game.gain = user.gain
+    " Zero"
+    BET odd
+    SPIN 0
+    ASSERT game.gain = -user.gain
+    BET even
+    SPIN 0
+    ASSERT game.gain = -user.gain
+    " Random spin"
+    BET even
+    SPIN
+    ASSERT game.gain = user.gain OR game.gain = -game.bet
+
+.SEQUENCE "== Unit test completed"
+    WRITE debug 'The test is successfully completed if you see this message'

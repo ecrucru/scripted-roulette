@@ -1,6 +1,6 @@
 
-/*  Scripted Roulette - version 0.2
- *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+/*  Scripted Roulette - version 0.2.1
+ *  Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ reprocess_code:
                     LogError(wxString::Format(_("Having more than %d includes is not accepted."), roulette_max_includes));
                 else
                 {
-                    subfile = wxString::Format(wxT("%s.sri"), parser.Command.uniCStr());
+                    subfile = wxString::Format(wxT("%s%s"), parser.Command.uniCStr(), roulette_file_ext_inc_dot);
                     if (wxRouletteHelper::LoadFileToArrayString(subfile, &content))
                     {
                         if (content.GetCount() > 0)     //Empty includes to not count in the maximal total
@@ -514,7 +514,7 @@ current_statement:
             break;
         if (m_stop_requested)
         {
-		    LogWarning(_("The execution of the script has been requested to stop."));
+            LogWarning(_("The execution of the script has been requested to stop."));
             break;
         }
         if (i > line_max)                   //Some IF ends a script
@@ -752,9 +752,9 @@ void wxRoulette::DoUpdateDynamicVariables(bool pNoWarning)
 
     //-- After SET for example, the bet needs to be updated
     if (m_engine.GetConstant(roulette_vars_bet, &bet))
-		if (!m_table.SetBet(bet))
-			if (!pNoWarning)
-				LogWarning(_("You can't bet with null or negative amounts."));
+        if (!m_table.SetBet(bet))
+            if (!pNoWarning)
+                LogWarning(_("You can't bet with null or negative amounts."));
     bet = m_table.GetBet();
     m_engine.SetConstant(roulette_vars_bet, bet);
 
@@ -766,7 +766,7 @@ void wxRoulette::DoUpdateDynamicVariables(bool pNoWarning)
 
     //-- Updates the stake and the status telling if we can bet more
     stake = m_table.GetStake();
-	m_engine.SetConstant(roulette_vars_stake, stake);
+    m_engine.SetConstant(roulette_vars_stake, stake);
     m_engine.GetConstant(roulette_vars_cash, &cash, 0);
     m_engine.GetConstant(roulette_vars_credit, &credit, 0);
     maxbet = GetMaxBet();
@@ -1074,8 +1074,8 @@ bool wxRoulette::StartFromFile(wxString pFileName, bool pStart)
     //-- Loads the script from a file
     if (!wxRouletteHelper::LoadFileToArrayString(pFileName, &m_script))
     {
-	    LogError(wxString::Format(_("The input file '%s' is not loaded."), pFileName.uniCStr()));
-	    return false;
+        LogError(wxString::Format(_("The input file '%s' is not loaded."), pFileName.uniCStr()));
+        return false;
     }
 
     //-- Loads the script

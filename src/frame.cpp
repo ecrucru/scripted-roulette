@@ -1,6 +1,6 @@
 
-/*  Scripted Roulette - version 0.2
- *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+/*  Scripted Roulette - version 0.2.1
+ *  Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -62,14 +62,14 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
 {
     wxString buffer;
 
-	//-- Layout
-	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-	this->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    //-- Layout
+    this->SetSizeHints(wxDefaultSize, wxDefaultSize);
+    this->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-	wxBoxSizer *VSizer = new wxBoxSizer(wxVERTICAL);
-		m_notebook = new wxNotebook(this, wxID_ANY);
-			m_tab_script = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-				wxBoxSizer *SSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer *VSizer = new wxBoxSizer(wxVERTICAL);
+        m_notebook = new wxNotebook(this, wxID_ANY);
+            m_tab_script = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+                wxBoxSizer *SSizer = new wxBoxSizer(wxVERTICAL);
                 #ifdef wxUSE_STC
                     m_script_view = new wxStyledTextCtrl(m_tab_script, wxID_ANY);
 
@@ -139,14 +139,14 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
                     m_script_view->StyleSetForeground(wxSTC_ST_GLOBAL, wxColour(128, 0, 128));
                     m_script_view->StyleSetBold      (wxSTC_ST_GLOBAL, true);
                 #else
-					m_script_view = new wxTextCtrl(m_tab_script, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_NOHIDESEL);
-					m_script_view->SetFont(wxFont(9, 76, 90, 90, false, wxEmptyString));
+                    m_script_view = new wxTextCtrl(m_tab_script, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_NOHIDESEL);
+                    m_script_view->SetFont(wxFont(9, 76, 90, 90, false, wxEmptyString));
                 #endif
-					SSizer->Add(m_script_view, 1, wxALL|wxEXPAND, 5);
-					m_tab_script->SetSizer(SSizer);
-					m_tab_script->Layout();
-				SSizer->Fit(m_tab_script);
-			m_notebook->AddPage(m_tab_script, _("Script"), true);
+                    SSizer->Add(m_script_view, 1, wxALL|wxEXPAND, 5);
+                    m_tab_script->SetSizer(SSizer);
+                    m_tab_script->Layout();
+                SSizer->Fit(m_tab_script);
+            m_notebook->AddPage(m_tab_script, _("Script"), true);
 
             m_tab_memory = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
                 wxBoxSizer *ASizer = new wxBoxSizer(wxVERTICAL);
@@ -159,69 +159,69 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
             m_notebook->AddPage(m_tab_memory, _("Memory"), false);
 
             m_tab_console = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	            wxBoxSizer *CSizer = new wxBoxSizer(wxVERTICAL);
-		            m_grid = new wxGrid(m_tab_console, wxID_ANY);
-		            // Grid
-		            m_grid->CreateGrid(1, 2);
-		            m_grid->EnableEditing(false);
-		            m_grid->EnableGridLines(true);
-		            m_grid->EnableDragGridSize(false);
-		            m_grid->SetMargins(0, 0);
+                wxBoxSizer *CSizer = new wxBoxSizer(wxVERTICAL);
+                    m_grid = new wxGrid(m_tab_console, wxID_ANY);
+                    // Grid
+                    m_grid->CreateGrid(1, 2);
+                    m_grid->EnableEditing(false);
+                    m_grid->EnableGridLines(true);
+                    m_grid->EnableDragGridSize(false);
+                    m_grid->SetMargins(0, 0);
                     m_grid->SetSelectionMode(wxGrid::wxGridSelectRows);
-		            // Columns
-		            m_grid->AutoSizeColumns();
-		            m_grid->EnableDragColMove(false);
-		            m_grid->EnableDragColSize(true);
-		            m_grid->SetColLabelSize(25);
-		            m_grid->SetColLabelValue(0, _("Type"));
-		            m_grid->SetColLabelValue(1, _("Message"));
-		            m_grid->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+                    // Columns
                     m_grid->AutoSizeColumns();
-		            // Rows
-		            m_grid->SetRowSize(0, 0);
-		            m_grid->AutoSizeRows();
-		            m_grid->EnableDragRowSize(true);
-		            m_grid->SetRowLabelSize(50);
-		            m_grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
-		            // Cell Defaults
-		            m_grid->SetDefaultCellAlignment(wxALIGN_LEFT, wxALIGN_TOP);
-	            CSizer->Add(m_grid, 1, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+                    m_grid->EnableDragColMove(false);
+                    m_grid->EnableDragColSize(true);
+                    m_grid->SetColLabelSize(25);
+                    m_grid->SetColLabelValue(0, _("Type"));
+                    m_grid->SetColLabelValue(1, _("Message"));
+                    m_grid->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+                    m_grid->AutoSizeColumns();
+                    // Rows
+                    m_grid->SetRowSize(0, 0);
+                    m_grid->AutoSizeRows();
+                    m_grid->EnableDragRowSize(true);
+                    m_grid->SetRowLabelSize(50);
+                    m_grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+                    // Cell Defaults
+                    m_grid->SetDefaultCellAlignment(wxALIGN_LEFT, wxALIGN_TOP);
+                CSizer->Add(m_grid, 1, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
 
                 wxBoxSizer *CTSizer = new wxBoxSizer(wxHORIZONTAL);
-	                m_toggle_all = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE_ALL, _("All"));
-	                m_toggle_all->SetValue(true);
-	                CTSizer->Add(m_toggle_all, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxTOP, 5);
-	                m_toggle_info = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Information"));
-	                m_toggle_info->SetValue(true);
-	                CTSizer->Add(m_toggle_info, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
-	                m_toggle_warning = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Warning"));
-	                m_toggle_warning->SetValue(true);
-	                CTSizer->Add(m_toggle_warning, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
-	                m_toggle_error = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Error"));
-	                m_toggle_error->SetValue(true);
-	                CTSizer->Add(m_toggle_error, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
-	                m_toggle_debug = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Debug"));
-	                m_toggle_debug->SetValue(true);
-	                CTSizer->Add(m_toggle_debug, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
-	                m_toggle_system = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("System"));
-	                m_toggle_system->SetValue(true);
-	                CTSizer->Add(m_toggle_system, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+                    m_toggle_all = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE_ALL, _("All"));
+                    m_toggle_all->SetValue(true);
+                    CTSizer->Add(m_toggle_all, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxTOP, 5);
+                    m_toggle_info = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Information"));
+                    m_toggle_info->SetValue(true);
+                    CTSizer->Add(m_toggle_info, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+                    m_toggle_warning = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Warning"));
+                    m_toggle_warning->SetValue(true);
+                    CTSizer->Add(m_toggle_warning, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+                    m_toggle_error = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Error"));
+                    m_toggle_error->SetValue(true);
+                    CTSizer->Add(m_toggle_error, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+                    m_toggle_debug = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("Debug"));
+                    m_toggle_debug->SetValue(true);
+                    CTSizer->Add(m_toggle_debug, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
+                    m_toggle_system = new wxToggleButton(m_tab_console, ID_BUTTON_TOGGLE, _("System"));
+                    m_toggle_system->SetValue(true);
+                    CTSizer->Add(m_toggle_system, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
                 CSizer->Add(CTSizer, 0, wxEXPAND, 5);
 
-	            m_tab_console->SetSizer(CSizer);
-	            m_tab_console->Layout();
-	            CSizer->Fit(m_tab_console);
+                m_tab_console->SetSizer(CSizer);
+                m_tab_console->Layout();
+                CSizer->Fit(m_tab_console);
             m_notebook->AddPage(m_tab_console, _("Console"), false);
 
-			m_tab_money = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-				wxBoxSizer *MSizer = new wxBoxSizer(wxVERTICAL);
-					m_plot = new wxEcPlot(m_tab_money, wxID_ANY);
-					MSizer->Add(m_plot, 1, wxALL|wxEXPAND, 5);
-					m_tab_money->SetSizer(MSizer);
-					m_tab_money->Layout();
-				MSizer->Fit(m_tab_money);
-			m_notebook->AddPage(m_tab_money, _("Money"), false);
-		VSizer->Add(m_notebook, 1, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
+            m_tab_money = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+                wxBoxSizer *MSizer = new wxBoxSizer(wxVERTICAL);
+                    m_plot = new wxEcPlot(m_tab_money, wxID_ANY);
+                    MSizer->Add(m_plot, 1, wxALL|wxEXPAND, 5);
+                    m_tab_money->SetSizer(MSizer);
+                    m_tab_money->Layout();
+                MSizer->Fit(m_tab_money);
+            m_notebook->AddPage(m_tab_money, _("Money"), false);
+        VSizer->Add(m_notebook, 1, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, 5);
 
         m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,10), wxGA_HORIZONTAL);
         VSizer->Add(m_gauge, 0, wxALL|wxEXPAND, 5);
@@ -244,30 +244,30 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
     m_toolbar->AddTool(ID_MENU_STOP, wxEmptyString, wxBitmap(icon_stop_xpm), _("Stop"));
     m_toolbar->Realize();
 
-	//-- Menubar
-	m_menubar = new wxMenuBar(0);
-	m_menu_file = new wxMenu();
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_NEW, _("&New\tCtrl+N")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_OPEN, _("&Open\tCtrl+O")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_SAVE, _("&Save\tCtrl+S")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_SAVEAS, _("S&ave as...")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXPORT, _("E&xport")));
-		m_menu_file->AppendSeparator();
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_PRETTY, _("&Pretty script")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_RESET, _("&Reset")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXECUTE, _("&Execute\tF5")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_STOP, _("S&top\tF6")));
-		m_menu_file->AppendSeparator();
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_INSTANCE, _("Ne&w instance")));
-		m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_QUIT, _("&Quit")));
-	m_menubar->Append(m_menu_file, _("&File"));
+    //-- Menubar
+    m_menubar = new wxMenuBar(0);
+    m_menu_file = new wxMenu();
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_NEW, _("&New\tCtrl+N")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_OPEN, _("&Open\tCtrl+O")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_SAVE, _("&Save\tCtrl+S")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_SAVEAS, _("S&ave as...")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXPORT, _("E&xport")));
+        m_menu_file->AppendSeparator();
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_PRETTY, _("&Pretty script")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_RESET, _("&Reset")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_EXECUTE, _("&Execute\tF5")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_STOP, _("S&top\tF6")));
+        m_menu_file->AppendSeparator();
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_INSTANCE, _("Ne&w instance")));
+        m_menu_file->Append(new wxMenuItem(m_menu_file, ID_MENU_QUIT, _("&Quit")));
+    m_menubar->Append(m_menu_file, _("&File"));
 
-	m_menu_help = new wxMenu();
-		m_menu_help->Append(new wxMenuItem(m_menu_help, ID_MENU_HELP, _("&Help\tF1")));
-		m_menu_help->AppendSeparator();
-		m_menu_help->Append(new wxMenuItem(m_menu_help, ID_MENU_ABOUT, _("&About")));
-	m_menubar->Append(m_menu_help, _("&?"));
-	this->SetMenuBar(m_menubar);
+    m_menu_help = new wxMenu();
+        m_menu_help->Append(new wxMenuItem(m_menu_help, ID_MENU_HELP, _("&Help\tF1")));
+        m_menu_help->AppendSeparator();
+        m_menu_help->Append(new wxMenuItem(m_menu_help, ID_MENU_ABOUT, _("&About")));
+    m_menubar->Append(m_menu_help, _("&?"));
+    this->SetMenuBar(m_menubar);
 
     //-- Popup menu
     m_popup_grid = new wxMenu();
@@ -282,16 +282,16 @@ wxRouletteFrame::wxRouletteFrame(wxWindow *pParent, wxWindowID pId, bool pDefaul
 #endif
     m_statusbar->SetStatusWidths(3, &(status_widths[0]));
 
-	//-- Final layout
+    //-- Final layout
 #ifdef __WXMSW__
     SetIcon(wxIcon(wxT("MAINICON")));
 #else
     SetIcon(wxIcon(icon_mainicon_xpm));
 #endif
-	this->SetSizer(VSizer);
-	this->Layout();
+    this->SetSizer(VSizer);
+    this->Layout();
     m_script_view->SetFocus();
-	this->Center();
+    this->Center();
 
     //-- Extra features
     wxRouletteFileDrop* drop = new wxRouletteFileDrop();
@@ -413,7 +413,7 @@ void wxRouletteFrame::UpdateLog()
         m_grid->BeginBatch();
         m_grid->AppendRows(logas->Count()/*-1*/);
 
-        //- Prepare the color set
+        //- Prepares the color set
         col_white = wxColour(255, 255, 255);
         col_yellow = wxColour(255, 255, 192);
         col_red = wxColour(255, 192, 192);
@@ -480,7 +480,7 @@ void wxRouletteFrame::UpdateLog()
             m_grid->SetCellValue(i-skipped, 1, buffer.Mid(1, buffer.Len()));
         }
 
-        //- Remove the skipped lines
+        //- Removes the skipped lines
         if (skipped > 0)
             m_grid->DeleteRows(m_grid->GetNumberRows()-skipped, skipped);
 

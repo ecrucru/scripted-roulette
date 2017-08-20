@@ -1,6 +1,6 @@
 
-/*  Scripted Roulette - version 0.2
- *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+/*  Scripted Roulette - version 0.2.1
+ *  Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -239,10 +239,10 @@
 #define roulette_http_delay             5
 
 #define roulette_about_name             wxT("Scripted Roulette")
-#define roulette_about_version          wxT("v0.2")
-#define roulette_about_version_num      20
+#define roulette_about_version          wxT("v0.2.1")
+#define roulette_about_version_num      21
 #define roulette_about_website          wxT("http://scripted-roulette.sourceforge.net")
-#define roulette_about_copyright        wxT("Copyright (c) 2015-2016, ecrucru")
+#define roulette_about_copyright        wxT("Copyright (c) 2015-2017, ecrucru")
 #define roulette_about_desc             wxT("Scripting tool to develop your own betting\nstrategy for the Roulette, a casino game.")
 
 

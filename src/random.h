@@ -66,8 +66,8 @@
  *  ---------------------------------------------------------------------------
  *  Other algorithms:
  *
- *     Scripted Roulette - version 0.1
- *     Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+ *     Scripted Roulette - version 0.2.1
+ *     Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -201,6 +201,9 @@ class wxRouletteRandom
         //-- LnGen
         double ln_seed;
 
+        //-- Custom
+        unsigned long custom_seed;
+
     public:
         /** Constructor. */
         wxRouletteRandom()
@@ -245,6 +248,9 @@ class wxRouletteRandom
                 ln_seed = log(m_initial_seed/M_PI + 2);
             else
                 ln_seed = log(m_initial_seed_time/M_PI + 2);
+
+            //-- Custom
+            custom_seed = m_initial_seed;
         }
 
         /**
@@ -419,8 +425,8 @@ class wxRouletteRandom
          */
         unsigned long GetCustom()
         {
-            //Write your own code here !
-            return 1;
+            //Write your own code here based on the variable custom_seed.
+            return custom_seed;
         }
 };
 

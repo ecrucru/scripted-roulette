@@ -13,10 +13,22 @@
     WRITE game.landed.number
 
     "-- Asks to continue"
-    IF game.landed.black
-        CONFIRM 'Landed number =' game.landed.number '(black). Continue ?'
+    IF game.landed.zero
+        IF game.landed.number = sys.triple_zero
+            CONFIRM 'Landed number = 000 (green). Continue ?'
+        ELSE
+            IF game.landed.number = sys.double_zero
+                CONFIRM 'Landed number = 00 (green). Continue ?'
+            ELSE
+                CONFIRM 'Landed number = 0 (green). Continue ?'
+            ENDIF
+        ENDIF
     ELSE
-        CONFIRM 'Landed number =' game.landed.number '(red). Continue ?'
+        IF game.landed.black
+            CONFIRM 'Landed number =' game.landed.number '(black). Continue ?'
+        ELSE
+            CONFIRM 'Landed number =' game.landed.number '(red). Continue ?'
+        ENDIF
     ENDIF
     IF sys.popup = sys.popup.yes
         GOTO new_spin

@@ -11,7 +11,7 @@
 <body>
 
 <div id="page_menu">
-	<p id="page_software"><img class="NoBorder" src="mainicon.png" alt="" /><br/>Scripted Roulette v0.2</p>
+	<p id="page_software"><img class="NoBorder" src="mainicon.png" alt="" /><br/>Scripted Roulette v0.2.1</p>
 
 	<ul>
 		<li><a href="#page_content">Top of the page</a></li>
@@ -629,7 +629,7 @@
 				<tr>
 					<td>roulette_compile_pick_stc</td>
 					<td>0, 1 (default)</td>
-					<td>This option activates or deactivates wxStyledTextCtrl, a text editor highlighting the syntax.<br/><br/><ins>Remark</ins>: wxStyledTextCtrl is a wrapper containing quite the same interface than wxTextCtrl. However all the methods are not implemented depending on the version of wxWidgets. Scripted Roulette will adapt to both versions 2.8 and 3.0.x.</td>
+					<td>This option activates or deactivates wxStyledTextCtrl, a text editor highlighting the syntax.<br/><br/><ins>Remark</ins>: wxStyledTextCtrl is a wrapper containing quite the same interface as wxTextCtrl. However all the methods are not implemented depending on the version of wxWidgets. Scripted Roulette will adapt to both versions 2.8 and 3.0.x.</td>
 				</tr>
 				<tr>
 					<td>roulette_compile_locale</td>
@@ -649,7 +649,7 @@
 
 		<h3 id="para_noresponse">No response from the window in GUI mode</h3>
 			<p>When you run a script which takes some time, the window may not respond and become fully white. This is caused by the design of the application.</p>
-			<p>The execution of the script occurs in the same thread than the GUI interface. When a script is busy, there is no resource to refresh the main window.</p>
+			<p>The execution of the script occurs in the same thread as the GUI interface. When a script is busy, there is no resource to refresh the main window.</p>
 			<p>To solve this issue and to allow the user to click on the button &quot;Stop&quot;, we must process periodically the pending message queue. This is achieved with a safe yield (<a href="http://docs.wxwidgets.org/2.8/wx_wxapp.html#wxappyield" rel="nofollow">wxSafeYield</a>). However, the functions from the interface are disabled to avoid recursive calls.</p>
 			<p>This yield is implicit via some instructions:</p>
 				<ul>
@@ -693,14 +693,14 @@
 					<li>Open <a href="http://gnuwin32.sourceforge.net/packages/wget.htm" rel="nofollow">http://gnuwin32.sourceforge.net/packages/wget.htm</a></li>
 					<li>Get the ZIP file in section &quot;Binaries&quot;.</li>
 					<li>Extract &quot;wget.exe&quot; from the ZIP archive.</li>
-					<li>Put this application in the same folder than the executable file for Scripted Roulette.</li>
+					<li>Put this application in the same folder as the executable file for Scripted Roulette.</li>
 				</ul>
 			<p>To get support for SSL:</p>
 				<ul>
 					<li>Open the same link.</li>
 					<li>Get the ZIP file in section &quot;Dependencies&quot;.</li>
 					<li>Extract all the DLL files from the ZIP archive.</li>
-					<li>Put this library in the same folder than the executable file for Scripted Roulette.</li>
+					<li>Put this library in the same folder as the executable file for Scripted Roulette.</li>
 				</ul>
 			<p>You should see something like that:</p>
 			<p class="Center"><img src="wget.png" alt="" /></p>
@@ -853,7 +853,7 @@
 			<p class="Center"><img src="debug_margin.png" alt="" /></p>
 			<p>The embedded degugger is the following screen:</p>
 			<p class="Center"><img class="NoBorder" src="debug.png" alt="" /></p>
-			<p>The top area is a view of the lines of code being processed. The symbol "&gt;&gt;&gt;" is the current statement about to be interpreted. The displayed instructions belong to the same sequence. For few of them, some extra code can be generated and you will see it in this area. To extract the full generated code, you can call the instruction &quot;<a href="#para_show_script">SHOW SCRIPT</a>&quot;.</p>
+			<p>The top area is a view of the lines of code being processed. The symbol "&gt;&gt;&gt;" is the current statement about to be interpreted. The displayed instructions belong to the same sequence. For few of them, some extra code can be generated and you will see it in this area. To extract the full generated code, you can call the instruction &quot;<a href="#para_show_script">SHOW SCRIPT</a>&quot;.</p>
 			<p>The text area serves to evaluate any mathematical expression. The variables of the list below on the left are reachable. It is not possible to execute an instruction on-the-fly. The result of the calculation is automatically updated when you reach the next instruction (immediate or not).</p>
 			<p>The list on the left exposes all the available <a href="#sect_defvars">variables</a>. The list on the right shows all the modified values: the sign "-" means that the value has disappeared and the sign "+" means that the value has been defined. When a value is changed, you have the two signs and you are able to compare.</p>
 			<p>To modify a variable belonging to a domain name writable by the users, double-click on the right one in the list on the left. The displayed input field accepts a numerical value or a mathematical expression. An error is displayed if the result is wrong. You can't delete any variable.</p>
@@ -861,7 +861,7 @@
 				<ul>
 					<li>Continue : the script is executed until another break-point is found.</li>
 					<li>Step : you jump to the next instruction whatever the existihg break-points.</li>
-					<li>Validate  : if you consider that the issue is solved, the debugger will be skipped until the script ends.</li>
+					<li>Validate : if you consider that the issue is solved, the debugger will be skipped until the script ends.</li>
 					<li>Stop : the execution of the script is immediately stopped as if you called the instruction &quot;<a href="#inst_stop">STOP</a>&quot;</li>
 				</ul>
 
@@ -881,7 +881,7 @@
 				</ul>
 			<p>We deduct some easy rules:</p>
 				<ul>
-					<li>When the hot map is the same than the distribution, it means that black areas are never a possible result.</li>
+					<li>When the hot map is the same as the distribution, it means that black areas are never a possible result.</li>
 					<li>When the hot map is of variable gray levels, it means that the algorithm is able to target the numbers with a quite good distribution.</li>
 					<li>When the hot map is mostly black with few white dots, the algorithm has limited capabilities.</li>
 				</ul>
@@ -1206,8 +1206,8 @@
 				<tr>
 					<td>game.bet</td>
 					<td>At any time, you can set the amount of 1 counter. It is used each time you call the instruction <a href="#inst_bet">BET</a> or <a href="#inst_cbet">CBET</a>.
-						<ul><li><ins>Warning</ins>: with bets paying 1 to 2 (like 2 dozens or 2 columns), the bet will be doubled in order that the casino can pay you back a full counter (not a half one).</li></ul>
-						Editing this variable doesn't change the amount of money you have or the credit you contracted.
+						<br/>
+						<br/>Editing this variable doesn't change the amount of money you have or the credit you contracted.
 					</td>
 				</tr>
 				<tr>
@@ -1841,7 +1841,7 @@
 		<p>Starting from the version 0.2, Scripted Roulette is equiped with few string-related functions:</p>
 			<ul>
 				<li><a href="#inst_input">INPUT</a> : with the modifier "string", the input text is converted into an array of numbers.</li>
-				<li><a href="#inst_write">WRITE</a> : with the modifier &quot;<a href="#sect_numfmt">c:</a>&quot;, any numerical code can be represented by its corresponding character.
+				<li><a href="#inst_write">WRITE</a> : with the modifier &quot;<a href="#sect_numfmt">c:</a>&quot;, any numerical code can be represented by its corresponding character.
 					<ul>
 						<li>Remark: if the font of the output doesn't support the character, it will be display like a blank rectangle.</li>
 					</ul>
@@ -1913,10 +1913,10 @@
 				<li>Supported in GUI and Console.</li>
 				<li>No argument.</li>
 			</ul>
-		<p>This instruction allows you save all the current variables of the simulation in a temporary memory space. The affected variables can be listed with the instruction &quot;<a href="#para_show_memory">SHOW MEMORY</a>&quot;.</p>
+		<p>This instruction allows you save all the current variables of the simulation in a temporary memory space. The affected variables can be listed with the instruction &quot;<a href="#para_show_memory">SHOW MEMORY</a>&quot;.</p>
 		<p>To restore the variables to their initial state, you have to call the instruction &quot;<a href="#inst_rollback">ROLLBACK</a>&quot;.</p>
-		<p>To remove the backup, you can call the instruction &quot;<a href="#para_clear_backup">CLEAR BACKUP</a>&quot;.</p>
-		<p>You are not supposed to use the instruction &quot;<a href="#inst_spin">SPIN</a>&quot; between the moments when you save and restore the variables because the log is not saved and it won't be restored. Else unexpected discrepancy may arise.</p>
+		<p>To remove the backup, you can call the instruction &quot;<a href="#para_clear_backup">CLEAR BACKUP</a>&quot;.</p>
+		<p>You are not supposed to use the instruction &quot;<a href="#inst_spin">SPIN</a>&quot; between the moments when you save and restore the variables because the log is not saved and it won't be restored. Else unexpected discrepancies may arise.</p>
 
 	<h2 id="inst_beep">BEEP</h2>
 		<p>Characteristics:</p>
@@ -1941,7 +1941,7 @@
 		<h3 id="para_bet_desc">Description</h3>
 			<p>This instruction is one of the most important because it validates your bets for the roulette. Its behavior is influenced by the following variables:</p>
 				<ul>
-					<li>The amount of the bet is given by the variable &quot;game.bet&quot;. But if the target pays 1 to 2, then the bet will be doubled to avoid partial counters.</li>
+					<li>The amount of the bet is given by the variable &quot;game.bet&quot;. If the target pays 1 to 2, you may double the bet yourself to avoid partial counters.</li>
 					<li>The ability to bet is given by &quot;sys.can_bet&quot;. Unless you use the instruction &quot;<a href="#inst_cbet">CBET</a>&quot;, the bet is by default unlimited and will open a credit line if you have insufficient funds. As a restriction, this variable applies for 1 amount of the bet. Then if you are betting 2 numbers at a time, it doesn't guarantee that a credit line will not be contracted.</li>
 				</ul>
 			<p>After it is played, the instruction updates some statistics (refer to the <a href="#sect_defvars">corresponding section</a>), especially &quot;sys.game.stake&quot; which represents the money you will pay out to play the current round.</p>
@@ -2016,7 +2016,7 @@
 					<li>1-12, 13-24 or 25-36 for dozens.</li>
 					<li>1-34, 2-35 or 3-36 for columns.</li>
 				</ul>
-			<p>It pays 1 to 2 if you play 24 numbers. However, the bet is doubled to have the expected gain as a multiple of the bet. </p>
+			<p>It pays 1 to 2 if you play 24 numbers. You may double the bet yourself to have the expected gain as a multiple of the bet. </p>
 				<ul>
 					<li>1-24 or 13-36 for dozens.</li>
 					<li>1-35 or 2-36 for columns.</li>
@@ -2238,7 +2238,7 @@ user.bits_5 = 1,000000</p>
 				<li>1 composite argument.</li>
 			</ul>
 		<p>This instruction displays a text in a popup window. The user has then the possibility to reply Yes, No or Cancel.</p>
-		<p>This instruction has the same technical behavior than the instruction &quot;<a href="#inst_popup">POPUP</a>&quot;. The difference is in the processing of the return code. By checking the value of the variable &quot;sys.popup&quot;, you can know which button was pressed.</p>
+		<p>This instruction has the same technical behavior as the instruction &quot;<a href="#inst_popup">POPUP</a>&quot;. The difference is in the processing of the return code. By checking the value of the variable &quot;sys.popup&quot;, you can know which button was pressed.</p>
 		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
     <span class="SR_Keyword">CONFIRM</span> <span class="SR_String">'Do you want to continue ?'</span>
     <span class="SR_Keyword">IF</span> sys.popup = sys.popup.yes
@@ -2304,7 +2304,7 @@ user.bits_5 = 1,000000</p>
 			<p>This instruction removes the last entry of the history of the spins created by the instruction &quot;<a href="#inst_spin">SPIN</a>&quot;.</p>
 
 		<h3 id="para_clear_log">CLEAR LOG</h3>
-			<p>This instruction has the same effect than the instruction &quot;<a href="#para_clear_console">CLEAR CONSOLE</a>&quot;.</p>
+			<p>This instruction has the same effect as the instruction &quot;<a href="#para_clear_console">CLEAR CONSOLE</a>&quot;.</p>
 
 		<h3 id="para_clear_money">CLEAR MONEY</h3>
 			<p>This instruction should not be interpreted as a way to drop your money, but rather as a cleansing operation to delete the evolution of your money.</p>
@@ -2339,10 +2339,10 @@ user.bits_5 = 1,000000</p>
 		<h3 id="para_debug_onoff">DEBUG ON/OFF</h3>
 			<p>You can prevent the debugger from being called for a time. For that, you have to write the following instruction. This operation is equivalent to clicking on the <a href="#para_debug">button "Validate"</a> in the debugger.</p>
 			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
-    <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">OFF</span></p>
+    <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">OFF</span></p>
 			<p>The reverse operation which reactivates the debugger is trivial:</p>
 			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
-    <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">ON</span></p>
+    <span class="SR_Keyword">DEBUG</span> <span class="SR_Keyword">ON</span></p>
 			<p>These instructions are convenient if you want to debug the scripts having long processing times. Indeed, you define once a condition and every instruction "DEBUG" will inherit from the activation status. From the screen of the debugger, the user has an additionnal control of the execution of the script.</p>
 			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
     <span class="SR_Keyword">IF</span> (a given condition)
@@ -2355,14 +2355,14 @@ user.bits_5 = 1,000000</p>
     <span class="SR_Keyword">DEBUG</span> <span class="SR_Comment">"It will be triggered conditionally even if there is no immediate surrounding condition"</span>
     <span class="SR_Comment">"... Do something here ..."</span></p>
 
-		<h3 id="para_debug_external">DEBUG EXTERNAL</h3>
+		<h3 id="para_debug_external">DEBUG EXTERNAL</h3>
 			<p>Scripted Roulette is a compiled application written in C++ and Assembly language. The sources can be downloaded from the official website. For the purposes of its further development, it may be necessary to crash the application in certain conditions with a trap in order that it gets rescued by a <em>debugger</em>. Such a tool used by the software developers can analyze the memory of the computer and the execution of the program in parallel of the source code. It helps to understand why the execution of a script is not working well or how it can run better.</p>
 			<p>For the end users, this instruction is strictly useless. Moreover, if you try to call the function in the public version of the application, you will get an error telling that the instruction is not enabled, unless you write:</p>
 			<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
     <span class="SR_Keyword">IF</span> sys.debug
         <span class="SR_Keyword">DEBUG EXTERNAL</span>
     <span class="SR_Keyword">ENDIF</span></p>
-			<p>This instruction considers the status of the debugger set with the instruction "DEBUG ON/OFF".</p>
+			<p>This instruction considers the status of the debugger set with the instruction "DEBUG ON/OFF".</p>
 
 	<h2 id="inst_dec">DEC</h2>
 		<p>Characteristics:</p>
@@ -2550,7 +2550,7 @@ user.bits_5 = 1,000000</p>
 			</ul>
 		<p>By default, this instruction gets a number from the user. If you use the modifier "string", you get a chain of characters stored in <a href="#sect_defarrays">an array</a> starting from the position 1.</p>
 		<p class="Center"><img class="NoBorder" src="input.png" alt="" /></p>
-		<p>The arguments are used to build the text which appears in the input dialog. The technical rules are the same than for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;.</p>
+		<p>The arguments are used to build the text which appears in the input dialog. The technical rules are the same as for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;.</p>
 		<p>There are several outputs for the function:</p>
 			<ul>
 				<li>The button validated by the user is stored in &quot;sys.popup&quot;. The button OK corresponds to the value &quot;sys.popup.yes&quot; and the button Cancel corresponds to the value &quot;sys.popup.cancel&quot;.
@@ -2650,7 +2650,7 @@ performances.</p>
 			</ul>
 		<p>This instruction displays a text directly in a popup window. The objective is to have a higher level of attention from the user.</p>
 		<p class="Center"><img class="NoBorder" src="message.png" alt="" /></p>
-		<p>The arguments are used to build the message. The rules are the same than for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;. When you use modifiers to classify the popup, the icon will be adapted accordingly.</p>
+		<p>The arguments are used to build the message. The rules are the same as for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;. When you use modifiers to classify the popup, the icon will be adapted accordingly.</p>
 		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
     <span class="SR_Keyword">POPUP</span> error <span class="SR_String">'An error occurred.'</span></p>
 		<p>The execution of the script is suspended while the message is not validated by clicking on &quot;OK&quot;. No other choice is possible.</p>
@@ -2862,8 +2862,8 @@ results.</p>
     <span class="SR_Keyword">SET</span> user.var1 = <span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span> + <span class="SR_Numeric">3</span> + <span class="SR_Numeric">4</span></p>
 		<p>Starting from the version 0.2, the spaces are allowed in the first argument if you use the sign &quot;=&quot;. This is especially interesting to improve the readability of the arrays defined with imbricated expressions:</p>
 		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
-    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span>] = <span class="SR_Numeric">3</span> <span class="SR_Comment">"OK"</span>
-    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span>] <span class="SR_Numeric">3</span> <span class="SR_Comment">"KO"</span></p>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span>] = <span class="SR_Numeric">3</span> <span class="SR_Comment">"OK"</span>
+    <span class="SR_Keyword">SET</span> user.array[<span class="SR_Numeric">1</span> + <span class="SR_Numeric">2</span>] <span class="SR_Numeric">3</span> <span class="SR_Comment">"KO"</span></p>
 		<p>To remove a variable, you can use the instruction &quot;<a href="#inst_unset">UNSET</a>&quot;.</p>
 		<p>To test the existence of a variable, you can use the instruction &quot;<a href="#inst_exist">EXIST</a>&quot;. But from a general point of view, you have several other ways to handle it:</p>
 			<ul><li>Pay attention to the mathematical facts:</li></ul>
@@ -3005,7 +3005,7 @@ results.</p>
 			</ul>
 		<p>This instruction displays a text in the status bar of the main window.</p>
 		<p class="Center"><img src="status.png" alt="" /></p>
-		<p>The arguments are used to build the message. The rules are the same than for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;.</p>
+		<p>The arguments are used to build the message. The rules are the same as for the instruction &quot;<a href="#inst_write">WRITE</a>&quot;.</p>
 		<p>When you call the instruction, it is possible that you will not see it immediately. Indeed, when a script is running, the refresh of the window is not the priority and if the window doesn't respond, it will become white. To solve this issue, you have to use <a href="#para_noresponse">special commands</a> which will trigger the processing of the pending refreshes.</p>
 		<p>If you also use the instruction &quot;<a href="#inst_progress">PROGRESS</a>&quot; to inform about the status of the script, it is recommended that you write it after &quot;STATUS&quot;.</p>
 		<p class="Code"><span class="SR_Keyword">.SEQUENCE</span>
@@ -3243,7 +3243,12 @@ results.</p>
 
 <h1 id="chap_changelog">Change log</h1>
 	<ul>
-		<li><strong>Version 0.2</strong> - In development
+		<li><strong>Version 0.2.1</strong> - August 20<sup>th</sup> 2017
+			<ul>
+				<li>Critical bugfix in the calculation of the gains</li>
+			</ul>
+		</li>
+		<li><strong>Version 0.2</strong> - April 10<sup>th</sup> 2016
 			<ul>
 				<li>Support for the arrays (<a href="#sect_defarrays">section</a>)</li>
 				<li>Embedded debugger (<a href="#para_debug">section</a>)</li>

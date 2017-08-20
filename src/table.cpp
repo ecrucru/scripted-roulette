@@ -1,6 +1,6 @@
 
-/*  Scripted Roulette - version 0.2
- *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+/*  Scripted Roulette - version 0.2.1
+ *  Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -665,18 +665,18 @@ bool wxRouletteTable::Bet(wxArrayString* pBets, bool pNoWarning)
         if ((buffer == wxT("high")) || (buffer == wxT("19-36"))) { mt_half[1] += m_bet; continue; }
 
         //- Column
-        if ((buffer == wxT("column_1"))  || (buffer == wxT("1-34"))) { mt_column[0]    +=   m_bet; continue; }
-        if ((buffer == wxT("column_2"))  || (buffer == wxT("2-35"))) { mt_column[1]    +=   m_bet; continue; }
-        if ((buffer == wxT("column_2"))  || (buffer == wxT("3-36"))) { mt_column[2]    +=   m_bet; continue; }
-        if ((buffer == wxT("column_12")) || (buffer == wxT("1-35"))) { mt_column_x2[0] += 2*m_bet; continue; }  //Remark: CBET doesn't work correctly for this case and similar ones, because only 1 bet is tested, not two
-        if ((buffer == wxT("column_23")) || (buffer == wxT("2-36"))) { mt_column_x2[1] += 2*m_bet; continue; }
+        if ((buffer == wxT("column_1"))  || (buffer == wxT("1-34"))) { mt_column[0]    += m_bet; continue; }
+        if ((buffer == wxT("column_2"))  || (buffer == wxT("2-35"))) { mt_column[1]    += m_bet; continue; }
+        if ((buffer == wxT("column_3"))  || (buffer == wxT("3-36"))) { mt_column[2]    += m_bet; continue; }
+        if ((buffer == wxT("column_12")) || (buffer == wxT("1-35"))) { mt_column_x2[0] += m_bet; continue; }
+        if ((buffer == wxT("column_23")) || (buffer == wxT("2-36"))) { mt_column_x2[1] += m_bet; continue; }
 
         //- Dozen
-        if ((buffer == wxT("dozen_1"))  || (buffer == wxT("1-12")))  { mt_dozen[0]    +=   m_bet; continue; }
-        if ((buffer == wxT("dozen_2"))  || (buffer == wxT("13-24"))) { mt_dozen[1]    +=   m_bet; continue; }
-        if ((buffer == wxT("dozen_2"))  || (buffer == wxT("25-36"))) { mt_dozen[2]    +=   m_bet; continue; }
-        if ((buffer == wxT("dozen_12")) || (buffer == wxT("1-24")))  { mt_dozen_x2[0] += 2*m_bet; continue; }
-        if ((buffer == wxT("dozen_23")) || (buffer == wxT("13-36"))) { mt_dozen_x2[1] += 2*m_bet; continue; }
+        if ((buffer == wxT("dozen_1"))  || (buffer == wxT("1-12")))  { mt_dozen[0]    += m_bet; continue; }
+        if ((buffer == wxT("dozen_2"))  || (buffer == wxT("13-24"))) { mt_dozen[1]    += m_bet; continue; }
+        if ((buffer == wxT("dozen_3"))  || (buffer == wxT("25-36"))) { mt_dozen[2]    += m_bet; continue; }
+        if ((buffer == wxT("dozen_12")) || (buffer == wxT("1-24")))  { mt_dozen_x2[0] += m_bet; continue; }
+        if ((buffer == wxT("dozen_23")) || (buffer == wxT("13-36"))) { mt_dozen_x2[1] += m_bet; continue; }
 
         //- Line
         for (j=0 ; j<11 ; j++)
@@ -1040,13 +1040,13 @@ int wxRouletteTable::GetColumn(int pLanded)
 
 int wxRouletteTable::GetStreet(int pLanded)
 {
-    return (IsZero(pLanded) ? 0 : floor((pLanded-1)/3+1));
+    return (IsZero(pLanded) ? 0 : floor((pLanded-1)/3)+1);
 }
 
 double wxRouletteTable::GetGain(int pLanded)
 {
     double gain;
-    int x, y;
+    int i, j, n, x, y;
 
     //-- Checks
     if ((pLanded < 0) || (pLanded > m_nbcell))
@@ -1058,55 +1058,72 @@ double wxRouletteTable::GetGain(int pLanded)
         gain += mt_single[pLanded];
     else
     {
+        //- Absolute position of the landed number
         y = floor((pLanded-1) / 3);
         x = (pLanded - 1) % 3;
 
-        //- Single (35 to 1)
+        //- Single (35 to 1) -- Straight
         gain += 36 * mt_single[pLanded];
 
-        //- Double horizontally (17 to 1)
-        if (x > 0)
-            gain += 18 * mt_double_h[x-1][y];
-        gain += 18 * mt_double_h[x][y];
+        //- Double horizontally (17 to 1) -- Split H
+        if ((x == 0) || (x == 1))
+            gain += 18 * mt_double_h[0][y];
+        if ((x == 1) || (x == 2))
+            gain += 18 * mt_double_h[1][y];
 
-        //- Double vertically (17 to 1)
-        if (y > 0)
-            gain += 18 * mt_double_v[x][y-1];
-        gain += 18 * mt_double_v[x][y];
+        //- Double vertically (17 to 1) -- Split V
+        if (y == 0)
+            gain += 18 * mt_double_v[x][y];
+        else
+            if (y == 11)
+                gain += 18 * mt_double_v[x][y-1];
+            else
+                gain += 18 * (mt_double_v[x][y-1] + mt_double_v[x][y]);
 
-        //- Triple (11 to 1)
-        gain += 12 * mt_triple[GetStreet(pLanded)];
+        //- Triple (11 to 1) -- Street
+        gain += 12 * mt_triple[y];
 
-        //- Quad (8 to 1)
-        gain += 9 * mt_quad[x][y];
-        if (x > 0)
-            gain += 9 * mt_quad[x-1][y];
-        if (y > 0)
-            gain += 9 * mt_quad[x][y-1];
-        if ((x > 0) && (y > 0))
-            gain += 9 * mt_quad[x-1][y-1];
+        //- Quad (8 to 1) -- Corner
+        for (i=0 ; i<2 ; i++)
+            for (j=0 ; j<11 ; j++)
+            {
+                n = 3*j + i + 1;
+                if ((pLanded == n  ) ||
+                    (pLanded == n+1) ||
+                    (pLanded == n+3) ||
+                    (pLanded == n+4)
+                )
+                    gain += 9 * mt_quad[i][j];
+            }
 
-        //- Six (5 to 1)
-        gain += 6 * mt_six[(unsigned long)floor((pLanded+3-1) / 3 - 1)];
+        //- Six (5 to 1) -- Line
+        if (y == 0)
+            gain += 6 * mt_six[y];
+        else
+            if (y == 11)
+                gain += 6 * mt_six[y-1];
+            else
+                gain += 6 * (mt_six[y-1] + mt_six[y]);
 
         //- Dozen (2 to 1)
-        y = floor((pLanded-1) / 12);
-        gain += 3 * mt_dozen[y];
-        if (y <= 1)
-            gain += 3 * mt_dozen_x2[0];
-        if (y >= 1)
-            gain += 3 * mt_dozen_x2[1];
+        j = floor((pLanded-1) / 12);
+        gain += 3 * mt_dozen[j];
+        if (j <= 1)
+            gain += 1.5 * mt_dozen_x2[0];
+        if (j >= 1)
+            gain += 1.5 * mt_dozen_x2[1];
 
         //- Column (2 to 1)
-        x = (pLanded-1) % 3;
-        gain += 3 * mt_column[x];
-        if (x <= 1)
+        i = (pLanded-1) % 3;
+        gain += 3 * mt_column[i];
+        if (i <= 1)
             gain += 1.5 * mt_column_x2[0];
-        if (x >= 1)
+        if (i >= 1)
             gain += 1.5 * mt_column_x2[1];
 
         //- Half (1 to 1)
-        gain += 2 * mt_half[(unsigned long)floor((pLanded-1)/18)];
+        j = floor((pLanded-1)/18);
+        gain += 2 * mt_half[j];
 
         //- Color (1 to 1)
         gain += 2 * mt_color[GetColor(pLanded)];

@@ -1,6 +1,6 @@
 
-/*  Scripted Roulette - version 0.2
- *  Copyright (C) 2015-2016, http://scripted-roulette.sourceforge.net
+/*  Scripted Roulette - version 0.2.1
+ *  Copyright (C) 2015-2017, http://scripted-roulette.sourceforge.net
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,9 +43,8 @@ wxString wxRouletteInstruction::GetAsString()
 {
     wxString buffer = wxString::Format(wxT("%s %s"), Instruction.uniCStr(), Command.uniCStr()).Trim(true);
     if (NoWarning)
-        return wxT("@") + buffer;
-    else
-        return buffer;
+        buffer = buffer.Prepend(wxT("@"));
+    return buffer;
 }
 
 bool wxRouletteInstruction::Parse(wxString pInstruction, bool pChecksum)
